@@ -24,13 +24,13 @@
 
 ## Team Roster
 
-### [Name]
-- **Role:** [Role]
+### Ori Chason
+- **Role:** Project Lead
 - **About:**  
-  [1–2 sentences about your interests, skills, etc.]
-- **Favorite Snack:** [fill]
-- **Favorite Song While Coding:** [fill]
-- **GitHub:** https://github.com/[username]
+  I enjoy programming at the intersection of software and hardware, and currently deepening my skills in compilers construction. Alongside that, I really enjoy project management and working with a team who shares a commnon goal.
+- **Favorite Snack:** Potato Chips
+- **Favorite Song While Coding:** Narco by Timmy Trumpet
+- **GitHub:** https://github.com/orichason
 
 ---
 
