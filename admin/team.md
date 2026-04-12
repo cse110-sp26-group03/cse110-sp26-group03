@@ -6,8 +6,8 @@
 **Team Image:**  
 ![Team Photo](../assets/images/team_logo.jpg)
 
-**Who we are:**  
-[1–3 sentences describing our team's goals]
+**Who we are:**
+We are a team of UC San Diego students brought together by a common goal of growing both individually and collectively in the field of software engineering. Recognizing this course as a unique and valuable experience, we strive to make the most of our time by exploring our passions, supporting one another, and building strong skills.
 
 ---
 
@@ -65,7 +65,8 @@
 
 ### Katie Ngo
 - **Role:** Frontend/Design
-- **About:** I enjoy solving problems and building practical applications like websites that address user needs. I am also interested in developing recommender systems!
+- **About:** 
+I enjoy solving problems and building practical applications like websites that address user needs. I am also interested in developing recommender systems!
 - **Favorite Snack:** Choco Churro Turtle Chips
 - **Favorite Song While Coding:** Under A Siege by Snow Strippers
 - **GitHub:** https://github.com/kttngo
