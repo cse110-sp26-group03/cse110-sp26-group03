@@ -123,13 +123,13 @@ I enjoy solving problems and building practical applications like websites that 
 
 ---
 
-### [Name]
-- **Role:** [Role]
+### TianLin Zhao
+- **Role:** Test
 - **About:**  
-  [1–2 sentences about your interests, skills, etc.]
-- **Favorite Snack:** [fill]
-- **Favorite Song While Coding:** [fill]
-- **GitHub:** https://github.com/[username]
+  I love game graphics design and know a fair amount about software and hardware.
+- **Favorite Snack:** Seaweed Snips
+- **Favorite Song While Coding:** No. I don't listen to music while coding.
+- **GitHub:** https://github.com/EveningPiao
 
 ---
 
