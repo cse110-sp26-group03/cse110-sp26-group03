@@ -53,13 +53,13 @@ We are a team of UC San Diego students brought together by a common goal of grow
 
 ---
 
-### [Name]
-- **Role:** [Role]
+### Humza Shaikh
+- **Role:** Frontend/Design
 - **About:**  
-  [1–2 sentences about your interests, skills, etc.]
-- **Favorite Snack:** [fill]
-- **Favorite Song While Coding:** [fill]
-- **GitHub:** https://github.com/[username]
+  I enjoy algorithims that solve problems like making a puzzle and seeing it all come together. I paticularly enjoy working in fintech.
+- **Favorite Snack:** Trader Joe's Chocolate Bon Bons
+- **Favorite Song While Coding:** Anything Brent faiyaz or Drake
+- **GitHub:** https://github.com/hushaikh95
 
 ---
 
