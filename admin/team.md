@@ -64,13 +64,12 @@
 
 ---
 
-### [Name]
-- **Role:** [Role]
-- **About:**  
-  [1–2 sentences about your interests, skills, etc.]
-- **Favorite Snack:** [fill]
-- **Favorite Song While Coding:** [fill]
-- **GitHub:** https://github.com/[username]
+### Katie Ngo
+- **Role:** Frontend/Design
+- **About:** I enjoy solving problems and building practical applications like websites that address user needs. I am also interested in developing recommender systems!
+- **Favorite Snack:** Choco Churro Turtle Chips
+- **Favorite Song While Coding:** Under A Siege by Snow Strippers
+- **GitHub:** https://github.com/kttngo
 
 ---
 
