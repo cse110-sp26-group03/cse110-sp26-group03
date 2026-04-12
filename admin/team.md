@@ -4,8 +4,7 @@
 **Slogan:** [fill]
 
 **Team Image:**  
-![Team Photo](assets/images/team_logo.jpg)
-<!-- Replace with image path -->
+![Team Photo](../assets/images/team_logo.jpg)
 
 **Who we are:**  
 [1–3 sentences describing our team's goals]
