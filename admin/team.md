@@ -73,13 +73,13 @@ I enjoy solving problems and building practical applications like websites that 
 
 ---
 
-### [Name]
-- **Role:** [Role]
+### Natalin Duangpanya
+- **Role:** Backend
 - **About:**  
-  [1–2 sentences about your interests, skills, etc.]
-- **Favorite Snack:** [fill]
-- **Favorite Song While Coding:** [fill]
-- **GitHub:** https://github.com/[username]
+  I like experimenting with technologies I haven't worked with before. Right now, I am interested in computer vision and graphics!
+- **Favorite Snack:** Trail mix
+- **Favorite Song While Coding:** Music Baby by Jane Remover
+- **GitHub:** https://github.com/ndpya
 
 ---
 
