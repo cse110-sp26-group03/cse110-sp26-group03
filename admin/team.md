@@ -83,13 +83,13 @@ I enjoy solving problems and building practical applications like websites that 
 
 ---
 
-### [Name]
-- **Role:** [Role]
+### Ryan Le
+- **Role:** Backend
 - **About:**  
-  [1–2 sentences about your interests, skills, etc.]
-- **Favorite Snack:** [fill]
-- **Favorite Song While Coding:** [fill]
-- **GitHub:** https://github.com/[username]
+  I lowkey like debugging even though it's annoying, and solving problems. I also like dealing with databases.
+- **Favorite Snack:** Popcorn
+- **Favorite Song While Coding:** anything by Stevie Wonder
+- **GitHub:** https://github.com/ryanqgle
 
 ---
 
