@@ -43,13 +43,13 @@ We are a team of UC San Diego students brought together by a common goal of grow
 
 ---
 
-### [Name]
-- **Role:** [Role]
+### Scottin Pham
+- **Role:** Scheduler / TBD
 - **About:**  
-  [1–2 sentences about your interests, skills, etc.]
-- **Favorite Snack:** [fill]
-- **Favorite Song While Coding:** [fill]
-- **GitHub:** https://github.com/[username]
+  I think backend and UX stuff is interesting! In my free time I enjoy videography/photography, gaming, and occasional hikes.
+- **Favorite Snack:** Green Grapes
+- **Favorite Song While Coding:** Poison Root by Alex G
+- **GitHub:** https://github.com/scottinp
 
 ---
 
