@@ -1,7 +1,7 @@
 # Team Name: StringRays
 
 ## Brand & Identity
-**Slogan:** [fill]
+**Slogan:** A Dictionary of StringRays 
 
 **Team Image:**  
 ![Team Photo](../assets/images/team_logo.jpg)
@@ -33,13 +33,13 @@ We are a team of UC San Diego students brought together by a common goal of grow
 
 ---
 
-### [Name]
-- **Role:** [Role]
+### Angel Wan
+- **Role:** Project Lead
 - **About:**  
-  [1–2 sentences about your interests, skills, etc.]
-- **Favorite Snack:** [fill]
-- **Favorite Song While Coding:** [fill]
-- **GitHub:** https://github.com/[username]
+  I'm interested in the people side of computers and software, whether that be project management or user experience and design. I really enjoy working with others and bringing together different peoples' unique strengths. 
+- **Favorite Snack:** Cherry Tomatoes + Hummus
+- **Favorite Song While Coding:** Out Of The Woods by Taylor Swift
+- **GitHub:** https://github.com/19tangerines
 
 ---
 
