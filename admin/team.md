@@ -113,13 +113,13 @@ I enjoy solving problems and building practical applications like websites that 
 
 ---
 
-### [Name]
+### Nathan Lin
 - **Role:** [Role]
-- **About:**  
-  [1–2 sentences about your interests, skills, etc.]
+- **About:**
+  I am interested in widening my knowledge outside of what we have done in past courses which have been heavily guided. I am interested in learning more frontend stuff, but I am also interested in computer vision!
 - **Favorite Snack:** [fill]
 - **Favorite Song While Coding:** [fill]
-- **GitHub:** https://github.com/[username]
+- **GitHub:** https://github.com/n8l1n
 
 ---
 
