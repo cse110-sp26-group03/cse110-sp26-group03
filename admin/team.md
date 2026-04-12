@@ -56,7 +56,7 @@ We are a team of UC San Diego students brought together by a common goal of grow
 ### Humza Shaikh
 - **Role:** Frontend/Design
 - **About:**  
-  I enjoy algorithims that solve problems like making a puzzle and seeing it all come together. I paticularly enjoy working in fintech.
+  I enjoy algorithms that solve problems like making a puzzle and seeing it all come together. I particularly enjoy working in fintech.
 - **Favorite Snack:** Trader Joe's Chocolate Bon Bons
 - **Favorite Song While Coding:** Anything Brent faiyaz or Drake
 - **GitHub:** https://github.com/hushaikh95
@@ -65,8 +65,8 @@ We are a team of UC San Diego students brought together by a common goal of grow
 
 ### Katie Ngo
 - **Role:** Frontend/Design
-- **About:** 
-I enjoy solving problems and building practical applications like websites that address user needs. I am also interested in developing recommender systems!
+- **About:**  
+  I enjoy solving problems and building practical applications like websites that address user needs. I am also interested in developing recommender systems!
 - **Favorite Snack:** Choco Churro Turtle Chips
 - **Favorite Song While Coding:** Under A Siege by Snow Strippers
 - **GitHub:** https://github.com/kttngo
@@ -134,5 +134,5 @@ I enjoy solving problems and building practical applications like websites that 
 ---
 
 ## Links!
-- Project Repo: [link]
-- README: [link]
+- [Project Repository](https://github.com/cse110-sp26-group03/cse110-sp26-group03)
+- [README](../README.md)
