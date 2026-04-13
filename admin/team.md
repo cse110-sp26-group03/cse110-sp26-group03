@@ -114,11 +114,11 @@ We are a team of UC San Diego students brought together by a common goal of grow
 ---
 
 ### Nathan Lin
-- **Role:** [Role]
+- **Role:** Tester
 - **About:**
   I am interested in widening my knowledge outside of what we have done in past courses which have been heavily guided. I am interested in learning more frontend stuff, but I am also interested in computer vision!
-- **Favorite Snack:** [fill]
-- **Favorite Song While Coding:** [fill]
+- **Favorite Snack:** The Snak Yard Shiitake Mushroom Snack
+- **Favorite Song While Coding:** I listen to pretty much any song, but I normally go for  more exciting/high energy.
 - **GitHub:** https://github.com/n8l1n
 
 ---
