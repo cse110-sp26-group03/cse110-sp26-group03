@@ -103,13 +103,13 @@ We are a team of UC San Diego students brought together by a common goal of grow
 
 ---
 
-### [Name]
-- **Role:** [Role]
+### Ike Okoye
+- **Role:** Frontend, Media/Design
 - **About:**  
-  [1–2 sentences about your interests, skills, etc.]
-- **Favorite Snack:** [fill]
-- **Favorite Song While Coding:** [fill]
-- **GitHub:** https://github.com/[username]
+  I like to merge my creative side with my technical side. I'm interested in/have experience the full stack, but my skills are probably better applicable to the frontend.
+- **Favorite Snack:** Fruit
+- **Favorite Song While Coding:** Chiasma - MAVI
+- **GitHub:** https://github.com/ikeywikey
 
 ---
 
