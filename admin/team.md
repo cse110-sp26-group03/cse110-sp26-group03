@@ -93,13 +93,13 @@ We are a team of UC San Diego students brought together by a common goal of grow
 
 ---
 
-### [Name]
-- **Role:** [Role]
+### David Tanioka
+- **Role:** Backend
 - **About:**  
-  [1–2 sentences about your interests, skills, etc.]
-- **Favorite Snack:** [fill]
-- **Favorite Song While Coding:** [fill]
-- **GitHub:** https://github.com/[username]
+  I like problem solving and coming up with unique solutions through backend development. Also like setting up cors
+- **Favorite Snack:** Pancakes
+- **Favorite Song While Coding:** Chopin's wrong note etude
+- **GitHub:** https://github.com/TaDavid7
 
 ---
 
