@@ -1,7 +1,7 @@
 # Team 3 Meeting Minutes
 
 **Type of Meeting:** Tech Warm-Up Wrap-Up  
-**Date/Time:** April 15th, 6:20 PM - 9:00 PM  
+**Date/Time:** April 14th, 6:20 PM - 9:00 PM  
 **Location/Method:** In-person, CSE Basement Lab  
 
 **Members Present:** Scottin, Ori, Angel, Tianlin, David, Ike, Natalin, Nathan, Ryan, Katie, Humza  
