@@ -23,7 +23,6 @@ She also shared examples of positive signals:
 - Answering questions in class
 - Going to office hours
 - Reaching out to the TA
-- Working in teams or pairs
 
 Helena said that **GitHub is the “main source of truth,”** as explained by Professor Powell, and that **meeting notes should be kept on GitHub**.
 
