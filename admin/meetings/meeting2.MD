@@ -1,7 +1,7 @@
 # Team 3 Meeting Minutes
 
 **Type of Meeting:** Group Bonding  
-**Date/Time:** 4:00 PM - 4:45 PM  
+**Date/Time:** April 11th Saturday, 4:00 PM - 4:45 PM  
 **Location/Method:** Zoom  
 
 **Members Present:** Scottin, Ori, Angel, Tianlin, David, Ike, Natalin, Nathan, Ryan  
