@@ -1,7 +1,7 @@
 # Team 3 Kickoff Meeting
 
 **Type of Meeting:** Kickoff  
-**Date/Time:** 6:20 PM – 7:00 PM  
+**Date/Time:** April 9th Thursday, 6:20 PM – 7:00 PM  
 **Location:** Outside Catalyst Hall  
 
 **Members Present:** Angel, Ori, Scott, Katie, Ryan, David, Ike, Nat, Nathan  
