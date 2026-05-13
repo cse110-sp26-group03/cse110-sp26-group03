@@ -94,6 +94,52 @@ What needs to be done?
 Optional details, blockers, or references
 ```
 
+
+## ADRs
+
+each ADR needs it's own file, titled as such:
+
+```
+XXX-title-with-dashes.md
+```
+each ADR should have a number, in sequential order.
+
+### ADR Template
+
+For the content, copy and follow the following template: 
+
+```md
+# ADR-XXX: Short Title
+
+## Status
+Accepted | Proposed | Deprecated (bold selected)
+
+**Date:** YYYY-MM-DD  
+**Authors:** Name, Name
+
+---
+
+## Context
+Brief explanation of the problem, constraint, or decision that needed to be made.
+
+---
+
+## Decision
+What was decided?
+
+---
+
+## Consequences
+
+### Positive
+- 
+
+### Negative
+- 
+```
+
+
+
 ## Pull Requests
 
 Pull Requests should include:
