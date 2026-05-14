@@ -16,17 +16,18 @@ AIT and database needs to fetch and write data locally inside a workspace, in a 
 ## Considered Options
 
 1. **Mutable JSON file.**. Allows for cleaner, less chunky data storage. Using this would allow for data optimization: changes made to the same issue will edit the existing issue's data rather than create another object. 
-2. **Appendable JSONL file.** Allows for quicker data storage. Though, will consume more space over time.
+2. **Appendable JSONL file.** Allows for quicker data storage. Though, will consume more space over time as file grows.
 
 ## Decision
 
-We adopt Option 2: JSONL is better for user appeal and performance.
+We adopt Option 2: JSONL is better for user appeal and performance. We want to prioritize performance over space optimizations for improved user experience, especially for a project of our scale. 
 
 - `.ait/issues.jsonl` is committed to git. Every change is one appended line.
 - JSONL log builds data locally.
 - On every write: the event is constructed, and auto-exported as a new line appended to the JSONL log.
 - If our database is ever corrupted or out of sync, deleting it and replaying the JSONL log restores the exact same state. The JSONL is the durable record.
-- Performance > Space consumption: having slow response times will detract users from using our issue tracker. Powell has also iterated that space is not so much a program as performance is (on our scale)
+- Every command updates both stores immediately, thus, the JSONL is always current with the SQLite database 
+- Performance > Space consumption: having slow response times will detract users from using our issue tracker. Powell has also iterated that space is not so much a problem as performance is (on our scale).
 
 ## Consequences
 
