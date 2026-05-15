@@ -48,6 +48,8 @@ blocked issues so that we do not need to recursively or repeatedly load/ready/sc
 
 - Daemon lifecycle is another point of failure. Crashes, stale connections, and version mismatches between client and daemon.
 If this were to occur, a workaround would be to transparently fall through to a direct-SQLite mode (i.e. work as if there is no daemon)
+- In many languages, including Javascript, if an abrupt termination, such as a crash, occurs, there might be data corruption or loss.
+Incomplete data may be written to files or databases and some processes may remain opened until cleaned by the OS
 
 ## References
 - Beads internal documents on ([GitHub](https://github.com/gastownhall/beads/blob/main/docs/INTERNALS.md))
