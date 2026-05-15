@@ -35,6 +35,7 @@ More Specifically in Response(R) and Load(L)
 - Significantly improved response times and memory usage
 - Bun is a majority native to Javascript
 - Bun has a Bun:Sqlite module built in
+- Bun has a built in test runner than is Jest-compatible
   
 **Negative:**
 - May encounter inexplicable bugs with the use of dependencies and libraries while building
