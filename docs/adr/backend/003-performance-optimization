@@ -1,0 +1,53 @@
+# ADR-003: CLI Performance Optimization
+
+## Status
+Proposed — 2026-05-13
+
+## Context
+
+Beads is a persistent-memory layer for AI coding agents. These AI agents can invoke `bd` commands tens to hundreds of times per session.
+This means that this latency per invocation can multiply into noticeable wall-clock cost. Beads' current
+per-invocation architecture looks like this:
+1. Go runtime cold start every invocation (runtime-init cost of ~10-30 ms).
+2. Uses Dolt as its storage backend, opening a connection for every command to query the database.
+3. For every invocation, a connection is established, authenticated, issues a query, and breaks down.
+This pattern is not optimal for some databases, including Dolt.
+
+## Considered Options
+
+1. **Follow Beads' architecture (Server storage backend).** Well documented, easier to implement a per-invocation connection
+2. **C/C++/Python based CLI infrastructure + local SQLite storage.** Though faster and more catered towards heavy infrastructure work, the learning curve is suboptimal given our timeframe.
+Having local storage beats depending on an external cloud service + allows users to work asynchronously and offline. Accessing local storage is faster than
+a server due to latency / network-related delays.
+3. **Javascript + local SQLite.** Does not require such a steep learning curve as C/C++/Python, and local SQLite allows quicker asynchronous and offline work. 
+4. **Javascript + local SQLite + daemon.** Allows the same benefits as the above, but the daemon holds one SQLite connection instead of invoking a new connection
+for every command. This drastically reduces the time it takes between invoking a command and querying the database. 
+
+## Decision
+
+We would like to adopt Option 4: JavaScript + local SQLite + daemon.
+
+- Local SQLite disconnects us from any external dependencies.
+- Local storage allows for quicker operations.
+- Daemon cold starts take "long" (~10ms), but querying the database is essentially instantaneous when warm (holding a connection).
+- Use pre-prepared statements for hot queries (queries used often), and an in-memory blocked-cache for issue dependency resolution.
+This way, we can quickly query. For the blocked-cache, Beads uses this in its codebase. We use a HashSet to store currently
+blocked issues so that we do not need to recursively or repeatedly load/ready/scan them.
+- Cold commands (commands that aren't run often, like init or migrate) can skip the daemon and open SQLite directly.
+
+## Consequences
+
+**Positive:**
+
+- Hot-path latency drops by removing the per-invocation cost. Saves wall-clock cost for agents and users.
+- No external server dependency.
+- Infrastructure makes daemon optional, but is better for performance.
+- Easier migration from Beads to our issue tracker.
+  
+**Negative:**
+
+- Daemon lifecycle is another point of failure. Crashes, stale connections, and version mismatches between client and daemon.
+If this were to occur, a workaround would be to transparently fall through to a direct-SQLite mode (i.e. work as if there is no daemon)
+
+## References
+- Beads internal documents on ([GitHub](https://github.com/gastownhall/beads/blob/main/docs/INTERNALS.md))
