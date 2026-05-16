@@ -3,7 +3,7 @@
 ## Status
 Proposed — 2026-05-13
 
-Accepted - Pending
+Accepted - 2026-05-15 by Ori
 
 ## Context
 
