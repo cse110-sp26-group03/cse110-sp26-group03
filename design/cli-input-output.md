@@ -7,20 +7,20 @@ Issues follow this format:
 
 ### Possible flags:
 > - --title
->  - --desc 
+> - --desc
 > - --status
->  - --priority
+> - --priority
 > - --type
 > - --assignee
 
 ### Rough list of commands:
 
-*required 
+*required
 
 > - mt help
 >>> - shows and defines list of all commands. takes no flags
 > - mt create (flags)
->>> - creates an issue. 
+>>> - creates an issue.
 >>>> - flags taken: *title, desc, status, priority, type, assignee
 
 > - mt update (*id, flags)
@@ -38,7 +38,7 @@ Issues follow this format:
 >>> - returns list of issues, or details of a specific issue
 >>>> - if no id is provided, a list of all issues are returned. otherwise, details of corresponding issue are displayed
 >>>> - if flags are provided and id isn't provided, you should be able to filter by flag by adding it:
->>>>> ex. - mt view --priority High will return a list of high priority issues.
+>>>>> ex. - mt view --priority p1 will return a list of p1 issues.
 
 
 # Sample I/O
@@ -46,10 +46,10 @@ Issues follow this format:
 ```
 mt create --title My new issue --desc Needs to be solved
 
-   Created Issue #001 
+   Created Issue #001
 
    Title: My new issue
-   Priority: -
+   Priority: p0
    Status: open
    Created at: ISO timestamp
 ```
@@ -70,7 +70,7 @@ mt view
 
    ID       TITLE                                   PRIORITY   STATUS        TYPE      ASSIGNEE
    ---------------------------------------------------------------------------------------------
-   001      Changed the title                       -          open          -         -
+   001      Changed the title                       p0         open          -         -
 
 
 ```
@@ -79,10 +79,10 @@ mt view
 mt view 001
 
 Issue #001     Changed the title
-   
+
    > Needs to be solved
 
-   Priority:    -
+   Priority:    p0
    Status:      open
    Type:        -
    Assignee:    -
@@ -94,19 +94,19 @@ Issue #001     Changed the title
 
 
 ```
-mt close 001 
+mt close 001
 
    Closed Issue #001
 
    Title: Changed the title
-   Priority: none
+   Priority: p0
    Status: closed
               ^ colored red
    Closed at: ISO timestamp
 ```
 
 ```
-mt delete 001 
+mt delete 001
 
    You are about to delete Issue #001: Changed the title
       Confirm? y/n _y_
@@ -131,16 +131,16 @@ mt help
       create    Create a new issue
                   --title <t>       (required)
                   --desc  <d>       Description
-                  --priority        low | medium | high (default: none)
-                  --status          open | closed
+                  --priority        p0 | p1 | p2 | p3 | ... (default: p0)
+                  --status          Issue state
                   --assignee <a>    Name of assignee
-                  --type <t>        space separated list of issue type tags (ex. --type design frontend) 
+                  --type <t>        space separated list of issue type tags (ex. --type design frontend)
                                                                                          ^ tags: design, frontend
       ... etc
 
 
    EXAMPLES
-      
+
       mt create --title My new issue --desc Needs to be solved
       mt update 001 --title Changed the title
       mt view 001
