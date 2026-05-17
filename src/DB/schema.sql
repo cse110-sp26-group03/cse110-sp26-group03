@@ -7,9 +7,10 @@ CREATE TABLE IF NOT EXISTS issues (
   Description TEXT,
   -- CHECK constraints enforce allowed values for Status, Priority, and IssueType
   Status TEXT DEFAULT 'open' CHECK (Status IN ('open', 'in_progress', 'closed')),
-  -- P0 = blocker, P1 = high, P2 = medium, P3 = low.
-  -- Default p3 forces creators to actively bump priority for anything urgent.
-  Priority TEXT DEFAULT 'p3' CHECK (Priority IN ('p0', 'p1', 'p2', 'p3')),
+  -- Smaller number = higher priority (P0 is the most urgent).
+  -- Any non-negative integer is allowed; the user picks the scale.
+  -- The "p" prefix shown to users (e.g. "p5") should be added by the CLI display
+  Priority INTEGER DEFAULT 5 CHECK (Priority >= 0),
   IssueType TEXT DEFAULT 'task' CHECK (IssueType IN ('task', 'bug')),
   Assignee TEXT,
   CreatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
