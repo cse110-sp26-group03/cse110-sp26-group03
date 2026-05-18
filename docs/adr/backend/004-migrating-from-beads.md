@@ -27,7 +27,7 @@ We agreed upon this roadmap upon the CLI command: `mt migrate beads`
 1. Reads the Beads JSONL.
 2. Validates the file looks like Beads format (check for expected fields).
 3. Validate the Manta project is empty
-4. Translates each Beads issue to create event with current state.
+4. Translates each Beads issue to create event with current state (fields not used by Manta are omitted).
 5. Appends events to Manta's JSONL updates SQLite
 6. Reports: "Migrated # issues from beads. # fields had no Manta equivalent and were dropped. Run `mt list` to see your issues."
 
@@ -41,4 +41,4 @@ We agreed upon this roadmap upon the CLI command: `mt migrate beads`
 **Negative:**
 - Must consider the many keys that Beads might store in their JSONL files
 - Need to maintain compatability if Beads changes their JSONL schema, or data storage method
-- While migrating from Beads, somme of the data might have to be altered to better fit Manta's design (i.e. Issue IDs)
+- While migrating from Beads, some of the data might have to be altered to better fit Manta's design (i.e. Issue IDs)
