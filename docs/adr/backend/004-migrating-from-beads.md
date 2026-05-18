@@ -1,9 +1,9 @@
 # ADR-004: Migration from Beads
 
 ## Status
-Proposed — 2026-05-17
+Proposed — 2026-05-17 by Nathan
 
-Status: Pending
+Accepted — 2026-05-18 by Ori
 
 ## Context
 
@@ -16,7 +16,7 @@ Some important details that we considered is that:
 
 ## Considered Options
 
-1. **Read from Bead's JSONL file**. Due to how JSONL files are organized, a command can be created that reads and parses Beads JSONL file, and outputs a Manta-compatable JSONL file with the translated data
+1. **Read from Beads JSONL file**. Due to how JSONL files are organized, a command can be created that reads and parses Beads JSONL file, and outputs a Manta-compatable JSONL file with the translated data
 2. **Users remake their issues.** The user is responsible for migrating their issues from Beads to Manta
 
 ## Decision
@@ -33,7 +33,7 @@ We agreed upon this roadmap upon the CLI command: `mt migrate beads`
 
 **Notes**
 - The Manta project needs to be empty to ensure that there are no duplicate or conflicting issues.
-- Upon calling `mt migrate beads`, the Beads JSONL file will be read line by line, and the `(key, value)` pairs will be parsed, translated and outputed as a line in the Manta JSONL file. Then replay.js will read the Manta JSONL file and update the Manta SQLite file.
+- Upon calling `mt migrate beads`, the Beads JSONL file will be read line by line, and the `(key, value)` pairs will be parsed, translated and outputed as a line in the Manta JSONL file. Then replay.js will read the Manta JSONL file and update the Manta SQLite database.
 - Beads issue IDs are compatable with Manta issue IDs since the alphabet used to generate Beads issue IDS is a subset of the alphabet used to generate Manta IDs.
 
 ## Consequences
