@@ -33,7 +33,7 @@ We adopt Option 1: Ike's custom parser, in plain JS.
 Names and paths below are a starting suggestion
 
 ```
-frontend/src/cli/
+src/cli/
 ├── parser.js          Ike's parser
 ├── index.js           entry point: calls the parser, dispatches, prints the result
 ├── usage.js           help text

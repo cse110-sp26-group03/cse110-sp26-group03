@@ -15,7 +15,7 @@ Backend ADR-001 makes JSONL the source of truth. SQLite is a local cache built b
 The storage layer needs to:
 
 1. Own the SQLite connection in one place.
-2. On every write, append to JSONL **and** update SQLite so the two stay in sync..
+2. On every write, append to JSONL **and** update SQLite so the two stay in sync.
 3. Stay out of the CLI's way: commands just call functions like `createIssue(...)` / `closeIssue(...)`.
 
 
@@ -26,7 +26,7 @@ The storage layer needs to:
 
 ## Decision
 
-We adopt Option 1: `bun:sqlite` directly, with `store.js` as the only module that touches SQLite or `.manta/issues.jsonl`.
+We adopt Option 1: `bun:sqlite` directly, with `store.js` as the only module that writes to SQLite or `.manta/issues.jsonl`. Connection management lives in `db.js`. Replay lives in `replay.js`.
 
 - Every mutating command flows through `store.js`.
 - Write order inside `store.js`: append the JSONL line first, then update SQLite
@@ -40,7 +40,8 @@ validate.js  >  events.js  >  store.js
 
 ### Files 
 
-- `store.js`: writes to JSONL and SQLite (Ori's rename of `db.js`)
+- `db.js`: opens .manta/manta.db, runs schema.sql (Tian)
+- `store.js`: writes to JSONL and SQLite
 - `schema.sql`: table definitions plus the replay-watermark row
 - `replay.js`: reads the watermark, applies new JSONL lines
 - `events.js`: builds event objects before they hit `store.js`
@@ -50,9 +51,9 @@ validate.js  >  events.js  >  store.js
 The full directory layout, file paths, and the extra modules below are a starting suggestion
 
 ```
-frontend/src/
-├── store/
-│   ├── connection.js   opens .manta/cache.sqlite
+src/
+├── storage/        
+│   ├── db.js           opens .manta/manta.db
 │   ├── schema.sql      table definitions
 │   ├── store.js        writes to JSONL and SQLite
 │   ├── repo.js         read-only helpers for `mt view` / `mt list`
@@ -69,7 +70,7 @@ frontend/src/
 
 ### Positive
 
-- Zero new dependencies.s.
+- Zero new dependencies.
 - If the schema changes, we can rebuild from JSONL.
 
 ### Negative

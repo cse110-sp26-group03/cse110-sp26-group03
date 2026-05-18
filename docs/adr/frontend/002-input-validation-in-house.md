@@ -38,7 +38,7 @@ No new dependencies.
 Names and paths below are a starting suggestion, not a team decision.
 
 ```
-frontend/src/validation/
+src/validation/
 └── validate.js        helpers used by command functions
 ```
 
