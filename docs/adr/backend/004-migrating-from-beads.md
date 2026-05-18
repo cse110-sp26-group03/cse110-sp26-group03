@@ -1,0 +1,36 @@
+# ADR-004: Migration from Beads
+
+## Status
+Proposed — 2026-05-17
+
+Status: Pending
+
+## Context
+
+Currently, our product aims to improve upon Beads, however, if a user, or a team wanted to switch from Beads to Manta, they would have to manually remake all of their issues.
+This added work load may outweigh the improvements of Manta and discourage migration unless there was an easy, and quick way to migrate data from Beads.
+Some important detail that we considered is that:
+1. Beads handles data storage using a similar method as Manta (through a JSONL)
+2. The JSONL holds the current Beads data in a semi-structured, and parsable way
+3. Core data can be mapped from Beads to Manta
+
+## Considered Options
+
+1. **Read from Bead's JSONL file**. Due to how JSONL files are organized, a command can be created that reads and parses Beads JSONL file, and outputs a Manta-compatable JSONL file with the translated data
+2. **Users remake their issues.** The user is responsible for migrating their issues from Beads to Manta
+
+## Decision
+
+We want to adopt Option 1: Translating a Bead JSONL file to a Manta JSONL file appeals more to the user's needs as migration is easier and faster
+
+## Consequences
+
+**Positive:**
+
+- Gives the user an easy path to switch to Manta
+- Reduces the human error of manual migrations
+  
+**Negative:**
+- Must consider the many keys that Beads might store in their JSONL files
+- Need to maintain compatability if Beads changes their JSONL schema, or data storage method
+- While migrating from Beads, somme of the data might have to be altered to better fit Manta's design (i.e. Issue IDs)
