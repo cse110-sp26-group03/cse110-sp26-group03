@@ -66,3 +66,26 @@ Modified formatting and adjusted instructions to better fit the team workflow an
 - `CONTRIBUTING.md`
 - `CHANGELOG.md`
 - `genai-log.md`
+
+## Date: 2026-05-18
+
+### Team Member(s)
+- David Tanioka
+
+### Tool Used
+- Claude
+
+### Purpose
+Assisted with webui design sketches
+
+### Prompt Summary
+Requested examples for diagrams/pictures for ideas of what the UI may look like and any features that may be needed
+
+### Output Used
+Used diagrams and pasted on the design sketch
+
+### Human Modifications / Review
+Specified formatting of the diagram and guided it based on context of our goals 
+
+### Related Files / Issues (Optional)
+- `frontend web design plan.pdf`
