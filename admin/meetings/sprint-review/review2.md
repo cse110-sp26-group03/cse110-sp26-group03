@@ -57,7 +57,6 @@ The team worked heavily on documentation, including:
 - Asked everyone to push ADRs to main.
 - Wants everyone to put the same amount of communication into both teams.
 - Wants everyone to feel ownership and equal opportunity in the project.
-- Suggested using all alphabet letters and numbers except vowels for IDs to avoid confusion between characters like `0` and `O`.
 - Mentioned that the team has come far since last Tuesday, when there was only a rough idea.
 
 ### Ryan
