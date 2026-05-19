@@ -21,9 +21,10 @@ Issue IDs take the form `manta-<suffix>` where `<suffix>` is a 4-character rando
 
 > - mt help
 >>> - shows and defines list of all commands. takes no flags
-> - mt create (flags)
+> - mt create (*title, flags)
 >>> - creates an issue.
->>>> - flags taken: *title, desc, status, priority, type, assignee
+>>>> - title is passed as a positional argument (required). `--title` is also accepted.
+>>>> - flags taken: desc, status, priority, type, assignee
 
 > - mt update (*id, flags)
 >>> - updates fields of an issue based on flags passed in.
@@ -46,7 +47,7 @@ Issue IDs take the form `manta-<suffix>` where `<suffix>` is a 4-character rando
 # Sample I/O
 
 ```
-mt create --title My new issue --desc Needs to be solved
+mt create "My new issue" --desc Needs to be solved
 
    Created Issue manta-h3kp
 
@@ -131,7 +132,7 @@ mt help
    COMMANDS
 
       create    Create a new issue
-                  --title <t>       (required)
+                  <title>           (required) positional, or pass as --title <t>
                   --desc  <d>       Description
                   --priority        p0 | p1 | p2 | p3 | ... (default: p5)
                   --status          Issue state
@@ -143,7 +144,7 @@ mt help
 
    EXAMPLES
 
-      mt create --title My new issue --desc Needs to be solved
+      mt create "My new issue" --desc Needs to be solved
       mt update manta-h3kp --title Changed the title
       mt view manta-h3kp
       mt close manta-h3kp
