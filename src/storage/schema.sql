@@ -1,3 +1,28 @@
+-- src/storage/schema.sql
+--
+-- SQLite schema for Manta's local cache database (.manta/manta.db).
+--
+-- This file defines the shape of every table the storage layer reads
+-- from or writes to. It's run by db.js on database open. CREATE TABLE
+-- IF NOT EXISTS makes the file idempotent — re-running it on an
+-- existing database is a no-op.
+--
+-- Note: changes to this file will NOT be applied to databases that
+-- already exist (IF NOT EXISTS prevents that). To pick up schema
+-- changes, delete the local .manta/manta.db file and let it be
+-- recreated on the next command.
+--
+-- Conventions:
+--   - Column names use PascalCase (Title, CreatedAt) to match how
+--     SQLite outputs them in query results.
+--   - Event field names in JavaScript code are camelCase (title,
+--     createdAt). store.js maps between the two via a helper.
+--   - CHECK constraints enforce allowed values at the database level
+--     so invalid data can't be stored even if the application layer
+--     has a bug.
+--
+-- References:
+
 CREATE TABLE IF NOT EXISTS issues (
   ID TEXT PRIMARY KEY NOT NULL,
   Title TEXT NOT NULL,
