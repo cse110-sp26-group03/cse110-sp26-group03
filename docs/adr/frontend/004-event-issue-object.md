@@ -60,7 +60,7 @@ Primary validation will occur during construction (before or during `event.js`),
   type: "issue.updated",
   timestamp: "2026-05-18T21:00:00.000Z",
   actor: "local-user",
-  issueId: "ISS-XXX",
+  issueId: "manta-XXXX",
   changes: {
     priority: "p1",
     status: "in_progress",
@@ -80,7 +80,7 @@ As a note, "closing" an issue is a shortcut that will be translated into an "upd
   type: "issue.deleted",
   timestamp: "2026-05-18T21:00:00.000Z",
   actor: "local-user",
-  issueId: "ISS-XXX",
+  issueId: "manta-XXXX",
 }
 ```
 
