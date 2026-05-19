@@ -7,7 +7,7 @@
   },
   "type": "module",
   "scripts": {
-    "lint": "echo 'lint not yet configured'",
+    "lint": "eslint .",
     "test": "echo 'tests not yet written'"
   },
   "repository": {
@@ -20,5 +20,10 @@
   "bugs": {
     "url": "https://github.com/cse110-sp26-group03/cse110-sp26-group03/issues"
   },
-  "homepage": "https://github.com/cse110-sp26-group03/cse110-sp26-group03#readme"
+  "homepage": "https://github.com/cse110-sp26-group03/cse110-sp26-group03#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.4.0",
+    "globals": "^17.6.0"
+  }
 }
