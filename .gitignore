@@ -2,3 +2,10 @@
 
 # npm
 node_modules/
+
+# Manta local SQLite DB — derived from .manta/issues.jsonl, never commit.
+# JSONL (the source of truth, per ADR-001) is NOT ignored.
+.manta/*.db
+.manta/*.db-journal
+.manta/*.db-wal
+.manta/*.db-shm
