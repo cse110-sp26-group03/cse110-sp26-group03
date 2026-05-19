@@ -3,6 +3,8 @@
 ## Status
 **Proposed** | Accepted | Deprecated 
 
+***To be discussed later in development***
+
 **Date**: 2026-05-15 
 
 **Authors**: Ryan, Nathan
@@ -25,7 +27,7 @@ Having local storage beats depending on an external cloud service + allows users
 a server due to latency / network-related delays.
 3. **Javascript + local SQLite.** Does not require such a steep learning curve as C/C++/Python, and local SQLite allows quicker asynchronous and offline work. 
 4. **Javascript + local SQLite + daemon.** Allows the same benefits as the above, but the daemon holds one SQLite connection instead of invoking a new connection
-for every command. This drastically reduces the time it takes between invoking a command and querying the database. 
+for every command. This drastically reduces the time it takes between invoking a command and querying the database.
 
 ## Decision
 
@@ -47,13 +49,14 @@ blocked issues so that we do not need to recursively or repeatedly load/ready/sc
 - No external server dependency.
 - Infrastructure makes daemon optional, but is better for performance.
 - Easier migration from Beads to our issue tracker.
+- Drastically reduces overhead latency from handshake and authentication
   
 **Negative:**
 
 - Daemon lifecycle is another point of failure. Crashes, stale connections, and version mismatches between client and daemon.
 If this were to occur, a workaround would be to transparently fall through to a direct-SQLite mode (i.e. work as if there is no daemon)
 - In many languages, including JavaScript, if an abrupt termination, such as a crash, occurs, there might be data corruption or loss.
-Incomplete data may be written to files or databases and some processes may remain opened until cleaned by the OS
+Incomplete data may be written to files or databases, and some processes may remain open until cleaned by the OS
 
 ## References
 - Beads internal documents on ([GitHub](https://github.com/gastownhall/beads/blob/main/docs/INTERNALS.md))
