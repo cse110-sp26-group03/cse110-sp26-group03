@@ -5,7 +5,7 @@
 Issues follow this format:
 > ID | Title | Description | Status | Priority | Issue Type | Assignee | Created at | Created by | Updated at
 
-Issue IDs take the form `manta-<suffix>` where `<suffix>` is a 5-character random Crockford base32 string, lowercased (e.g. `manta-h53kp`). The alphabet drops visually ambiguous characters (`i`, `l`, `o`, `u`), giving ~33M possible suffixes. IDs are generated randomly per issue with no coordination between teammates — see ADR-005.
+Issue IDs take the form `manta-<suffix>` where `<suffix>` is a 4-character random Crockford base32 string, lowercased (e.g. `manta-h3kp`). The alphabet drops visually ambiguous characters (`i`, `l`, `o`, `u`), giving ~1M possible suffixes. IDs are generated randomly per issue with no coordination between teammates — see ADR-005.
 
 ### Possible flags:
 > - --title
@@ -48,7 +48,7 @@ Issue IDs take the form `manta-<suffix>` where `<suffix>` is a 5-character rando
 ```
 mt create --title My new issue --desc Needs to be solved
 
-   Created Issue manta-h53kp
+   Created Issue manta-h3kp
 
    Title: My new issue
    Priority: p5
@@ -58,9 +58,9 @@ mt create --title My new issue --desc Needs to be solved
 
 
 ```
-mt update manta-h53kp --title Changed the title
+mt update manta-h3kp --title Changed the title
 
-   Updated Issue manta-h53kp
+   Updated Issue manta-h3kp
 
    Title: My new issue -> Changed the title
                               ^ colored green
@@ -72,15 +72,15 @@ mt view
 
    ID              TITLE                                   PRIORITY   STATUS        TYPE      ASSIGNEE
    --------------------------------------------------------------------------------------------------
-   manta-h53kp     Changed the title                       p0         open          -         -
+   manta-h53kp     Changed the title                       p5         open          -         -
 
 
 ```
 
 ```
-mt view manta-h53kp
+mt view manta-h3kp
 
-Issue manta-h53kp     Changed the title
+Issue manta-h3kp     Changed the title
 
    > Needs to be solved
 
@@ -96,9 +96,9 @@ Issue manta-h53kp     Changed the title
 
 
 ```
-mt close manta-h53kp
+mt close manta-h3kp
 
-   Closed Issue manta-h53kp
+   Closed Issue manta-h3kp
 
    Title: Changed the title
    Priority: p5
@@ -108,7 +108,7 @@ mt close manta-h53kp
 ```
 
 ```
-mt delete manta-h53kp
+mt delete manta-h3kp
 
    You are about to delete Issue manta-h53kp: Changed the title
       Confirm? y/n _y_
@@ -144,8 +144,8 @@ mt help
    EXAMPLES
 
       mt create --title My new issue --desc Needs to be solved
-      mt update manta-h53kp --title Changed the title
-      mt view manta-h53kp
-      mt close manta-h53kp
+      mt update manta-h3kp --title Changed the title
+      mt view manta-h3kp
+      mt close manta-h3kp
 
 ```
