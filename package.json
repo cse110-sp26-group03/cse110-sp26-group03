@@ -8,7 +8,8 @@
   "type": "module",
   "scripts": {
     "lint": "echo 'lint not yet configured'",
-    "test": "echo 'tests not yet written'"
+    "test": "echo 'tests not yet written'",
+    "prettier": "bunx prettier . --write"
   },
   "repository": {
     "type": "git",
@@ -20,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/cse110-sp26-group03/cse110-sp26-group03/issues"
   },
-  "homepage": "https://github.com/cse110-sp26-group03/cse110-sp26-group03#readme"
+  "homepage": "https://github.com/cse110-sp26-group03/cse110-sp26-group03#readme",
+  "dependencies": {
+    "prettier": "^3.8.3"
+  }
 }

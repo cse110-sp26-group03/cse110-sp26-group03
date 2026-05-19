@@ -1,0 +1,15 @@
+.github
+admin
+assets
+branding
+design
+docs
+node_modules
+specs
+bun.lock
+CHANGELOG.md
+CONTRIBUTING.md
+genai-log.md
+package.json
+README.md
+.prettierrc
