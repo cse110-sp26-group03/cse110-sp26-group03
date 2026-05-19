@@ -5,6 +5,8 @@
 Issues follow this format:
 > ID | Title | Description | Status | Priority | Issue Type | Assignee | Created at | Created by | Updated at
 
+Issue IDs take the form `manta-<suffix>` where `<suffix>` is a 4-character random Crockford base32 string, lowercased (e.g. `manta-h3kp`). The alphabet drops visually ambiguous characters (`i`, `l`, `o`, `u`), giving ~1M possible suffixes. IDs are generated randomly per issue with no coordination between teammates — see ADR-005.
+
 ### Possible flags:
 > - --title
 > - --desc
@@ -19,9 +21,10 @@ Issues follow this format:
 
 > - mt help
 >>> - shows and defines list of all commands. takes no flags
-> - mt create (flags)
+> - mt create (*title, flags)
 >>> - creates an issue.
->>>> - flags taken: *title, desc, status, priority, type, assignee
+>>>> - title is passed as a positional argument (required). `--title` is also accepted.
+>>>> - flags taken: desc, status, priority, type, assignee
 
 > - mt update (*id, flags)
 >>> - updates fields of an issue based on flags passed in.
@@ -44,21 +47,21 @@ Issues follow this format:
 # Sample I/O
 
 ```
-mt create --title My new issue --desc Needs to be solved
+mt create "My new issue" --desc Needs to be solved
 
-   Created Issue #001
+   Created Issue manta-h3kp
 
    Title: My new issue
-   Priority: p0
+   Priority: p5
    Status: open
    Created at: ISO timestamp
 ```
 
 
 ```
-mt update 001 --title Changed the title
+mt update manta-h3kp --title Changed the title
 
-   Updated Issue #001
+   Updated Issue manta-h3kp
 
    Title: My new issue -> Changed the title
                               ^ colored green
@@ -68,21 +71,21 @@ mt update 001 --title Changed the title
 ```
 mt view
 
-   ID       TITLE                                   PRIORITY   STATUS        TYPE      ASSIGNEE
-   ---------------------------------------------------------------------------------------------
-   001      Changed the title                       p0         open          -         -
+   ID              TITLE                                   PRIORITY   STATUS        TYPE      ASSIGNEE
+   --------------------------------------------------------------------------------------------------
+   manta-h53kp     Changed the title                       p5         open          -         -
 
 
 ```
 
 ```
-mt view 001
+mt view manta-h3kp
 
-Issue #001     Changed the title
+Issue manta-h3kp     Changed the title
 
    > Needs to be solved
 
-   Priority:    p0
+   Priority:    p5
    Status:      open
    Type:        -
    Assignee:    -
@@ -94,24 +97,24 @@ Issue #001     Changed the title
 
 
 ```
-mt close 001
+mt close manta-h3kp
 
-   Closed Issue #001
+   Closed Issue manta-h3kp
 
    Title: Changed the title
-   Priority: p0
+   Priority: p5
    Status: closed
               ^ colored red
    Closed at: ISO timestamp
 ```
 
 ```
-mt delete 001
+mt delete manta-h3kp
 
-   You are about to delete Issue #001: Changed the title
+   You are about to delete Issue manta-h53kp: Changed the title
       Confirm? y/n _y_
 
-   Deleted Issue #001
+   Deleted Issue manta-h53kp
    Deleted at: ISO timestamp
 ```
 
@@ -129,9 +132,9 @@ mt help
    COMMANDS
 
       create    Create a new issue
-                  --title <t>       (required)
+                  <title>           (required) positional, or pass as --title <t>
                   --desc  <d>       Description
-                  --priority        p0 | p1 | p2 | p3 | ... (default: p0)
+                  --priority        p0 | p1 | p2 | p3 | ... (default: p5)
                   --status          Issue state
                   --assignee <a>    Name of assignee
                   --type <t>        space separated list of issue type tags (ex. --type design frontend)
@@ -141,9 +144,9 @@ mt help
 
    EXAMPLES
 
-      mt create --title My new issue --desc Needs to be solved
-      mt update 001 --title Changed the title
-      mt view 001
-      mt close 001
+      mt create "My new issue" --desc Needs to be solved
+      mt update manta-h3kp --title Changed the title
+      mt view manta-h3kp
+      mt close manta-h3kp
 
 ```
