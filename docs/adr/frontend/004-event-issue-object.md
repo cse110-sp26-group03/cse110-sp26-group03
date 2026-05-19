@@ -110,7 +110,7 @@ Issue Fields:
 | `title` | string | CLI input | required | Short issue title |
 | `description` | string | CLI input | `""` | Optional longer description |
 | `status` | string | `event.js` | `"open"` | Allowed: `open`, `in_progress`, `closed` |
-| `priority` | string | CLI input | `"p0"` | Allowed: `p0`, `p1`, `p2`, `p3`|
+| `priority` | string | CLI input | `"p5"` | Allowed: `p0`, `p1`, `p2`, `p3`, `p(integer)`, p0 is highest priority|
 | `issueType` | string | CLI input | `"task"` | Allowed: `bug`, `feature`, `task`, `docs`, `chore` |
 | `assignee` | string \| null | CLI input | `null` | Primary issue owner |
 | `createdAt` | string | `event.js` | generated | ISO timestamp |
