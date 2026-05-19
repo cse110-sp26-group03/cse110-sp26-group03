@@ -1,7 +1,11 @@
 # ADR-003: CLI Performance Optimization
 
 ## Status
-Proposed — 2026-05-13
+**Proposed** | Accepted | Deprecated 
+
+Date: 2026-05-15 
+
+Authors: Ryan, Nathan
 
 ## Context
 
@@ -25,7 +29,7 @@ for every command. This drastically reduces the time it takes between invoking a
 
 ## Decision
 
-We would like to adopt Option 4: JavaScript + local SQLite + daemon.
+We would like to (eventually) adopt Option 4: JavaScript + local SQLite + daemon.
 
 - Local SQLite disconnects us from any external dependencies.
 - Local storage allows for quicker operations.
@@ -48,7 +52,7 @@ blocked issues so that we do not need to recursively or repeatedly load/ready/sc
 
 - Daemon lifecycle is another point of failure. Crashes, stale connections, and version mismatches between client and daemon.
 If this were to occur, a workaround would be to transparently fall through to a direct-SQLite mode (i.e. work as if there is no daemon)
-- In many languages, including Javascript, if an abrupt termination, such as a crash, occurs, there might be data corruption or loss.
+- In many languages, including JavaScript, if an abrupt termination, such as a crash, occurs, there might be data corruption or loss.
 Incomplete data may be written to files or databases and some processes may remain opened until cleaned by the OS
 
 ## References
