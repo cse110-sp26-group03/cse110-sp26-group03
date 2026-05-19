@@ -3,9 +3,9 @@
 ## Status
 **Proposed** | Accepted | Deprecated 
 
-Date: 2026-05-15 
+**Date**: 2026-05-15 
 
-Authors: Ryan, Nathan
+**Authors**: Ryan, Nathan
 
 ## Context
 
