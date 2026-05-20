@@ -265,7 +265,7 @@ function generateIssueId() {
 function buildStoreError(action, issueId, reason) {
   const subject = issueId ? (`issue "${issueId}"`) : ("the issue"); //if exists format it as so, otherwise can't include it
   const err = new Error(`Cannot ${action} ${subject}: ${reason}`);
-  err.issueId = issueId; //we still know from this field is issueId exists or not
+  err.issueId = issueId; //we still know from this field if issueId exists or not
   err.reason = reason;
   return err;
 }
