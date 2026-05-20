@@ -28,7 +28,7 @@ For delete issues, no additional information beyond ID will be populated.
 
 `store.js` is responsible for assigning issue IDs during issue creation and persisting events to JSONL/SQLite.
 
-Primary validation will occur during construction (before or during `event.js`), but `store.js` can optionally validate for redundancy.
+Flag content validation runs in `src/validation/validation.js` after parsing (see ADR-007) and before `event.js` builds events. `store.js` can optionally validate for redundancy.
 
 ### Create Issue
 
@@ -42,7 +42,7 @@ Primary validation will occur during construction (before or during `event.js`),
     title: "example title",
     description: "",
     status: "open",
-    priority: "p0",
+    priority: "p5",
     issueType: "task",
     assignee: null,
     createdAt: "2026-05-18T20:55:00.000Z",
@@ -60,9 +60,9 @@ Primary validation will occur during construction (before or during `event.js`),
   type: "issue.updated",
   timestamp: "2026-05-18T21:00:00.000Z",
   actor: "local-user",
-  issueId: "manta-XXXX",
+  issueId: "manta-h3kp",
   changes: {
-    priority: "p1",
+    priority: "p2",
     status: "in_progress",
     // additional changed fields as needed
     updatedAt: "2026-05-18T20:55:00.000Z",
@@ -80,9 +80,23 @@ As a note, "closing" an issue is a shortcut that will be translated into an "upd
   type: "issue.deleted",
   timestamp: "2026-05-18T21:00:00.000Z",
   actor: "local-user",
-  issueId: "manta-XXXX",
+  issueId: "manta-h3kp",
 }
 ```
+
+### CLI validation rules (`validation.js`)
+
+These rules apply to parsed flag values before they are mapped into event objects. The parser fills defaults where noted so `validate()` always receives a value.
+
+| CLI flag | Required | Default (parser) | Valid values / format |
+|---|---|---|---|
+| `id` | on `update`, `close`, `delete` | — | `manta-` + 4 Crockford base32 chars (see backend ADR-005) |
+| `title` | on `create` (parser) | — | optional on `update`; if present, under 50 characters |
+| `desc` | no | — | if present, under 512 characters |
+| `priority` | yes (parser default) | `p5` | `p` + single digit `0`–`9` (e.g. `p2`, `p7`) |
+| `status` | yes (parser default) | `open` | `open`, `in_progress`, `closed` |
+| `type` | no | — | if present: `bug`, `feature`, `task`, `docs`, `store` |
+| `assignee` | no | — | if present: letters only (`a`–`z`, `A`–`Z`), any length |
 
 ### Field breakdown:
 
@@ -93,7 +107,7 @@ Metadata:
 |`type`| string | CLI input | required | Allowed: `issue.created`, `issue.updated`, `issue.deleted`|
 |`timestamp`| string | `event.js` | generated | ISO timestamp (this action) |
 |`actor`| string | config/default | `"local-user"` | username from config |
-|`issueId`| string \| null | CLI Input/generated | generated | CLI input for update/delete, null on creation (assigned by store.js) |
+|`issueId`| string \| null | CLI input / generated | generated | `manta-` + 4-char Crockford suffix on update/delete; null on create (assigned by store.js) |
 
 Depending on the type, there will be a final field called `changes`, `issue`, or none. 
 
@@ -107,12 +121,12 @@ Issue Fields:
 
 | Field | Type | Source | Default | Notes |
 |---|---|---|---|---|
-| `title` | string | CLI input | required | Short issue title |
-| `description` | string | CLI input | `""` | Optional longer description |
-| `status` | string | `event.js` | `"open"` | Allowed: `open`, `in_progress`, `closed` |
-| `priority` | string | CLI input | `"p5"` | Allowed: `p0`, `p1`, `p2`, `p3`, `p(integer)`, p0 is highest priority|
-| `issueType` | string | CLI input | `"task"` | Allowed: `bug`, `feature`, `task`, `docs`, `chore` |
-| `assignee` | string \| null | CLI input | `null` | Primary issue owner |
+| `title` | string | CLI input | required on create | Under 50 characters when set (see validation table) |
+| `description` | string | CLI input | `""` | Under 512 characters when set |
+| `status` | string | parser / CLI | `"open"` | `open`, `in_progress`, `closed` |
+| `priority` | string | parser / CLI | `"p5"` | `p0`–`p9`; parser default `p5` if omitted |
+| `issueType` | string | CLI input | `"task"` | `bug`, `feature`, `task`, `docs`, `store` |
+| `assignee` | string \| null | CLI input | `null` | Letters only when set; otherwise `null` |
 | `createdAt` | string | `event.js` | generated | ISO timestamp |
 | `createdBy` | string | config/default | `"local-user"` | Username from config |
 | `updatedAt` | string | `event.js` | generated | Updated on modification |
