@@ -8,7 +8,8 @@
   "type": "module",
   "scripts": {
     "lint": "eslint .",
-    "test": "echo 'tests not yet written'"
+    "test": "echo 'tests not yet written'",
+    "prettier": "bunx prettier . --write"
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.4.0",
-    "globals": "^17.6.0"
+    "globals": "^17.6.0",
+    "prettier": "3.8.3"
   }
 }
