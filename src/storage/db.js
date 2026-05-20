@@ -16,9 +16,9 @@
 // For tests, call openDatabase(":memory:") to get an isolated DB
 // that lives only for the duration of the test.
 
-import { Database } from "bun:sqlite";
-import { readFileSync, mkdirSync } from "fs";
-import { dirname } from "path";
+import {Database} from "bun:sqlite";
+      import { readFileSync, mkdirSync } from "fs";
+              import { dirname} from "path";
 
 const DEFAULT_DB_PATH = ".manta/manta.db";
 const SCHEMA_URL = new URL("./schema.sql", import.meta.url);
