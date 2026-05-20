@@ -1,4 +1,4 @@
-# ADR-006: ESLint Linter
+# ADR-001: ESLint Linter
 
 ## Status
 Accepted | **Proposed** | Deprecated
