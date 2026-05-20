@@ -1,4 +1,4 @@
-# ADR-00X: CLI Validation: Data-Driven Flag Validation
+# ADR-007: CLI Validation: Data-Driven Flag Validation
 
 ## Status
 **Proposed** | Accepted | Deprecated
