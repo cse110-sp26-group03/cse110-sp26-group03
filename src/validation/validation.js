@@ -54,16 +54,64 @@ export function validate(parse_obj) {
 // helper functions. all input to these functions are in string form, as it's still in a
 // parsed format
 
-function check_id(id) { }
+const ID_PATTERN = /^manta-[0-9a-hjkmnp-tvwxyz]{4}$/
 
-function check_title(title) { }
+function check_id(id) {
+  if (id === undefined) return null
+  if (ID_PATTERN.test(id)) return null
+  return `validate error: '${id}' is not a valid issue id`
+}
 
-function check_desc(desc) { }
+const TITLE_MAX_LENGTH = 50
 
-function check_priority(priority) { }
+function check_title(title) {
+  if (title === undefined || title === '') return null
+  if (title.length < TITLE_MAX_LENGTH) return null
+  return 'validate error: title must be under 50 characters'
+}
 
-function check_status(status) { }
+const DESC_MAX_LENGTH = 512
 
-function check_type(type) { }
+function check_desc(desc) {
+  if (desc === undefined || desc === '') return null
+  if (desc.length < DESC_MAX_LENGTH) return null
+  return 'validate error: description must be under 512 characters'
+}
 
-function check_assignee(assignee) { }
+const PRIORITY_PATTERN = /^p(10|[1-9])$/
+
+function check_priority(priority) {
+  // parser always sets priority (default p5); undefined should not reach here
+  if (priority === undefined || priority === null || priority === '') {
+    return 'validate error: priority is required'
+  }
+  if (PRIORITY_PATTERN.test(priority)) return null
+  return `validate error: '${priority}' is not a valid priority`
+}
+
+const VALID_STATUSES = ['open', 'in_progress', 'closed']
+
+function check_status(status) {
+  // parser always sets status (default open); undefined should not reach here
+  if (status === undefined || status === null || status === '') {
+    return 'validate error: status is required'
+  }
+  if (VALID_STATUSES.includes(status)) return null
+  return `validate error: '${status}' is not a valid status`
+}
+
+const VALID_TYPES = ['bug', 'feature', 'task', 'docs', 'store']
+
+function check_type(type) {
+  if (type === undefined) return null
+  if (VALID_TYPES.includes(type)) return null
+  return `validate error: '${type}' is not a valid type`
+}
+
+const ASSIGNEE_PATTERN = /^[a-zA-Z]+$/
+
+function check_assignee(assignee) {
+  if (assignee === undefined) return null
+  if (ASSIGNEE_PATTERN.test(assignee)) return null
+  return `validate error: '${assignee}' is not a valid assignee`
+}
