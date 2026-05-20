@@ -16,14 +16,6 @@ const VALID_STATUSES = ['open', 'in_progress', 'closed']
 const VALID_TYPES = ['bug', 'feature', 'task', 'docs', 'store']
 const ASSIGNEE_PATTERN = /^[a-zA-Z]+$/
 
-const ID_PATTERN = /^manta-[0-9a-hjkmnp-tvwxyz]{4}$/
-const TITLE_MAX_LENGTH = 50
-const DESC_MAX_LENGTH = 512
-const PRIORITY_PATTERN = /^p([0-9])$/
-const VALID_STATUSES = ['open', 'in_progress', 'closed']
-const VALID_TYPES = ['bug', 'feature', 'task', 'docs', 'store']
-const ASSIGNEE_PATTERN = /^[a-zA-Z]+$/
-
 // which flags each command can have
 const possible_flags = {
   create: ['title', 'desc', 'priority', 'status', 'type', 'assignee'],
@@ -78,11 +70,6 @@ function check_id(id) {
   if (ID_PATTERN.test(id)) return null
   return `validate error: '${id}' is not a valid issue id`
 }
-function check_id(id) {
-  if (id === undefined) return null
-  if (ID_PATTERN.test(id)) return null
-  return `validate error: '${id}' is not a valid issue id`
-}
 
 function check_title(title) {
   if (title === undefined || title === '') return null
@@ -118,11 +105,6 @@ function check_status(status, cmd) {
   return `validate error: '${status}' is not a valid status`
 }
 
-function check_type(type) {
-  if (type === undefined) return null
-  if (VALID_TYPES.includes(type)) return null
-  return `validate error: '${type}' is not a valid type`
-}
 function check_type(type) {
   if (type === undefined) return null
   if (VALID_TYPES.includes(type)) return null
