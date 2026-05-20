@@ -81,7 +81,7 @@ export function validate(parse_obj) {
   const { cmd, flags } = parse_obj
 
   for (const flag of possible_flags[cmd]) {
-    const error_msg = validations[flag](flags[flag])
+    const error_msg = validations[flag](cmd, flags[flag])
     if (error_msg) throw new Error(error_msg)
   }
 
@@ -89,22 +89,24 @@ export function validate(parse_obj) {
 }
 ```
 
-Check functions take the flag's value and return `null` on success or an error string on failure. If a flag isn't present, its value is `undefined` and the check is skipped — optional flags being absent is valid, and required flags will have already been filled in by the parser.
+Check functions take the flag's value and the current command, and return `null` on success or an error string on failure. If a flag isn't present, its value is `undefined` and the check is skipped — optional flags being absent is valid, and required flags will have already been filled in by the parser.
+
+Passing `cmd` lets a check function vary its logic depending on context. For example, `check_status` can reject `closed` as a value when called from `create`, since an issue shouldn't be created already closed.
 
 ```js
-function check_id(id) { }
+function check_id(cmd, id) { }
 
-function check_title(title) { }
+function check_title(cmd, title) { }
 
-function check_desc(desc) { }
+function check_desc(cmd, desc) { }
 
-function check_priority(priority) { }
+function check_priority(cmd, priority) { }
 
-function check_status(status) { }
+function check_status(cmd, status) { }
 
-function check_type(type) { }
+function check_type(cmd, type) { }
 
-function check_assignee(assignee) { }
+function check_assignee(cmd, assignee) { }
 ```
 
 ---
