@@ -1,4 +1,4 @@
-# ADR-008: Store.js Responsibilities
+# ADR-006: Store.js Responsibilities
 
 ## Status
 
