@@ -17,7 +17,7 @@ export function create_event(data){
             return update_issue_event(flags, true);
         case "delete":
             return delete_issue_event(flags);
-        default:
+        default: throw new Error(`event creation error: '${cmd}' is not a recognized command`);
     }
 }
 
@@ -61,7 +61,7 @@ function update_issue_event(flags, close){
         // constructs changes object from the fields that are defined
         changes = {
             ...(flags.title    !== undefined && { title:     flags.title }),
-            ...(flags.desc     !== undefined && { desc:      flags.desc }),
+            ...(flags.desc     !== undefined && { description:      flags.desc }),
             ...(flags.priority !== undefined && { priority:  flags.priority }),
             ...(flags.status   !== undefined && { status:    flags.status }),
             ...(flags.type     !== undefined && { issueType: flags.type }),
