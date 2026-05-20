@@ -1,4 +1,4 @@
-# ADR-007: Prettier Code Formatter
+# ADR-002: Prettier Code Formatter
 
 ## Status
 Accepted | **Proposed** | Deprecated (bold selected)
