@@ -1,12 +1,18 @@
 // `event.js` is responsible for constructing event objects.
 
+// get the current user from OS username
+// falls back to "local-user" if $USER/$USERNAME not set.
+function get_actor() {
+  return process.env.USER || process.env.USERNAME || "local-user";
+}
+
 export function create_event(data){
     const {cmd, flags} = data; 
     switch(cmd){
         case "create":
             return create_issue_event(flags);
         case "update":
-            return update_issue_event(flags, false)
+            return update_issue_event(flags, false);
         case "close":
             return update_issue_event(flags, true);
         case "delete":
@@ -17,10 +23,11 @@ export function create_event(data){
 
 function create_issue_event(flags){
     const timestamp = new Date().toISOString();
+    const actor = get_actor();
     const event = {
         type: "issue.created",
         timestamp: timestamp,
-        actor: "placeholder",
+        actor: actor,
         issueId: null,
         issue: {
             title: flags.title,
@@ -30,9 +37,9 @@ function create_issue_event(flags){
             issueType: flags.type ?? "task",
             assignee: flags.assignee ?? null,
             createdAt: timestamp,
-            createdBy: "placeholder",
+            createdBy: actor,
             updatedAt: timestamp,
-            updatedBy: "placeholder"
+            updatedBy: actor
         }
     };
     return event;
@@ -41,12 +48,13 @@ function create_issue_event(flags){
 
 function update_issue_event(flags, close){
     const timestamp = new Date().toISOString();
+    const actor = get_actor();
     let changes;
     if(close){
         changes = {
             status: "closed",
             updatedAt: timestamp,
-            updatedBy: "placeholder"
+            updatedBy: actor
             }
     }
     else{
@@ -59,14 +67,14 @@ function update_issue_event(flags, close){
             ...(flags.type     !== undefined && { issueType: flags.type }),
             ...(flags.assignee !== undefined && { assignee:  flags.assignee }),
             updatedAt: timestamp,
-            updatedBy: "placeholder"
+            updatedBy: actor
         };
     }
 
     const event = {
         type: "issue.updated",
         timestamp: timestamp,
-        actor: "placeholder",
+        actor: actor,
         issueId: flags.id,
         changes: changes
     };
@@ -78,7 +86,7 @@ function delete_issue_event(flags){
     const event = {
         type: "issue.deleted",
         timestamp: timestamp,
-        actor: "placeholder",
+        actor: get_actor(),
         issueId: flags.id,
     };
     return event;
