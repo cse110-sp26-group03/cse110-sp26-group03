@@ -1,7 +1,7 @@
 # Team 3 Meeting Minutes
 
 **Type of Meeting:** Final Project Checkpoint  
-**Date/Time:** May 18th, 2026, 6:30 PM - 8:40 PM  
+**Date/Time:** May 19th, 2026, 6:30 PM - 8:40 PM  
 **Location/Method:** In-person, CSE Basement  
 
 **Members Present:** Ori, Ryan, David, Nathan, Tian, Angel, Nat, Ike, Katie, Humza, Scott  
