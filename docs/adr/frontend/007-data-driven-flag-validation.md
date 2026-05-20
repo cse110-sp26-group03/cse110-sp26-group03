@@ -63,7 +63,6 @@ const possible_flags = {
   update: ['id', 'title', 'desc', 'priority', 'status', 'type', 'assignee'],
   close:  ['id'],
   delete: ['id'],
-  view:   ['id', 'priority', 'status', 'type', 'assignee'],
 }
 
 // maps flag name to its check function
