@@ -16,12 +16,12 @@
 // For tests, call openDatabase(":memory:") to get an isolated DB
 // that lives only for the duration of the test.
 
-import {Database} from "bun:sqlite";
-      import { readFileSync, mkdirSync } from "fs";
-              import { dirname} from "path";
+import { Database } from 'bun:sqlite'
+import { readFileSync, mkdirSync } from 'fs'
+import { dirname } from 'path'
 
-const DEFAULT_DB_PATH = ".manta/manta.db";
-const SCHEMA_URL = new URL("./schema.sql", import.meta.url);
+const DEFAULT_DB_PATH = '.manta/manta.db'
+const SCHEMA_URL = new URL('./schema.sql', import.meta.url)
 
 /**
  * Open a Manta SQLite database, apply PRAGMAs, and run schema.sql.
@@ -31,27 +31,27 @@ const SCHEMA_URL = new URL("./schema.sql", import.meta.url);
  * @returns {Database} A ready-to-use bun:sqlite Database instance.
  */
 export function openDatabase(path = DEFAULT_DB_PATH) {
-  // Make sure the parent directory exists for file-based DBs.
-  if (path !== ":memory:") {
-    mkdirSync(dirname(path), { recursive: true });
-  }
+    // Make sure the parent directory exists for file-based DBs.
+    if (path !== ':memory:') {
+        mkdirSync(dirname(path), { recursive: true })
+    }
 
-  const db = new Database(path, { create: true });
+    const db = new Database(path, { create: true })
 
-  // WAL gives us better concurrent read/write behavior.
-  // Not applicable to in-memory databases.
-  if (path !== ":memory:") {
-    db.exec("PRAGMA journal_mode = WAL;");
-  }
-  db.exec("PRAGMA foreign_keys = ON;");
+    // WAL gives us better concurrent read/write behavior.
+    // Not applicable to in-memory databases.
+    if (path !== ':memory:') {
+        db.exec('PRAGMA journal_mode = WAL;')
+    }
+    db.exec('PRAGMA foreign_keys = ON;')
 
-  // Apply schema. CREATE TABLE IF NOT EXISTS makes this idempotent,
-  // so re-opening an existing DB is a no-op.
-  db.exec(readFileSync(SCHEMA_URL, "utf8"));
+    // Apply schema. CREATE TABLE IF NOT EXISTS makes this idempotent,
+    // so re-opening an existing DB is a no-op.
+    db.exec(readFileSync(SCHEMA_URL, 'utf8'))
 
-  return db;
+    return db
 }
 
 // Default singleton — what production code (CLI, repos) imports.
-const db = openDatabase();
-export default db;
+const db = openDatabase()
+export default db
