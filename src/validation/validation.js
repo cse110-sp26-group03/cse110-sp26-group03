@@ -8,6 +8,14 @@
 //   }
 // }
 
+const ID_PATTERN = /^manta-[0-9a-hjkmnp-tvwxyz]{4}$/
+const TITLE_MAX_LENGTH = 50
+const DESC_MAX_LENGTH = 512
+const PRIORITY_PATTERN = /^p([0-9])$/
+const VALID_STATUSES = ['open', 'in_progress', 'closed']
+const VALID_TYPES = ['bug', 'feature', 'task', 'docs', 'store']
+const ASSIGNEE_PATTERN = /^[a-zA-Z]+$/
+
 // which flags each command can have
 const possible_flags = {
   create: ['title', 'desc', 'priority', 'status', 'type', 'assignee'],
@@ -54,15 +62,11 @@ export function validate(parse_obj) {
 // helper functions. all input to these functions are in string form, as it's still in a
 // parsed format
 
-const ID_PATTERN = /^manta-[0-9a-hjkmnp-tvwxyz]{4}$/
-
 function check_id(id) {
   if (id === undefined) return null
   if (ID_PATTERN.test(id)) return null
   return `validate error: '${id}' is not a valid issue id`
 }
-
-const TITLE_MAX_LENGTH = 50
 
 function check_title(title) {
   if (title === undefined || title === '') return null
@@ -70,15 +74,11 @@ function check_title(title) {
   return 'validate error: title must be under 50 characters'
 }
 
-const DESC_MAX_LENGTH = 512
-
 function check_desc(desc) {
   if (desc === undefined || desc === '') return null
   if (desc.length < DESC_MAX_LENGTH) return null
   return 'validate error: description must be under 512 characters'
 }
-
-const PRIORITY_PATTERN = /^p(10|[1-9])$/
 
 function check_priority(priority) {
   // parser always sets priority (default p5); undefined should not reach here
@@ -89,8 +89,6 @@ function check_priority(priority) {
   return `validate error: '${priority}' is not a valid priority`
 }
 
-const VALID_STATUSES = ['open', 'in_progress', 'closed']
-
 function check_status(status) {
   // parser always sets status (default open); undefined should not reach here
   if (status === undefined || status === null || status === '') {
@@ -100,15 +98,11 @@ function check_status(status) {
   return `validate error: '${status}' is not a valid status`
 }
 
-const VALID_TYPES = ['bug', 'feature', 'task', 'docs', 'store']
-
 function check_type(type) {
   if (type === undefined) return null
   if (VALID_TYPES.includes(type)) return null
   return `validate error: '${type}' is not a valid type`
 }
-
-const ASSIGNEE_PATTERN = /^[a-zA-Z]+$/
 
 function check_assignee(assignee) {
   if (assignee === undefined) return null
