@@ -1,9 +1,9 @@
 # ADR-007: CLI Validation: Data-Driven Flag Validation
 
 ## Status
-**Proposed** | Accepted | Deprecated
-**Date:** 2026-05-20
-**Authors:** Ike Okoye
+**Proposed** | Accepted | Deprecated  
+**Date:** 2026-05-20  
+**Authors:** Ike Okoye  
 
 ---
 
