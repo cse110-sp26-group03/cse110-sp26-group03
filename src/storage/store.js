@@ -52,7 +52,7 @@ export function applyEvent(event) {
     case "issue.deleted":
       return applyDelete(event);
     default:
-      throw new Error(`Unknown event type: ${event.type}`);
+      throw buildStoreError(event.type, null, "unrecognized event type.");
   }
 }
 
@@ -88,10 +88,7 @@ function applyCreate(event) {
     return event;
   }
 
-  throw new Error(
-    `Failed to generate unique issue ID after ${ID_MAX_RETRIES} attempts. ` +
-    `This should be extremely rare — check for ID-space exhaustion or DB issues.`
-  );
+  throw buildStoreError("create", null, "failed to generate unique issue ID after multiple attempts. Check if there is space for more IDs or if the database is corrupted.");
 }
 
 /**
@@ -106,16 +103,12 @@ function applyCreate(event) {
  */
 function applyUpdate(event) {
   if (!issueExists(event.issueId)) {
-    throw new Error(
-      `Cannot update issue "${event.issueId}": no issue with that ID exists.`
-    );
+    throw buildStoreError("update", event.issueId, "no issue with that ID exists.");
   }
 
   const fields = Object.keys(event.changes);
   if (fields.length === 0) {
-    throw new Error(
-      `Cannot update issue "${event.issueId}": no fields to change were provided.`
-    );
+    throw buildStoreError("update", event.issueId, "no fields to change were provided.");
   }
 
   appendToLog(event);
@@ -131,13 +124,11 @@ function applyUpdate(event) {
  *
  * @param {object} event - A delete event with an issueId.
  * @returns {object} The event, unchanged.
- * @throws {Error} If the issue doesn't exist.
+ * @throws {Error} If the issue doesn't exist
  */
 function applyDelete(event) {
   if (!issueExists(event.issueId)) {
-    throw new Error(
-      `Cannot delete issue "${event.issueId}": no issue with that ID exists.`
-    );
+    throw buildStoreError("delete", event.issueId, "no issue with that ID exists.");
   }
 
   appendToLog(event);
@@ -257,6 +248,28 @@ function generateIssueId() {
   }
   return `manta-${suffix}`;
 }
+
+// ---- Error handling -----------------------------------------------
+/**
+ * Build a store error with the format: `Cannot <action> issue "<issueId>": <reason>`
+ *
+ * Attaches issueId and reason as structured fields on the Error so the
+ * frontend that catches it can use it if needed
+ * err.message should return whole string
+ *
+ * @param {string} action - The attempted action (e.g. "update", "delete").
+ * @param {string} issueId - The issue ID.
+ * @param {string} reason - The reason for the error.
+ * @returns {Error} A new error object with .issueId and .reason set.
+ */
+function buildStoreError(action, issueId, reason) {
+  const subject = issueId ? (`issue "${issueId}"`) : ("the issue"); //if exists format it as so, otherwise can't include it
+  const err = new Error(`Cannot ${action} ${subject}: ${reason}`);
+  err.issueId = issueId; //we still know from this field is issueId exists or not
+  err.reason = reason;
+  return err;
+}
+
 
 // ---- Helpers -------------------------------------------------------
 
