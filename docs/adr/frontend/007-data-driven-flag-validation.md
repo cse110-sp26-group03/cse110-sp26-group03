@@ -1,9 +1,9 @@
-# ADR-007: CLI Validation: Data-Driven Flag Validation
+# ADR-00X: CLI Validation: Data-Driven Flag Validation
 
 ## Status
-**Proposed** | Accepted | Deprecated  
-**Date:** 2026-05-20  
-**Authors:** Ike Okoye  
+**Proposed** | Accepted | Deprecated
+**Date:** 2026-05-20
+**Authors:** Ike Okoye
 
 ---
 
@@ -42,7 +42,7 @@ This ADR changes `flags` to a plain keyed object and drops `args` entirely:
 
 **Why the flat object.** The array format requires iterating to look up a flag. A keyed object allows direct access via `flags[flag]`, which is what the validator needs.
 
-**Why remove `args`.** It was meant to hold positional values like bare IDs. But shorthand titles get converted to a `title` flag by the parser, and IDs can be treated as an `id` flag — so `args` would always be empty. Removing it means everything the validator touches lives in `flags`.
+**Why remove `args`.** It was meant to hold positional values like bare IDs. But shorthand titles get converted to a `title` flag by the parser, and IDs are treated as an `id` flag — so `args` would always be empty. Removing it means everything the validator touches lives in `flags`.
 
 `parser.js` also enforces argument counts before validation runs — `close` and `delete` will never arrive with more than one flag.
 
@@ -63,6 +63,7 @@ const possible_flags = {
   update: ['id', 'title', 'desc', 'priority', 'status', 'type', 'assignee'],
   close:  ['id'],
   delete: ['id'],
+  view:   ['id', 'priority', 'status', 'type', 'assignee'],
 }
 
 // maps flag name to its check function
@@ -80,7 +81,7 @@ export function validate(parse_obj) {
   const { cmd, flags } = parse_obj
 
   for (const flag of possible_flags[cmd]) {
-    const error_msg = validations[flag](cmd, flags[flag])
+    const error_msg = validations[flag](flags[flag])
     if (error_msg) throw new Error(error_msg)
   }
 
@@ -88,24 +89,22 @@ export function validate(parse_obj) {
 }
 ```
 
-Check functions take the flag's value and the current command, and return `null` on success or an error string on failure. If a flag isn't present, its value is `undefined` and the check is skipped — optional flags being absent is valid, and required flags will have already been filled in by the parser.
-
-Passing `cmd` lets a check function vary its logic depending on context. For example, `check_status` can reject `closed` as a value when called from `create`, since an issue shouldn't be created already closed.
+Check functions take the flag's value and return `null` on success or an error string on failure. If a flag isn't present, its value is `undefined` and the check is skipped — optional flags being absent is valid, and required flags will have already been filled in by the parser.
 
 ```js
-function check_id(cmd, id) { }
+function check_id(id) { }
 
-function check_title(cmd, title) { }
+function check_title(title) { }
 
-function check_desc(cmd, desc) { }
+function check_desc(desc) { }
 
-function check_priority(cmd, priority) { }
+function check_priority(priority) { }
 
-function check_status(cmd, status) { }
+function check_status(status) { }
 
-function check_type(cmd, type) { }
+function check_type(type) { }
 
-function check_assignee(cmd, assignee) { }
+function check_assignee(assignee) { }
 ```
 
 ---
