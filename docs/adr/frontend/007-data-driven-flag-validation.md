@@ -42,7 +42,7 @@ This ADR changes `flags` to a plain keyed object and drops `args` entirely:
 
 **Why the flat object.** The array format requires iterating to look up a flag. A keyed object allows direct access via `flags[flag]`, which is what the validator needs.
 
-**Why remove `args`.** It was meant to hold positional values like bare IDs. But shorthand titles get converted to a `title` flag by the parser, and IDs are treated as an `id` flag — so `args` would always be empty. Removing it means everything the validator touches lives in `flags`.
+**Why remove `args`.** It was meant to hold positional values like bare IDs. But shorthand titles get converted to a `title` flag by the parser, and IDs can be treated as an `id` flag — so `args` would always be empty. Removing it means everything the validator touches lives in `flags`.
 
 `parser.js` also enforces argument counts before validation runs — `close` and `delete` will never arrive with more than one flag.
 
