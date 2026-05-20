@@ -33,19 +33,15 @@ const ID_MAX_RETRIES = 5;
 // ---- Public API ----------------------------------------------------
 
 /**
- * Apply an event to both JSONL and SQLite.
+ * Apply an event to both JSONL and SQLite. Dispatches by event.type.
  *
- * For create events: generates an issue ID, inserts into SQLite first
- * (to confirm the ID is unique), retries on collision, then appends to
- * JSONL. Returns the event with issueId filled in.
+ * Creates write to SQLite first (to validate the generated ID), then JSONL.
+ * Updates and deletes write to JSONL first (durability before visibility),
+ * then SQLite.
  *
- * For update/delete events: appends to JSONL first (durability before
- * visibility), then applies the change to SQLite. Returns the event
- * unchanged.
- *
- * @param {object} event - Event object matching ADR-004's schema.
+ * @param {object} event - Event object per ADR-004 (created/updated/deleted).
  * @returns {object} The persisted event (with issueId set for creates).
- * @throws If the event type is unknown or storage writes fail.
+ * @throws {Error} If event.type is unrecognized.
  */
 export function applyEvent(event) {
   switch (event.type) {
@@ -65,9 +61,14 @@ export function applyEvent(event) {
 /**
  * Persist a create event.
  *
- * Generates a random ID, inserts into SQLite, retries on UNIQUE collision
- * up to ID_MAX_RETRIES times. Only after SQLite accepts the row do we
- * append to JSON
+ * Generates a random ID and inserts into SQLite, retrying on UNIQUE
+ * collision up to ID_MAX_RETRIES times. Appends to JSONL only after
+ * SQLite accepts the row, so the log never records a collided ID.
+ *
+ * @param {object} event - A create event; event.issueId is filled in here.
+ * @returns {object} The event with its assigned issueId.
+ * @throws {Error} If a unique ID can't be generated within ID_MAX_RETRIES,
+ *                 or if SQLite rejects the insert for any other reason.
  */
 function applyCreate(event) {
   for (let attempt = 1; attempt <= ID_MAX_RETRIES; attempt++) {
@@ -96,9 +97,27 @@ function applyCreate(event) {
 /**
  * Persist an update event.
  *
- * Append to JSONL first (durability), then apply to SQLite.
+ * Checks the issue exists before writing anything, so we never log an
+ * update for a missing issue. Then appends to JSONL and applies to SQLite.
+ *
+ * @param {object} event - An update event with issueId and a changes object.
+ * @returns {object} The event, unchanged.
+ * @throws {Error} If the issue doesn't exist or changes is empty.
  */
 function applyUpdate(event) {
+  if (!issueExists(event.issueId)) {
+    throw new Error(
+      `Cannot update issue "${event.issueId}": no issue with that ID exists.`
+    );
+  }
+
+  const fields = Object.keys(event.changes);
+  if (fields.length === 0) {
+    throw new Error(
+      `Cannot update issue "${event.issueId}": no fields to change were provided.`
+    );
+  }
+
   appendToLog(event);
   updateIssue(event);
   return event;
@@ -107,9 +126,20 @@ function applyUpdate(event) {
 /**
  * Persist a delete event.
  *
- * Append to JSONL first (durability), then remove the row from SQLite.
+ * Checks the issue exists before writing anything, so we never log a
+ * delete for a missing issue. Then appends to JSONL and removes from SQLite.
+ *
+ * @param {object} event - A delete event with an issueId.
+ * @returns {object} The event, unchanged.
+ * @throws {Error} If the issue doesn't exist.
  */
 function applyDelete(event) {
+  if (!issueExists(event.issueId)) {
+    throw new Error(
+      `Cannot delete issue "${event.issueId}": no issue with that ID exists.`
+    );
+  }
+
   appendToLog(event);
   deleteIssue(event);
   return event;
@@ -120,8 +150,11 @@ function applyDelete(event) {
 /**
  * Append a single event to the JSONL log as one line.
  *
- * Creates the parent .manta/ directory if missing. The file itself is
- * created on first write by appendFileSync.
+ * Creates the parent .manta/ directory if missing; the log file itself
+ * is created on first write.
+ *
+ * @param {object} event - The event to record.
+ * @param {string} [logPath] - Log path override (mainly for testing).
  */
 function appendToLog(event, logPath = DEFAULT_LOG_PATH) {
   mkdirSync(dirname(logPath), { recursive: true });
@@ -129,18 +162,31 @@ function appendToLog(event, logPath = DEFAULT_LOG_PATH) {
   appendFileSync(logPath, line, "utf8");
 }
 
+// ---- SQLite reads (for validation) ---------------------------------
+
+/**
+ * Check whether an issue with the given ID exists in SQLite.
+ *
+ * Used by update/delete to fail early if the target issue isn't there.
+ *
+ * @param {string} issueId
+ * @returns {boolean}
+ */
+function issueExists(issueId) {
+  const row = db.prepare(`SELECT 1 FROM issues WHERE ID = ?`).get(issueId);
+  return row !== undefined && row !== null;
+}
+
 // ---- SQLite writes -------------------------------------------------
 
 /**
  * Insert a new issue row into SQLite.
  *
- * Called by applyCreate after an issueId has been generated. Pulls
- * fields from event.issue (the full issue object per ADR-004's create
- * event shape) and the top-level event.issueId.
+ * Reads fields from event.issue and the top-level event.issueId.
  *
- * May throw a UNIQUE constraint error if the generated ID collides
- * with an existing row. applyCreate catches this and retries with a
- * fresh ID.
+ * @param {object} event - A create event with a populated issueId.
+ * @throws {Error} UNIQUE constraint error if the ID already exists;
+ *                 applyCreate catches this and retries.
  */
 function insertIssue(event) {
   const i = event.issue;
@@ -166,7 +212,11 @@ function insertIssue(event) {
 
 /**
  * Update an existing issue with only the fields present in event.changes.
- * Per frontend ADR-004, the changes object contains only modified fields.
+ *
+ * Builds the SET clause dynamically so only changed columns are written.
+ * Per ADR-004, changes contains only modified fields.
+ *
+ * @param {object} event - An update event with issueId and a changes object.
  */
 function updateIssue(event) {
   const fields = Object.keys(event.changes);
@@ -180,6 +230,11 @@ function updateIssue(event) {
   `).run(...values, event.issueId);
 }
 
+/**
+ * Delete an issue row from SQLite by ID.
+ *
+ * @param {object} event - A delete event with an issueId.
+ */
 function deleteIssue(event) {
   db.prepare(`DELETE FROM issues WHERE ID = ?`).run(event.issueId);
 }
@@ -187,11 +242,12 @@ function deleteIssue(event) {
 // ---- ID generation -------------------------------------------------
 
 /**
- * Generate a random issue ID.
+ * Generate a random issue ID of the form "manta-<4 chars>".
  *
- * Format: "manta-<4 chars>" using the Crockford base32 alphabet.
- * Called once per attempt — if SQLite rejects the INSERT, applyCreate
- * calls this again for a fresh random suffix.
+ * Uses the Crockford base32 alphabet. Called once per insert attempt;
+ * applyCreate calls it again for a fresh suffix on collision.
+ *
+ * @returns {string} A new candidate issue ID.
  */
 function generateIssueId() {
   let suffix = "";
@@ -205,20 +261,24 @@ function generateIssueId() {
 // ---- Helpers -------------------------------------------------------
 
 /**
- * Detect SQLite's UNIQUE constraint violation.
+ * Detect SQLite's UNIQUE constraint violation from an error.
  *
- * The bun:sqlite error message uses the standard SQLite format, so
- * matching on the message is reliable. If bun:sqlite ever changes
- * its error shape, this check is the single place to update.
+ * Matches on the standard SQLite message; the single place to update
+ * if bun:sqlite ever changes its error shape.
+ *
+ * @param {Error} err - The error thrown by a SQLite write.
+ * @returns {boolean} True if it's a UNIQUE constraint violation.
  */
 function isUniqueConstraintError(err) {
   return /UNIQUE constraint failed/i.test(err.message);
 }
 
 /**
- * Map event field names (camelCase) to SQLite column names (PascalCase).
- * Centralized so renames are easy. Throws on unknown fields to catch
- * typos early rather than silently producing broken SQL.
+ * Map an event field name (camelCase) to its SQLite column (PascalCase).
+ *
+ * @param {string} field - The camelCase field name from a changes object.
+ * @returns {string} The matching PascalCase column name.
+ * @throws {Error} If the field name isn't recognized.
  */
 function columnName(field) {
   const map = {
