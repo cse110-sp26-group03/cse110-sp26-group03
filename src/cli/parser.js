@@ -32,9 +32,12 @@ const flag_aliases = {
 // ex. close and delete should only ever have 1 flag -> id
 
 const expected_flag_counts = {
-    "delete": { min: 1, max: 1 },
-    "close":  { min: 1, max: 1 },
-    "update": { min: 2 },         // no max
+    "delete": { min: 1, max: 1, msg: 'Only an ID is expected'},
+    "close":  { min: 1, max: 1, msg: "Only an ID is expected"},
+    "update": { 
+        min: 2,
+        msg: "No updates to any field were provided"
+    }
 }
 
 // returns parse object if argv is parsed successfully, otherwise throws error. Use try/catch
@@ -46,10 +49,12 @@ export function parse(argv){
     const args = raw_args.map(str => str.toLowerCase())           // lowercased, used for parsing logic
 
     if (args.length === 0) throw new Error(`No input provided. Commands look like: mt <cmd> [flags]`) // checks for empty input
-    if (args[0] !== "mt") throw new Error(`Unknown prefix '${args[0]}': must start with mt`)          // check if first arg is "mt"
 
-    const cmd = args[1] // extract command only
-    if (!args[1]) throw new Error(`Missing command. Commands look like: mt <cmd> [flags]`)            // check if command is missing
+    // NOTE: no prefix check anymore. "mt" is provided by the environment in the final
+    // product, so it never reaches the parser. The command is now the first arg.
+
+    const cmd = args[0] // extract command only
+    if (!args[0]) throw new Error(`Missing command. Commands look like: mt <cmd> [flags]`)            // check if command is missing
     if (!cmds.includes(cmd)) throw new Error(`Unknown command '${cmd}': valid commands are ${cmds.join(', ')}`) // check if command exists
 
     // object to store all flag info
@@ -57,14 +62,14 @@ export function parse(argv){
 
     // grab everything in between the command and the first flag.
     // for example if i have:
-    //      mt create Hello world --priority p2     -->     grabs "Hello world"
-    //      mt delete manta-h35p                    -->     grabs "manta-h35p"
+    //      create Hello world --priority p2     -->     grabs "Hello world"
+    //      delete manta-h35p                    -->     grabs "manta-h35p"
 
     // NOTE: treat ANY dash-prefixed token as a flag boundary (was "--").
     // This way a malformed flag like "-d" becomes the start of a flag instead
     // of being swallowed into the in-between text, so the regex check below can reject it.
     const first_flag = args.findIndex(el => el.startsWith("-"))
-    const in_between = raw_args.slice(2, first_flag === -1 ? args.length : first_flag).join(" ") // slice up to first flag, otherwise to the end
+    const in_between = raw_args.slice(1, first_flag === -1 ? args.length : first_flag).join(" ") // slice up to first flag, otherwise to the end
 
     // map args to the correct flag based on the command
     switch (cmd) {
@@ -113,7 +118,7 @@ export function parse(argv){
 
             // a flag that's present must carry a value. an empty (or whitespace-only)
             // value means the user wrote the flag with nothing after it, e.g.
-            //      mt update manta-h35p --title --priority p2
+            //      update manta-h35p --title --priority p2
             // reject it here so blank values never reach the parse object.
             if (flag_args.trim() === "") throw new Error(`Missing value for flag '${current}'`)
 
@@ -155,12 +160,12 @@ export function parse(argv){
             break
     }
 
-    // for commands that expect an exact amount of flags
+    // for commands that expect an exact amount or range of flags
     if (expected_flag_counts[cmd]) {
         const { min, max } = expected_flag_counts[cmd]
         const count = Object.keys(flags).length
-        if (min && count < min) throw new Error(`Too few flags: '${cmd}' expects at least ${min} flag(s)`)
-        if (max && count > max) throw new Error(`Too many flags: '${cmd}' expects at most ${max} flag(s)`)
+        if (min && count < min) throw new Error(`Too few flags for '${cmd}:' ${expected_flag_counts[cmd].msg}`)
+        if (max && count > max) throw new Error(`Too many flags for '${cmd}:' ${expected_flag_counts[cmd].msg}`)
     }
 
     //console.log(`cmd: ${cmd}`)
@@ -172,12 +177,3 @@ export function parse(argv){
     }
 
 }
-
-/*
-try {
-    parse(process.argv)
-} catch (err) {
-    console.log("[Manta]", err.message)
-    process.exit(1)
-}
-*/
