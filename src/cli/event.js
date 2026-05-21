@@ -1,3 +1,5 @@
+/* eslint-env node */
+
 // `event.js` is responsible for constructing event objects.
 
 // get the current user from OS username
@@ -17,7 +19,8 @@ export function create_event(data){
             return update_issue_event(flags, true);
         case "delete":
             return delete_issue_event(flags);
-        default: throw new Error(`event creation error: '${cmd}' is not a recognized command`);
+        default:
+            throw new Error(`event creation error: '${cmd}' is not a recognized command`);
     }
 }
 
