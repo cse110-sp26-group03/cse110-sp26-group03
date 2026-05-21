@@ -4,6 +4,8 @@
 //
 // Pipeline: argv -> parse -> validate -> create_event -> applyEvent -> print.
 
+/* global process */
+
 import { parse } from "./parser.js";
 import { validate } from "../validation/validation.js";
 import { create_event } from "./event.js";
