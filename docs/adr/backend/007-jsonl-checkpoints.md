@@ -6,7 +6,7 @@
 
 **Date**: 2026-05-20 
 
-**Authors**: Ryan Le
+**Authors**: Ryan Le, TianLin Zhao
 
 ---
 
@@ -16,7 +16,7 @@ For our issue tracker, we update our local DB with the JSONL log. In the event t
 
 ## Considered Options
 
-**Store the byte offset in separate file.** This is a relatively simple approach where we store the byte offset of where we stopped the JSONL log in a separate file. We would then read the offset, and skip all logs in JSONL until we reach the offset, and continue as normal. Allows for persistent memory but requires management of another file.
+**Store the checkpoint value in SQlite cache.** This is a relatively simple approach where we store the checkpoint value of where we stopped the JSONL log in SQlite cache. We would then read 40-character Git Commit SHA (git rev-parse HEAD) when the database was last successfully synced. 
 
 **Git Notes / refs.** Store the offset as a git note or a lightweight ref tied to the commit SHA. On git pull, we know exactly which commit was last processed and can use *diff* to find new lines in the JSONL log. This ties the checkpoint to git state naturally, so there is no need to manage a separate file. However, does require additional config set up in .git as notes are not fetched automatically on git pulls.
 
@@ -24,22 +24,16 @@ For our issue tracker, we update our local DB with the JSONL log. In the event t
 
 ## Decision
 
-We should use Option 1: Store the byte offset in a separate file.
+We should use Option 1: Store the byte offset in a AQlite cache.
 
-- Store the file alongside the JSONL log as a mutable JSON.
-- Write to/change the byte offset in the JSON file when we append to the JSONL log. This way, we are constantly up-to-date.
-- On git pull, read the byte offset in the JSON file to skip to the right place in the JSONL log.
-- JSON must be in .gitignore as to not push to git.
-
+Write to/change the checkpoint value in the JSON file when we append to the JSONL log. This way, we are constantly up-to-date.
+On post-git pull, the synchronization layer will read the stored SHA. It will then use Git's diff to instantly filter out and stream only the newly added lines from the JSONL log, inserting or replacing them into the local database.
 ## Consequences 
 
 **Positive:**
-- Trivial to implement: read/write JSON, seek to the correct offset.
-- Rather easy to debug in the case of failure
-- Considers technically inexperienced users: everything is in repo and local; Less set up required.
-- Seek is < O(n), most likely to be constant time.
+- Git-Native Robustness: By leveraging git diff, the implementation remains unaffected by platform-specific file tracking differences.
+- Zero Desynchronization Risk: Co-locating the checkpoint inside the SQLite local database means they are safe to create or delete by different users. The checkpoint is dropped automatically, causing the next run to correctly replay.
 
 **Negative:**
 - Requires reading/writing JSON file.
-- It is another file to manage, clean up, and explain.
-- Can break everything if it is pushed to git.
+- Git Dependency: The application tightly couples its sync state to the local environment's Git history. The tool will fail to sync if run outside of a valid Git repository clone.

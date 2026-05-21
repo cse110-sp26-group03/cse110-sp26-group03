@@ -40,3 +40,7 @@ CREATE TABLE IF NOT EXISTS issues (
   UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   UpdatedBy TEXT NOT NULL DEFAULT 'local-user'
 );
+
+CREATE TABLE IF NOT EXISTS checkpoint (
+  Value TEXT
+);
