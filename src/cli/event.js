@@ -1,4 +1,4 @@
-/* eslint-env node */
+/* global process */
 
 // `event.js` is responsible for constructing event objects.
 
