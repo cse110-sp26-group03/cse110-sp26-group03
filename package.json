@@ -9,7 +9,8 @@
   "scripts": {
     "lint": "eslint .",
     "test": "echo 'tests not yet written'",
-    "prettier": "bunx prettier . --write"
+    "prettier": "bunx prettier . --write",
+    "jsdoc": "bunx jsdoc -c jsdoc.json"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.4.0",
     "globals": "^17.6.0",
+    "jsdoc": "^4.0.5",
     "prettier": "3.8.3"
   }
 }
