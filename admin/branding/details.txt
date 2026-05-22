@@ -1,0 +1,8 @@
+colors: 
+white #FFFFFF
+ocean blue #002b4d
+black #000000
+
+fonts:
+Kunaroh (https://www.dafont.com/kunaroh.font?text=StringRay)
+
