@@ -24,9 +24,9 @@ For our issue tracker, we update our local DB with the JSONL log. In the event t
 
 ## Decision
 
-We should use Option 1: Store the byte offset in a AQlite cache.
+We should use Option 1: Store the git commit SHA in a SQLite cache.
 
-Write to/change the checkpoint value in the JSON file when we append to the JSONL log. This way, we are constantly up-to-date.
+Write to/change the checkpoint value in the SQLite database when we append to the JSONL log. This way, we are constantly up-to-date.
 On post-git pull, the synchronization layer will read the stored SHA. It will then use Git's diff to instantly filter out and stream only the newly added lines from the JSONL log, inserting or replacing them into the local database.
 ## Consequences 
 
@@ -35,5 +35,5 @@ On post-git pull, the synchronization layer will read the stored SHA. It will th
 - Zero Desynchronization Risk: Co-locating the checkpoint inside the SQLite local database means they are safe to create or delete by different users. The checkpoint is dropped automatically, causing the next run to correctly replay.
 
 **Negative:**
-- Requires reading/writing JSON file.
+- Requires reading/writing the SQLite database on every append and sync.
 - Git Dependency: The application tightly couples its sync state to the local environment's Git history. The tool will fail to sync if run outside of a valid Git repository clone.
