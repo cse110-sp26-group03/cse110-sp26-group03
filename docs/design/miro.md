@@ -1,0 +1,2 @@
+# Miro Board
+[Sprint Planning & Design Drafts](https://miro.com/welcomeonboard/dy9sNjd5Z1BHNk1KSDd1aXBRam1PK2N6NHAvK0hiZVFsbmZ4UE1BUkp2UkhjbFVqRGpKVXlxalpQS1FZKy9uMDBReE1ZRVd3a2NJSGVYOWZMcHArR0tkdDdXc3cydGJQNjArMTQ4QTVpY25SVmt4bnc2L0Fvb2NVNWoxTzdteHdzVXVvMm53MW9OWFg5bkJoVXZxdFhRPT0hdjE=?share_link_id=652737850260)
