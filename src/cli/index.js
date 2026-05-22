@@ -1,3 +1,4 @@
+#!/usr/bin/env bun
 // src/cli/index.js
 //
 // Manta CLI entry point.
