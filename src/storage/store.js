@@ -19,14 +19,14 @@
 // PRIMARY KEY constraint catches the rare collision; store.js retries
 // up to 5 times before failing loudly.
 
-import { appendFileSync, mkdirSync } from "fs";
-import { dirname } from "path";
-import db from "./db.js";
+import { appendFileSync, mkdirSync } from 'fs';
+import { dirname } from 'path';
+import db from './db.js';
 
-const DEFAULT_LOG_PATH = ".manta/manta.jsonl";
+const DEFAULT_LOG_PATH = '.manta/manta.jsonl';
 
 // Crockford base32 alphabet — drops i, l, o, u to avoid visual confusion.
-const CROCKFORD_ALPHABET = "0123456789abcdefghjkmnpqrstvwxyz";
+const CROCKFORD_ALPHABET = '0123456789abcdefghjkmnpqrstvwxyz';
 const ID_SUFFIX_LENGTH = 4;
 const ID_MAX_RETRIES = 5;
 
@@ -45,14 +45,14 @@ const ID_MAX_RETRIES = 5;
  */
 export function applyEvent(event) {
   switch (event.type) {
-    case "issue.created":
+    case 'issue.created':
       return applyCreate(event);
-    case "issue.updated":
+    case 'issue.updated':
       return applyUpdate(event);
-    case "issue.deleted":
+    case 'issue.deleted':
       return applyDelete(event);
     default:
-      throw buildStoreError(event.type, null, "unrecognized event type.");
+      throw buildStoreError(event.type, null, 'unrecognized event type.');
   }
 }
 
@@ -88,7 +88,11 @@ function applyCreate(event) {
     return event;
   }
 
-  throw buildStoreError("create", null, "failed to generate unique issue ID after multiple attempts. Check if there is space for more IDs or if the database is corrupted.");
+  throw buildStoreError(
+    'create',
+    null,
+    'failed to generate unique issue ID after multiple attempts. Check if there is space for more IDs or if the database is corrupted.',
+  );
 }
 
 /**
@@ -103,12 +107,20 @@ function applyCreate(event) {
  */
 function applyUpdate(event) {
   if (!issueExists(event.issueId)) {
-    throw buildStoreError("update", event.issueId, "no issue with that ID exists.");
+    throw buildStoreError(
+      'update',
+      event.issueId,
+      'no issue with that ID exists.',
+    );
   }
 
   const fields = Object.keys(event.changes);
   if (fields.length === 0) {
-    throw buildStoreError("update", event.issueId, "no fields to change were provided.");
+    throw buildStoreError(
+      'update',
+      event.issueId,
+      'no fields to change were provided.',
+    );
   }
 
   appendToLog(event);
@@ -128,7 +140,11 @@ function applyUpdate(event) {
  */
 function applyDelete(event) {
   if (!issueExists(event.issueId)) {
-    throw buildStoreError("delete", event.issueId, "no issue with that ID exists.");
+    throw buildStoreError(
+      'delete',
+      event.issueId,
+      'no issue with that ID exists.',
+    );
   }
 
   appendToLog(event);
@@ -149,8 +165,8 @@ function applyDelete(event) {
  */
 function appendToLog(event, logPath = DEFAULT_LOG_PATH) {
   mkdirSync(dirname(logPath), { recursive: true });
-  const line = JSON.stringify(event) + "\n";
-  appendFileSync(logPath, line, "utf8");
+  const line = JSON.stringify(event) + '\n';
+  appendFileSync(logPath, line, 'utf8');
 }
 
 // ---- SQLite reads (for validation) ---------------------------------
@@ -181,12 +197,14 @@ function issueExists(issueId) {
  */
 function insertIssue(event) {
   const i = event.issue;
-  db.prepare(`
+  db.prepare(
+    `
     INSERT INTO issues (
       ID, Title, Description, Status, Priority, IssueType, Assignee,
       CreatedAt, CreatedBy, UpdatedAt, UpdatedBy
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `).run(
+  `,
+  ).run(
     event.issueId,
     i.title,
     i.description,
@@ -197,7 +215,7 @@ function insertIssue(event) {
     i.createdAt,
     i.createdBy,
     i.updatedAt,
-    i.updatedBy
+    i.updatedBy,
   );
 }
 
@@ -213,12 +231,14 @@ function updateIssue(event) {
   const fields = Object.keys(event.changes);
   if (fields.length === 0) return;
 
-  const setClause = fields.map(f => `${columnName(f)} = ?`).join(", ");
-  const values = fields.map(f => event.changes[f]);
+  const setClause = fields.map((f) => `${columnName(f)} = ?`).join(', ');
+  const values = fields.map((f) => event.changes[f]);
 
-  db.prepare(`
+  db.prepare(
+    `
     UPDATE issues SET ${setClause} WHERE ID = ?
-  `).run(...values, event.issueId);
+  `,
+  ).run(...values, event.issueId);
 }
 
 /**
@@ -241,7 +261,7 @@ function deleteIssue(event) {
  * @returns {string} A new candidate issue ID.
  */
 function generateIssueId() {
-  let suffix = "";
+  let suffix = '';
   for (let i = 0; i < ID_SUFFIX_LENGTH; i++) {
     const idx = Math.floor(Math.random() * CROCKFORD_ALPHABET.length);
     suffix += CROCKFORD_ALPHABET[idx];
@@ -263,13 +283,12 @@ function generateIssueId() {
  * @returns {Error} A new error object with .issueId and .reason set.
  */
 function buildStoreError(action, issueId, reason) {
-  const subject = issueId ? (`issue "${issueId}"`) : ("the issue"); //if exists format it as so, otherwise can't include it
+  const subject = issueId ? `issue "${issueId}"` : 'the issue'; //if exists format it as so, otherwise can't include it
   const err = new Error(`Cannot ${action} ${subject}: ${reason}`);
   err.issueId = issueId; //we still know from this field if issueId exists or not
   err.reason = reason;
   return err;
 }
-
 
 // ---- Helpers -------------------------------------------------------
 
@@ -295,14 +314,14 @@ function isUniqueConstraintError(err) {
  */
 function columnName(field) {
   const map = {
-    title: "Title",
-    description: "Description",
-    status: "Status",
-    priority: "Priority",
-    issueType: "IssueType",
-    assignee: "Assignee",
-    updatedAt: "UpdatedAt",
-    updatedBy: "UpdatedBy",
+    title: 'Title',
+    description: 'Description',
+    status: 'Status',
+    priority: 'Priority',
+    issueType: 'IssueType',
+    assignee: 'Assignee',
+    updatedAt: 'UpdatedAt',
+    updatedBy: 'UpdatedBy',
   };
   if (!map[field]) {
     throw new Error(`Unknown field for update: ${field}`);

@@ -6,10 +6,10 @@
 
 /* global process */
 
-import { parse } from "./parser.js";
-import { validate } from "../validation/validation.js";
-import { create_event } from "./event.js";
-import { applyEvent } from "../storage/store.js";
+import { parse } from './parser.js';
+import { validate } from '../validation/validation.js';
+import { create_event } from './event.js';
+import { applyEvent } from '../storage/store.js';
 
 // 1. Parse argv -> { cmd, flags }.
 let parsed_command;
@@ -55,20 +55,20 @@ try {
 //      - close   -> confirm the id was closed
 //      - delete  -> confirm the id was deleted
 switch (parsed_command.cmd) {
-  case "create":
+  case 'create':
     console.log(`Created issue ${event.issueId}: ${event.issue.title}`);
     break;
-  case "update": {
+  case 'update': {
     const changes = Object.entries(event.changes)
       .map(([k, v]) => `${k}=${v}`)
-      .join(", ");
+      .join(', ');
     console.log(`Updated issue ${event.issueId} with ${changes}`);
     break;
   }
-  case "close":
+  case 'close':
     console.log(`Closed issue ${event.issueId}`);
     break;
-  case "delete":
+  case 'delete':
     console.log(`Deleted issue ${event.issueId}`);
     break;
 }
