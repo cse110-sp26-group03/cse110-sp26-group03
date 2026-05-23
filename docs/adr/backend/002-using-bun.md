@@ -1,9 +1,10 @@
 # ADR-002: Javascript Runtime - Using Buns instead of Node.js
 
 ## Status
-Proposed — 2026-05-13
 
-Accepted - 2026-05-15 by Ori
+Proposed | **Accepted** | Deprecated
+
+Date: 2026-05-15 Authors: Ori
 
 ## Context
 

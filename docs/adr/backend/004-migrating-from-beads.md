@@ -1,9 +1,10 @@
 # ADR-004: Migration from Beads
 
 ## Status
-Proposed — 2026-05-17 by Nathan
 
-Accepted — 2026-05-18 by Ori
+Proposed | **Accepted** | Deprecated
+
+Date: 2026-05-18 Authors: Nathan
 
 ## Context
 

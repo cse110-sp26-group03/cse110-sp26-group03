@@ -1,13 +1,13 @@
 # ADR-003: CLI Performance Optimization
 
 ## Status
+
 **Proposed** | Accepted | Deprecated 
 
 ***To be discussed later in development***
 
-**Date**: 2026-05-15 
+Date: 2026-05-15 Authors: Ryan, Nathan
 
-**Authors**: Ryan, Nathan
 
 ## Context
 

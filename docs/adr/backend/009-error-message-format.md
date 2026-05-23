@@ -2,7 +2,7 @@
 
 ## Status
 
-**Proposed** | Accepted | Deprecated
+Proposed | **Accepted** | Deprecated
 
 Date: 2026-05-20  Authors: David Tanioka
 
