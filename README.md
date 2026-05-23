@@ -2,4 +2,76 @@
 ## Team Page
 View our team here: [StringRays](admin/team.md)
 
-View our Agile Team Status Video here: [Youtube Link](https://www.youtube.com/watch?v=EK99ER9aCGg
+View our Agile Team Status Video here: [Youtube Link](https://www.youtube.com/watch?v=EK99ER9aCGg)
+
+## Getting Started
+
+A short guide to running Manta locally and trying a few commands.
+
+### Prerequisites
+
+Manta runs on [Bun](https://bun.sh). Install it once:
+
+```bash
+curl -fsSL https://bun.sh/install | bash
+```
+
+Restart your shell and verify the install:
+
+```bash
+bun --version
+```
+
+### Install
+
+Clone the repo and install dependencies:
+
+```bash
+git clone https://github.com/cse110-sp26-group03/cse110-sp26-group03.git
+cd cse110-sp26-group03
+bun install
+```
+
+### Run
+
+The easiest way is to link the CLI globally so you can run `mt` from anywhere:
+
+```bash
+bun link
+```
+
+
+### Try it
+
+```bash
+# -> Create issues
+mt create "Issue name" --priority p1 --assignee bob
+
+# -> Update issues
+mt update manta-xxxx --status in_progress
+
+# -> Close issues
+mt close manta-xxxx
+
+# -> Delete issues
+mt delete manta-xxxx
+
+```
+
+Replace `manta-xxxx` with the ID printed by your first `create`. See `design/cli-input-output.md` for the full command syntax and planned flags.
+
+### Where your data lives
+
+Manta creates a `.manta/` directory in your current working directory:
+
+- `.manta/manta.jsonl` — durable event log (the source of truth)
+- `.manta/manta.db` — local SQLite cache used for fast queries
+
+To peek at your issues directly:
+
+```bash
+sqlite3 .manta/manta.db "SELECT ID, Title, Status, Priority, Assignee FROM issues;"
+```
+
+If you'd rather click around in a GUI, install a [SQLite Viewer](https://marketplace.visualstudio.com/items?itemName=qwtel.sqlite-viewer) viewer and open `.manta/manta.db`:
+
