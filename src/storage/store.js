@@ -102,6 +102,7 @@ function applyCreate(event) {
  * update for a missing issue. Then appends to JSONL and applies to SQLite.
  *
  * @param {object} event - An update event with issueId and a changes object.
+ * @returns {object} The event, unchanged.
  * @throws {Error} If the issue doesn't exist or changes is empty.
  */
 function applyUpdate(event) {
