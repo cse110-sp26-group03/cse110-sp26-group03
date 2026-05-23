@@ -1,7 +1,7 @@
 # ADR-001: CLI Parser: In-House Parser (JavaScript)
 
 ## Status
-**Proposed** | Accepted | Deprecated
+Proposed | **Accepted** | Deprecated
 
 **Date:** 2026-05-16
 **Authors:** Scottin Pham
@@ -24,26 +24,27 @@ Backend ADR-002 commits us to Bun, so JS runs natively. We're writing the fronte
 
 We adopt Option 1: Ike's custom parser, in plain JS.
 
-- Parser handles argv splitting, command routing, and basic checks (empty input, unknown command).
-- Each command function does its own checks (e.g. `mt close` needs an id, `mt view` doesn't); see ADR-002.
-- Command functions return `{ ok, message }`. The parser prints the message and exits 0 or 1 accordingly.
+- Parser handles argv splitting, flag resolution (including shorthands), and surface-level checks (empty input, unknown command, duplicate/missing flags).
+- Deeper command-specific validation (required fields, enum values, formats) is handled by `src/validation/validation.js`; see ADR-002.
+- The pipeline in `index.js` is: **parse → validate → create_event → applyEvent → print**. Each stage throws on failure; `index.js` catches and exits 1 with the error message.
 
-### Proposed Layout (pending Ike's parser doc)
-
-Names and paths below are a starting suggestion
+### Actual Layout
 
 ```
-src/cli/
-├── parser.js          Ike's parser
-├── index.js           entry point: calls the parser, dispatches, prints the result
-├── usage.js           help text
-└── commands/
-    ├── create.js      one file per command
-    ├── view.js
-    ├── close.js
-    ├── edit.js
-    └── list.js
+src/
+├── cli/
+│   ├── index.js           entry point: runs the parse→validate→create_event→applyEvent→print pipeline
+│   ├── parser.js          Ike's parser: argv → { cmd, flags }
+│   └── event.js           builds typed event objects (issue.created / issue.updated / issue.deleted) from { cmd, flags }
+├── storage/
+│   ├── schema.sql
+│   ├── db.js
+│   └── store.js           applyEvent: writes events to SQLite and JSON stores
+└── validation/
+    └── validation.js      stage-2 validation: required fields, enum checks, ID format, etc.
 ```
+
+Valid commands: `create`, `update`, `close`, `delete`.
 
 No new dependencies.
 
@@ -55,10 +56,10 @@ No new dependencies.
 
 - No external dependencies for the CLI.
 - Parser lives in the repo, so we can change it whenever we need to.
-- Clear split: parser handles the generic stuff, each command handles its own rules.
-- `{ ok, message }` return type makes commands easy to test.
+- Clear split: parser handles generic argv parsing, validation handles command-specific rules, event.js builds the storage payload.
+- Throw-on-failure pattern makes each stage independently testable.
 
 ### Negative
 
 - We own any parser bugs 
-- No type checking on inputs since we're in plain JS. ADR-002's per-command checks cover this.
+- No type checking on inputs since we're in plain JS. ADR-002's validation layer covers this.
