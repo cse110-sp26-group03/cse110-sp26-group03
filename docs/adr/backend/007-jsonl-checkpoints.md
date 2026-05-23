@@ -4,9 +4,9 @@
 
 **Proposed** | Accepted | Deprecated
 
-**Date**: 2026-05-20 
+**Date**: 2026-05-23
 
-**Authors**: Ryan Le, TianLin Zhao
+**Authors**: Ryan Le, TianLin Zhao, Ori Chason
 
 ---
 
@@ -16,7 +16,7 @@ For our issue tracker, we update our local DB with the JSONL log. In the event t
 
 ## Considered Options
 
-**Store the checkpoint value in the SQLite cache.** This is a relatively simple approach where we store the checkpoint value of where we stopped the JSONL log in the SQLite cache. We would then read 40-character Git Commit SHA (git rev-parse HEAD) when the database was last successfully synced. 
+**Store the checkpoint value in the SQLite cache.** The checkpoint value is a hash we compute ourselves over the entire JSONL log, stored in the SQLite cache. On each run we re-hash the current JSONL log and check it against the stored hash to determine whether the log has changed: if the hashes match, nothing changed and we skip replay; if they differ — new events, a merge, etc. — we replay the log. We do not git diff every time to save time and sources.
 
 **Git Notes / refs.** Store the offset as a git note or a lightweight ref tied to the commit SHA. On git pull, we know exactly which commit was last processed and can use *diff* to find new lines in the JSONL log. This ties the checkpoint to git state naturally, so there is no need to manage a separate file. However, does require additional config setup in .git as notes are not fetched automatically on git pulls.
 
@@ -24,16 +24,24 @@ For our issue tracker, we update our local DB with the JSONL log. In the event t
 
 ## Decision
 
-We should use Option 1: Store the git commit SHA in a SQLite cache.
+We should use Option 1: Store the checkpoint value in the SQLite cache.
 
-Write to/change the checkpoint value in the SQLite database when we append to the JSONL log. This way, we are constantly up-to-date.
-On post-git pull, the synchronization layer will read the stored SHA. It will then use Git's diff to instantly filter out and stream only the newly added lines from the JSONL log, inserting or replacing them into the local database.
-## Consequences 
+The checkpoint value is a hash of the entire JSONL log. Replay depends on this checkpoint — on every run it hashes the current `.manta/manta.jsonl` and compares the result against the stored checkpoint:
+
+- If the hashes match, the log has not changed since the cache was last built, so replay is skipped.
+- If the hashes differ — or no checkpoint has been stored yet — replay wipes the `issues` table and replays the entire log from scratch.
+
+After a successful replay, and after a command appends its own event to the log, the checkpoint is updated to the hash so the next run can skip.
+
+The checkpoint is purely a fast path — it lets us skip the rebuild when, and only when, the file is provably unchanged. We use a hash so a collision (a changed file that merged by git and would be wrongly skipped) is not a practical concern.
+
+## Consequences
 
 **Positive:**
-- Git-Native Robustness: By leveraging git diff, the implementation remains unaffected by platform-specific file tracking differences.
-- Zero Desynchronization Risk: Co-locating the checkpoint inside the SQLite local database means they are safe to create or delete by different users. The checkpoint is dropped automatically, causing the next run to correctly replay.
+- Simple: replay reduces to one question — did the file change? — with a full rebuild on "yes" and a skip on "no". No git diff parsing.
+- Merge-safe: a git pull that merges changes, triggering a full replay. Because the rebuild reads the whole file, line ordering can never cause a teammate's event to be missed.
 
 **Negative:**
+- Requires to write code to compute the hash, compare it, and make it run automatically.
+- The whole log is read and hashed on every run, even when nothing changed.
 - Requires reading/writing the SQLite database on every append and sync.
-- Git Dependency: The application tightly couples its sync state to the local environment's Git history. The tool will fail to sync if run outside of a valid Git repository clone.
