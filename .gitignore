@@ -3,6 +3,9 @@
 # npm
 node_modules/
 
+# JSDoc generated HTML output
+out/
+
 # Manta local SQLite DB — derived from .manta/issues.jsonl, never commit.
 # JSONL (the source of truth, per ADR-001) is NOT ignored.
 .manta/*.db
