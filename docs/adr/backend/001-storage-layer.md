@@ -1,9 +1,10 @@
 # ADR-001: Storage Layer — JSONL Log + SQLite Cache
 
 ## Status
-Proposed — 2026-05-07
 
-Accepted — 2026-05-13 by Ori, Nathan, Ryan, David, and Powell
+Proposed | **Accepted** | Deprecated
+
+Date: 2026-05-13 Authors: Ori, Nathan, Ryan, David
 
 ## Context
 

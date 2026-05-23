@@ -1,7 +1,10 @@
 # ADR-005: Issue ID Format
 
 ## Status
-Accepted — 2026-05-18 by Ori, Nathan
+
+Proposed | **Accepted** | Deprecated
+
+Date: 2026-05-18 Authors: Ori, Nathan
 
 ## Context
 
