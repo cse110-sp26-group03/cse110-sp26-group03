@@ -1,7 +1,12 @@
 # ADR-001: Version Location
 
 ## Status
-Proposed — 2026-05-22 by TianLin Zhao
+
+Proposed | **Accepted** | Deprecated
+
+Date: 2026-05-23  Authors: TianLin Zhao
+
+---
 
 ## Context
 
