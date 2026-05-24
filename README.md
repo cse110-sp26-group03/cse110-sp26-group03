@@ -60,6 +60,14 @@ mt delete manta-xxxx
 
 Replace `manta-xxxx` with the ID printed by your first `create`. See `design/cli-input-output.md` for the full command syntax and planned flags.
 
+### Viewing your issues (temporary workaround)
+
+We're actively adding `mt show` / `mt list` so you can view issues directly from the CLI, but those commands aren't implemented yet. In the meantime, you can view your issues through a GUI:
+
+1. Install the **SQLite Viewer** extension by **Florian Klampfer** on VS Code ([Marketplace link](https://marketplace.visualstudio.com/items?itemName=qwtel.sqlite-viewer)).
+2. Create an issue on Manta (see the `mt create` command above).
+3. Go to the `.manta/` directory and open `manta.db` to view it in the visualizer.
+
 ### Where your data lives
 
 Manta creates a `.manta/` directory in your current working directory:
@@ -73,5 +81,4 @@ To peek at your issues directly:
 sqlite3 .manta/manta.db "SELECT ID, Title, Status, Priority, Assignee FROM issues;"
 ```
 
-If you'd rather click around in a GUI, install a [SQLite Viewer](https://marketplace.visualstudio.com/items?itemName=qwtel.sqlite-viewer) viewer and open `.manta/manta.db`:
 
