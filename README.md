@@ -75,14 +75,6 @@ Manta creates a `.manta/` directory in your current working directory:
 - `.manta/manta.jsonl` — durable event log (the source of truth)
 - `.manta/manta.db` — local SQLite cache used for fast queries
 
-To peek at your issues directly:
-
-```bash
-sqlite3 .manta/manta.db "SELECT ID, Title, Status, Priority, Assignee FROM issues;"
-```
-
----
-
 ### Supported flags/fields 
 
 Below is an overview of the currently supported flags + fields for CLI commands. 
