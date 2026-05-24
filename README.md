@@ -58,7 +58,7 @@ mt delete manta-xxxx
 
 ```
 
-Replace `manta-xxxx` with the ID printed by your first `create`. See `design/cli-input-output.md` for the full command syntax and planned flags.
+Replace `manta-xxxx` with the ID printed by your first `create`. See `docs/design/cli-input-output.md` for the full command syntax and planned flags.
 
 ### Viewing your issues (temporary workaround)
 
