@@ -79,9 +79,9 @@ Here is an overview of the fields that are auto-assigned by the issue tracker, a
 | --- | --- | --- | --- |
 | ID | the manta ID of the issue | manta-xxxx format where xxxx is a unique sequence of Crockford base32 characters | assigned on creation | 
 | createdAt | the time the issue was created | ISO timestamp (UTC) | updated only once at creation |
-| createdBy | the person who created the issue | a-z, A-Z string | currently a placeholder, also updated only once at creation |
+| createdBy | the person who created the issue | a-z, A-Z string | updated only once at creation |
 | updatedAt | the most recent time the issue was edited | ISO timestamp (UTC) | the most recent edit time, not all edits |
-| updatedBy | the person who updated most recently | a-z, A-Z string | currently a placeholder. most recent editor, not all of them. | 
+| updatedBy | the person who updated most recently | a-z, A-Z string | most recent editor, not all of them | 
 
 
 ### Viewing your issues (temporary workaround)
