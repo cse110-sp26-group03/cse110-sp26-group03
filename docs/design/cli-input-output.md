@@ -19,6 +19,9 @@ Issue IDs take the form `manta-<suffix>` where `<suffix>` is a 4-character rando
 
 *required
 
+> - mt version
+>>> - prints the Manta SemVer from `package.json` (see versioning ADR-001). Subcommand only — `mt --version` is not supported. Takes no positional arguments and no flags. **Implemented.**
+
 > - mt help
 >>> - shows and defines list of all commands. takes no flags
 > - mt create (*title, flags)
@@ -45,6 +48,13 @@ Issue IDs take the form `manta-<suffix>` where `<suffix>` is a 4-character rando
 
 
 # Sample I/O
+
+```
+mt version
+
+0.0.1
+```
+
 
 ```
 mt create "My new issue" --desc Needs to be solved
@@ -144,6 +154,7 @@ mt help
 
    EXAMPLES
 
+      mt version
       mt create "My new issue" --desc Needs to be solved
       mt update manta-h3kp --title Changed the title
       mt view manta-h3kp
