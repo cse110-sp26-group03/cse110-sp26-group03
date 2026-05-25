@@ -37,10 +37,15 @@ decides the Semantic Version.
   
 ## Decision
 
+We decide on Option 2: Automatic SemVer versioning and releases
+
 ## Consequences
 
 **Positive:**
+- Automatically reads commits (given they are formatted correctly) and determines versioning and changelogs, which are taken from the commit messages.
+- Only needs main branch to release, and we can configure any branch to be a development/hotfixes branch, so it knows how to determine the version.
 
 **Negative:**
-
-## References
+- Requires a handful of plugins (dependencies)
+- Adds some complexity to the CI/CD pipeline, having to make sure nothing breaks/no improper interactions
+- Does not give the developer control over whether a new version is released, like with release-please. Everything is automated.
