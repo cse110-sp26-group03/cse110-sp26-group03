@@ -9,7 +9,7 @@
 // }
 
 // all valid commands
-const cmds = ['create', 'update', 'close', 'delete'];
+const cmds = ['create', 'update', 'close', 'delete', 'version'];
 
 // all valid flags
 const possible_flags = [
@@ -88,6 +88,12 @@ export function parse(argv) {
     case 'close':
     case 'delete':
       if (in_between) flags['id'] = in_between; // map to "id" if in_between is not ""
+      break;
+    case 'version':
+      if (in_between)
+        throw new Error(
+          `Unexpected argument '${in_between.trim()}': version takes no arguments`,
+        );
       break;
   }
 
@@ -180,15 +186,18 @@ export function parse(argv) {
   if (expected_flag_counts[cmd]) {
     const { min, max } = expected_flag_counts[cmd];
     const count = Object.keys(flags).length;
-    if (min && count < min)
+    if (min != null && count < min)
       throw new Error(
         `Too few flags for '${cmd}:' ${expected_flag_counts[cmd].msg}`,
       );
-    if (max && count > max)
+    if (max != null && count > max)
       throw new Error(
         `Too many flags for '${cmd}:' ${expected_flag_counts[cmd].msg}`,
       );
   }
+
+  if (cmd === 'version' && Object.keys(flags).length > 0)
+    throw new Error(`Unexpected flags for 'version': no flags are expected`);
 
   //console.log(`cmd: ${cmd}`)
   //console.log("flags:", flags)

@@ -44,6 +44,9 @@ bun link
 ### Try it
 
 ```bash
+# -> Print version
+mt version
+
 # -> Create issues
 mt create "Issue name" --priority p1 --assignee bob
 

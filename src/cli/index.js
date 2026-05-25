@@ -4,8 +4,13 @@
 // Manta CLI entry point.
 //
 // Pipeline: argv -> parse -> validate -> create_event -> applyEvent -> print.
+// Exception: version reads package.json and exits before storage.
 
 /* global process */
+
+import { readFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
 import { parse } from './parser.js';
 import { validate } from '../validation/validation.js';
@@ -19,6 +24,16 @@ try {
 } catch (err) {
   console.error(err.message);
   process.exit(1);
+}
+
+if (parsed_command.cmd === 'version') {
+  const pkgPath = join(
+    dirname(fileURLToPath(import.meta.url)),
+    '../../package.json',
+  );
+  const { version } = JSON.parse(readFileSync(pkgPath, 'utf8'));
+  console.log(version);
+  process.exit(0);
 }
 
 // 2. Validate the parsed command (required fields, enum values, formats).
