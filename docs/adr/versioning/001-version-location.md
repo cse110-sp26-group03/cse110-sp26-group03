@@ -21,7 +21,7 @@ This inconsistency is exactly the problem this ADR exists to fix: without a sing
 
 ## Considered Options
 
-1. **`package.json` `version` field.** The npm-standard location for a package's version. Manta is already an npm/Bun package with a `bin` entry (`mt`), so this field already exists. A `mt --version` command can read it at runtime. Crucially, the external toolchain assumes it: `npm version`, `bun`, and automated-release tools read and bump *this field* by default, and publishing to the npm registry or cutting GitHub Releases keys off the same field. 
+1. **`package.json` `version` field.** The npm-standard location for a package's version. Manta is already an npm/Bun package with a `bin` entry (`mt`), so this field already exists. A CLI subcommand (e.g. `mt version`) can read it at runtime. Crucially, the external toolchain assumes it: `npm version`, `bun`, and automated-release tools read and bump *this field* by default, and publishing to the npm registry or cutting GitHub Releases keys off the same field. 
 2. **Dedicated `VERSION` file at repo root.** A plain-text file holding only the version string — trivial to read at runtime. But standard tooling is blind to it: `npm version`, `bun`, and release automation only ever modify `package.json`, so a `VERSION` file would have to be kept in sync by hand-written scripts. And since `package.json`'s `version` field exists regardless, every release means updating `VERSION` *and* remembering to also update `package.json` — two places to maintain instead of one.
 3. **A `src/version.js` exported constant.** The version lives as code, so the CLI can import it directly. Like the `VERSION` file it is invisible to release tooling, but its failure mode is quieter: you bump the constant and `package.json`'s `version` is left stale, so the two silently drift apart over time.
 
@@ -31,18 +31,26 @@ This inconsistency is exactly the problem this ADR exists to fix: without a sing
 
 Supporting roles, all derived from that field:
 
-- **CLI:** add a `mt --version` (and/or `mt version`) command that reads `version` from `package.json` at runtime and prints it. No hardcoded constant.
+- **CLI:** `mt version` reads `version` from `package.json` at runtime and prints it (no hardcoded constant). This is a **subcommand**, not a global flag — `mt --version` is intentionally unsupported.
 - **`CHANGELOG.md`:** continues to document every release with a `## [x.y.z] - YYYY-MM-DD` entry. It is human-maintained release notes; its latest version heading must match `package.json`.
 - **Git tags:** each release is tagged `vX.Y.Z` on GitHub to mark the commit.
 
 **Workflow for releasing a new version: update** `package.json` → add a `CHANGELOG.md` entry → tag the commit `vX.Y.Z`.
+
+### Implementation (`mt version`)
+
+Implemented in `src/cli/index.js` and `src/cli/parser.js`:
+
+1. **Parse:** `version` is a valid command in `parser.js`. It rejects positional arguments and flags (e.g. `mt version extra`, `mt version --priority p1`).
+2. **Print:** After parse, `index.js` resolves `package.json` relative to the CLI entry (`../../package.json` from `src/cli/`), reads the `version` field, prints it to stdout, and exits before validation, event creation, or storage.
+3. **Output:** Prints the version string only (e.g. `0.0.1`), with no prefix or extra formatting.
 
 ## Consequences
 
 **Positive:**
 - A fixed location; every other place either derives from it or is a documentation/tagging convention.
 - `package.json` `version` is the ecosystem standard —  standard scripts can bump it.
-- `mt --version` reflects the real shipped version because it reads the same field, with no constant to forget.
+- `mt version` reflects the real shipped version because it reads the same field, with no constant to forget.
 
 **Negative:**
 - The changelog and git tag are still updated by hand, so a release can ship with a mismatched changelog entry or missing tag if the process is not followed. 
