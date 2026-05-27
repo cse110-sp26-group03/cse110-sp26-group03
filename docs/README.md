@@ -74,9 +74,8 @@ Grouped by area; each folder uses its own `001`, `002`, … numbering.
 | [`004-migrating-from-beads.md`](adr/backend/004-migrating-from-beads.md) | Migration from Beads |
 | [`005-issue-id-format.md`](adr/backend/005-issue-id-format.md) | Issue ID format (`manta-…`) |
 | [`006-store-js.md`](adr/backend/006-store-js.md) | `store.js` responsibilities |
-| [`009-error-message-format.md`](adr/backend/009-error-message-format.md) | Backend error message format |
-
-*(Numbers 007–008 are unused in `backend/` as of this writing.)*
+| [`007-cache-sync.md`](adr/backend/007-cache-sync.md) | SQLite cache sync from the JSONL log |
+| [`008-error-message-format.md`](adr/backend/008-error-message-format.md) | Backend error message format |
 
 **`adr/CI/`**
 
