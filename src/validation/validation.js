@@ -23,7 +23,7 @@ const possible_flags = {
   update: ['id', 'title', 'desc', 'priority', 'status', 'type', 'assignee'],
   close: ['id'],
   delete: ['id'],
-  view: ['id', 'priority', 'status', 'type', 'assignee', 'createdBy']
+  view: ['id', 'priority', 'status', 'type', 'assignee', 'createdBy'],
 };
 
 // maps flag name to its check function
@@ -118,7 +118,8 @@ function check_assignee(assignee) {
 }
 
 function check_createdBy(creator, cmd) {
-  if (cmd !== 'view') return `validate error: 'createdBy' is not a valid flag for '${cmd}'`;
+  if (cmd !== 'view')
+    return `validate error: 'createdBy' is not a valid flag for '${cmd}'`;
   if (creator === undefined) return null;
   if (USERNAME_PATTERN.test(creator)) return null;
   return `validate error: '${creator}' is not a valid username`;
