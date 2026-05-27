@@ -1,10 +1,11 @@
-import { Database } from "bun:sqlite";
-import { join, dirname } from "path";
-import { fileURLToPath } from "url";
+import { Database } from 'bun:sqlite';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const db = new Database(join(__dirname, "../../.manta/manta.db"), { readonly: true });
-
+const db = new Database(join(__dirname, '../../.manta/manta.db'), {
+  readonly: true,
+});
 
 // Interaction with the SQLite db specifically for the mt view command.
 // Takes a parse object.
@@ -14,48 +15,56 @@ const db = new Database(join(__dirname, "../../.manta/manta.db"), { readonly: tr
 
 // Check below for what input/output should look like.
 
-const filter_map = { status: "status", priority: "priority", type: "issueType", assignee: "assignee", createdBy: "createdBy" };
+const filter_map = {
+  status: 'status',
+  priority: 'priority',
+  type: 'issueType',
+  assignee: 'assignee',
+  createdBy: 'createdBy',
+};
 
 export function FETCH(parse_obj) {
+  //console.log("Parse obj:", parse_obj)
 
-    //console.log("Parse obj:", parse_obj)
+  try {
+    if (parse_obj['flags']['id']) {
+      // view specific issue
 
-    try {
-        if (parse_obj["flags"]["id"]) {
-            // view specific issue
+      let issue = db
+        .query('SELECT * FROM issues WHERE id = ?')
+        .get(parse_obj['flags']['id']);
 
-            let issue = db.query("SELECT * FROM issues WHERE id = ?").get(parse_obj["flags"]["id"]);
+      if (!issue) {
+        throw new Error(`Issue with id ${parse_obj['flags']['id']} not found`);
+      }
 
-            if (!issue) {
-                throw new Error(`Issue with id ${parse_obj["flags"]["id"]} not found`);
-            }
+      return issue;
+    } else {
+      // list behavior
+      const { flags } = parse_obj;
+      const conditions = [];
+      const params = [];
 
-            return issue
+      if (!('all' in parse_obj['flags']) && !flags['status'])
+        conditions.push("status != 'closed'");
 
-        } else {
-            // list behavior
-            const { flags } = parse_obj;
-            const conditions = [];
-            const params = [];
-
-            if (!("all" in parse_obj["flags"]) && !flags["status"]) conditions.push("status != 'closed'");
-
-            
-            for (const [flag, col] of Object.entries(filter_map)) {
-                if (flags[flag]) {
-                    conditions.push(`${col} = ?`);
-                    params.push(flags[flag]);
-                }
-            }
-
-            const where = conditions.length ? " WHERE " + conditions.join(" AND ") : "";
-            return db.query(`SELECT * FROM issues${where} ORDER BY priority`).all(...params);
+      for (const [flag, col] of Object.entries(filter_map)) {
+        if (flags[flag]) {
+          conditions.push(`${col} = ?`);
+          params.push(flags[flag]);
         }
+      }
 
-    } catch (err) {
-        throw new Error("Query failed: " + err.message);
+      const where = conditions.length
+        ? ' WHERE ' + conditions.join(' AND ')
+        : '';
+      return db
+        .query(`SELECT * FROM issues${where} ORDER BY priority`)
+        .all(...params);
     }
-
+  } catch (err) {
+    throw new Error('Query failed: ' + err.message);
+  }
 }
 
 // input will look like this:
@@ -68,13 +77,12 @@ export function FETCH(parse_obj) {
 //   }
 // }
 
-// or for specific issue viewing behavior: 
+// or for specific issue viewing behavior:
 //   cmd: "view",
 //   flags: {
 //     id: "manta-h3kp"
 //   }
 // }
-
 
 // Output will look something like this:
 /* [

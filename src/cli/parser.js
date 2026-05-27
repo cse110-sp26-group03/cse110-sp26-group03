@@ -9,7 +9,15 @@
 // }
 
 // all valid commands
-const cmds = ['create', 'update', 'close', 'delete', 'version', 'view', 'replay'];
+const cmds = [
+  'create',
+  'update',
+  'close',
+  'delete',
+  'version',
+  'view',
+  'replay',
+];
 
 // all valid flags
 const possible_flags = [
@@ -19,13 +27,11 @@ const possible_flags = [
   'priority',
   'type',
   'assignee',
-  'all', 
-  'createdBy'
+  'all',
+  'createdBy',
 ];
 
-const empty_flags = [
-  'all'
-]
+const empty_flags = ['all'];
 
 // shorthands for flags
 const flag_aliases = {
@@ -34,11 +40,11 @@ const flag_aliases = {
   p: 'priority',
   s: 'status',
   a: 'assignee',
-  cb: 'createdBy'
+  cb: 'createdBy',
 };
 
 // flags that need to preserve capitalization.
-const preserve_case = ['title', 'desc', 'assignee', 'createdBy']
+const preserve_case = ['title', 'desc', 'assignee', 'createdBy'];
 
 // for cmds that need to have exact numbers of flags
 // ex. close and delete should only ever have 1 flag -> id
@@ -131,7 +137,9 @@ export function parse(argv) {
         throw new Error(`Duplicate flag '${flag}': --${flag} was already set`); // flag dupe check
 
       if (flag === 'createdBy' && cmd !== 'view')
-        throw new Error(`Flag '--createdBy' can only be used with the 'view' command`);
+        throw new Error(
+          `Flag '--createdBy' can only be used with the 'view' command`,
+        );
 
       // take everything between this flag and next flag.
       // NOTE: next boundary is ANY dash-prefixed token (was "--"), matching the
@@ -150,22 +158,18 @@ export function parse(argv) {
       const flag_args = (preserve_case.includes(flag) ? raw_args : args)
         .slice(i + 1, next_flag_index)
         .join(' ');
- 
-      if (empty_flags.includes(flag)){
 
-           // for flags that need to be called with no values.
-          if (flag_args.trim() !== '')
-          throw new Error(`--'${current}' flag cannot be called with a value. `);
-
+      if (empty_flags.includes(flag)) {
+        // for flags that need to be called with no values.
+        if (flag_args.trim() !== '')
+          throw new Error(
+            `--'${current}' flag cannot be called with a value. `,
+          );
       } else {
-
-          // for flags that need values, verify a value is there. no blank values get through
-          if (flag_args.trim() === '')
-          throw new Error(`Missing value for flag '${flag}'`); 
-
+        // for flags that need values, verify a value is there. no blank values get through
+        if (flag_args.trim() === '')
+          throw new Error(`Missing value for flag '${flag}'`);
       }
-
-      
 
       // add flag and its info to the flag object.
       flags[flag] = flag_args;
@@ -201,13 +205,18 @@ export function parse(argv) {
     case 'delete':
       // needs id
       if (!flags['id']) throw new Error(`Missing required input: id`);
-      if (flags['id'] && flags['id'].slice(0,6) !== "manta-") flags['id'] = `manta-${flags['id']}` // auto add prefix to allow shorthand id searching
+      if (flags['id'] && flags['id'].slice(0, 6) !== 'manta-')
+        flags['id'] = `manta-${flags['id']}`; // auto add prefix to allow shorthand id searching
 
       break;
     case 'view':
-      if (flags['id'] && flags['id'].slice(0,6) !== "manta-") flags['id'] = `manta-${flags['id']}` // auto add prefix to allow shorthand id searching
+      if (flags['id'] && flags['id'].slice(0, 6) !== 'manta-')
+        flags['id'] = `manta-${flags['id']}`; // auto add prefix to allow shorthand id searching
 
-      if (flags['title'] || flags['desc']) throw new Error('Cannot filter by title or description.\n Can only filter by: status, priority, type, assignee')
+      if (flags['title'] || flags['desc'])
+        throw new Error(
+          'Cannot filter by title or description.\n Can only filter by: status, priority, type, assignee',
+        );
   }
 
   // for commands that expect an exact amount or range of flags

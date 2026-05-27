@@ -16,7 +16,7 @@ import { parse } from './parser.js';
 import { validate } from '../validation/validation.js';
 import { create_event } from './event.js';
 import { applyEvent } from '../storage/store.js';
-import { FETCH } from '../storage/fetch.js'
+import { FETCH } from '../storage/fetch.js';
 
 // 1. Parse argv -> { cmd, flags }.
 let parsed_command;
@@ -46,16 +46,15 @@ try {
 }
 
 // to test what the db actually fetches, for "view". Remove later when command is fully finished
-if (parsed_command.cmd === "view") {
+if (parsed_command.cmd === 'view') {
   try {
-    console.log(FETCH(parsed_command))
-    process.exit(0)
+    console.log(FETCH(parsed_command));
+    process.exit(0);
   } catch (err) {
     console.error(err.message);
     process.exit(1);
   }
 }
-
 
 // 3. Build the storage event from the parsed command.
 let event;
@@ -65,8 +64,6 @@ try {
   console.error(err.message);
   process.exit(1);
 }
-
-
 
 // 4. applyEvent (from src/storage/store.js) writes the event to both
 //    of Manta's stores:
