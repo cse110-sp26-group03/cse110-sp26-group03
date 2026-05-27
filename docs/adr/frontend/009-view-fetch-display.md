@@ -35,7 +35,7 @@ These happen in `parser.js` before `FETCH` runs:
 - **Short IDs.** A bare suffix gets `manta-` added in front, so `mt view h3kp`
   and `mt view manta-h3kp` are the same.
 - **Filters.** `view` accepts `status`, `priority`, `type`, `assignee`, and
-  `createdBy`. You can combine several at once (they all have to match).
+  `createdBy`. You can combine several at once.
 - **`--createdBy` (short: `--cb`)** only works with `view`; the parser blocks it
   on other commands.
 - **`--all`** is a `view`-only flag with no value. It includes closed issues in
