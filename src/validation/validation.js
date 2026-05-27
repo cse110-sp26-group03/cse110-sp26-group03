@@ -67,7 +67,6 @@ export function validate(parse_obj) {
 function check_id(id, cmd) {
 
   if (id === undefined) return null;
-  if (cmd === "view") id = `manta-${id}` // auto add prefix for view command to allow shorthand id searching
   if (ID_PATTERN.test(id)) return null;
   return `validate error: '${id}' is not a valid issue id`;
 }
