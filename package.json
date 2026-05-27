@@ -25,9 +25,16 @@
   "homepage": "https://github.com/cse110-sp26-group03/cse110-sp26-group03#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^12.0.8",
+    "@semantic-release/npm": "^13.1.5",
+    "@semantic-release/release-notes-generator": "^14.1.1",
     "eslint": "^10.4.0",
     "globals": "^17.6.0",
     "jsdoc": "^4.0.5",
-    "prettier": "3.8.3"
+    "prettier": "3.8.3",
+    "semantic-release": "^25.0.3"
   }
 }
