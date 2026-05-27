@@ -113,7 +113,7 @@ function applyUpdate(event) {
       'no issue with that ID exists.',
     );
   }
-
+  buildStoreError
   const fields = Object.keys(event.changes);
   if (fields.length === 0) {
     throw buildStoreError(
