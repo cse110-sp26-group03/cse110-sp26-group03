@@ -65,7 +65,6 @@ export function validate(parse_obj) {
 // checks whose required-ness depends on the command.
 
 function check_id(id) {
-
   if (id === undefined) return null;
   if (ID_PATTERN.test(id)) return null;
   return `validate error: '${id}' is not a valid issue id`;
