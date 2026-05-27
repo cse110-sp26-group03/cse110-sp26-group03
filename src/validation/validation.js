@@ -14,7 +14,7 @@ const DESC_MAX_LENGTH = 512;
 const PRIORITY_PATTERN = /^p([0-9])$/;
 const VALID_STATUSES = ['open', 'in_progress', 'closed'];
 const VALID_TYPES = ['bug', 'feature', 'task', 'docs', 'store'];
-const STRING_PATTERN = /^[a-zA-Z]+$/;
+const ASSIGNEE_PATTERN = /^[a-zA-Z]+$/;
 const USERNAME_PATTERN = /^[a-zA-Z0-9_]+$/;
 
 // which flags each command can have
@@ -64,7 +64,7 @@ export function validate(parse_obj) {
 // parsed format. each also receives the command name as a second argument for the few
 // checks whose required-ness depends on the command.
 
-function check_id(id, cmd) {
+function check_id(id) {
 
   if (id === undefined) return null;
   if (ID_PATTERN.test(id)) return null;
