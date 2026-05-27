@@ -23,7 +23,14 @@ export function FETCH(parse_obj) {
     try {
         if (parse_obj["flags"]["id"]) {
             // view specific issue
-            return db.query("SELECT * FROM issues WHERE id = ?").all(parse_obj["flags"]["id"]);
+
+            let issue = db.query("SELECT * FROM issues WHERE id = ?").get(parse_obj["flags"]["id"]);
+
+            if (!issue) {
+                throw new Error(`Issue with id ${parse_obj["flags"]["id"]} not found`);
+            }
+
+            return issue
 
         } else {
             // list behavior
