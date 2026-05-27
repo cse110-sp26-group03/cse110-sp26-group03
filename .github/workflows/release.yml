@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          # GITHUB_REF_NAME is e.g. v0.2.0; strip the leading v.
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Verify package.json and CHANGELOG.md are ready
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+
+          PKG_VERSION=$(jq -r .version package.json)
+          if [ "$VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::Tag version ($VERSION) does not match package.json version ($PKG_VERSION)."
+            echo "::error::Per ADR versioning/001, package.json is the single source of truth - they must match."
+            exit 1
+          fi
+
+          if ! grep -qE "^## \[$VERSION\]" CHANGELOG.md; then
+            echo "::error::No CHANGELOG.md entry found for version $VERSION."
+            exit 1
+          fi
+
+          if grep -qE "^## \[$VERSION\] - YYYY-MM-DD" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md entry for $VERSION still has the YYYY-MM-DD placeholder date - set the actual release date before tagging."
+            exit 1
+          fi
+
+      - name: Extract release notes from CHANGELOG.md
+        id: notes
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          NOTES_FILE="$RUNNER_TEMP/release_notes.md"
+          awk -v ver="$VERSION" '
+            { sub(/\r$/, "") }   # tolerate CRLF line endings
+            /^## \[/ {
+              if ($0 ~ "^## \\[" ver "\\]") { found=1; next }
+              else if (found) { exit }
+            }
+            found && /^---$/ { next }
+            found { print }
+          ' CHANGELOG.md > "$NOTES_FILE"
+          echo "notes_file=$NOTES_FILE" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Manta v${{ steps.version.outputs.version }}
+          body_path: ${{ steps.notes.outputs.notes_file }}
