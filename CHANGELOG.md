@@ -1,3 +1,11 @@
+# [1.1.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.0.0...v1.1.0) (2026-05-27)
+
+
+### Features
+
+* testing merging ([927948f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/927948ff6f7c5d0c2f99f054a4b0b6ebd7a8c8ff))
+* testing merging ([9ca007d](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/9ca007dd24d10908be667933ec0967e4fc265a8d))
+
 # 1.0.0 (2026-05-27)
 
 
