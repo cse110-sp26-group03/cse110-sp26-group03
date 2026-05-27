@@ -38,7 +38,7 @@ export function FETCH(parse_obj) {
             const conditions = [];
             const params = [];
 
-            if (!flags["all"] && !flags["status"]) conditions.push("status != 'closed'");
+            if (!("all" in parse_obj["flags"]) && !flags["status"]) conditions.push("status != 'closed'");
 
             
             for (const [flag, col] of Object.entries(filter_map)) {
