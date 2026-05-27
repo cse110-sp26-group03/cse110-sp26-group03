@@ -22,6 +22,7 @@
 import { appendFileSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
 import db from './db.js';
+import { recordAppend } from './replay.js';
 
 const DEFAULT_LOG_PATH = '.manta/manta.jsonl';
 
@@ -84,7 +85,8 @@ function applyCreate(event) {
     }
 
     // SQLite accepted the ID. JSONL is the durable record.
-    appendToLog(event);
+    const line = appendToLog(event);
+    recordAppend(line)
     return event;
   }
 
@@ -123,7 +125,8 @@ function applyUpdate(event) {
     );
   }
 
-  appendToLog(event);
+  const line = appendToLog(event);
+  recordAppend(line);
   updateIssue(event);
   return event;
 }
@@ -147,7 +150,8 @@ function applyDelete(event) {
     );
   }
 
-  appendToLog(event);
+  const line = appendToLog(event);
+  recordAppend(line);
   deleteIssue(event);
   return event;
 }
@@ -167,6 +171,7 @@ function appendToLog(event, logPath = DEFAULT_LOG_PATH) {
   mkdirSync(dirname(logPath), { recursive: true });
   const line = JSON.stringify(event) + '\n';
   appendFileSync(logPath, line, 'utf8');
+  return line;
 }
 
 // ---- SQLite reads (for validation) ---------------------------------
@@ -195,7 +200,7 @@ function issueExists(issueId) {
  * @throws {Error} UNIQUE constraint error if the ID already exists;
  *                 applyCreate catches this and retries.
  */
-function insertIssue(event) {
+export function insertIssue(event) {
   const i = event.issue;
   db.prepare(
     `
@@ -227,7 +232,7 @@ function insertIssue(event) {
  *
  * @param {object} event - An update event with issueId and a changes object.
  */
-function updateIssue(event) {
+export function updateIssue(event) {
   const fields = Object.keys(event.changes);
   if (fields.length === 0) return;
 
@@ -246,7 +251,7 @@ function updateIssue(event) {
  *
  * @param {object} event - A delete event with an issueId.
  */
-function deleteIssue(event) {
+export function deleteIssue(event) {
   db.prepare(`DELETE FROM issues WHERE ID = ?`).run(event.issueId);
 }
 
