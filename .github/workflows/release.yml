@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [main]
+    branches: [main, chore/CI-changelog-versioning]
 
 permissions:
   contents: write
