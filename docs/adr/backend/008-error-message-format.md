@@ -1,4 +1,4 @@
-# ADR-009: Backend Error Message Format
+# ADR-008: Backend Error Message Format
 
 ## Status
 
