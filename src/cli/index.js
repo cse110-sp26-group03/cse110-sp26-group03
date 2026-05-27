@@ -16,7 +16,8 @@ import { parse } from './parser.js';
 import { validate } from '../validation/validation.js';
 import { create_event } from './event.js';
 import { applyEvent } from '../storage/store.js';
-import { FETCH } from '../storage/fetch.js';
+import { FETCH } from '../storage/fetch.js'
+import { DISPLAY } from './display.js';
 
 // 1. Parse argv -> { cmd, flags }.
 let parsed_command;
@@ -48,8 +49,8 @@ try {
 // to test what the db actually fetches, for "view". Remove later when command is fully finished
 if (parsed_command.cmd === 'view') {
   try {
-    console.log(FETCH(parsed_command));
-    process.exit(0);
+    const result = FETCH(parsed_command);
+    await DISPLAY(parsed_command, result);
   } catch (err) {
     console.error(err.message);
     process.exit(1);
@@ -100,3 +101,4 @@ switch (parsed_command.cmd) {
     console.log(`Deleted issue ${event.issueId}`);
     break;
 }
+
