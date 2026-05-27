@@ -1,3 +1,0 @@
-{"type":"issue.created","timestamp":"2026-05-25T19:21:55.791Z","actor":"ryan","issueId":"manta-a787","issue":{"title":"sheesh","description":"","status":"open","priority":"p1","issueType":"task","assignee":"me","createdAt":"2026-05-25T19:21:55.791Z","createdBy":"ryan","updatedAt":"2026-05-25T19:21:55.791Z","updatedBy":"ryan"}}
-{"type":"issue.updated","timestamp":"2026-05-25T19:22:11.454Z","actor":"ryan","issueId":"manta-a787","changes":{"status":"in_progress","updatedAt":"2026-05-25T19:22:11.454Z","updatedBy":"ryan"}}
-{"type":"issue.updated","timestamp":"2026-05-25T19:22:22.639Z","actor":"ryan","issueId":"manta-a787","changes":{"status":"closed","updatedAt":"2026-05-25T19:22:22.639Z","updatedBy":"ryan"}}
