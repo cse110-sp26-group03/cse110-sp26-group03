@@ -14,7 +14,8 @@ const DESC_MAX_LENGTH = 512;
 const PRIORITY_PATTERN = /^p([0-9])$/;
 const VALID_STATUSES = ['open', 'in_progress', 'closed'];
 const VALID_TYPES = ['bug', 'feature', 'task', 'docs', 'store'];
-const ASSIGNEE_PATTERN = /^[a-zA-Z]+$/;
+const STRING_PATTERN = /^[a-zA-Z]+$/;
+const USERNAME_PATTERN = /^[a-zA-Z0-9_]+$/;
 
 // which flags each command can have
 const possible_flags = {
@@ -22,6 +23,7 @@ const possible_flags = {
   update: ['id', 'title', 'desc', 'priority', 'status', 'type', 'assignee'],
   close: ['id'],
   delete: ['id'],
+  view: ['id', 'priority', 'status', 'type', 'assignee', 'createdBy']
 };
 
 // maps flag name to its check function
@@ -33,6 +35,7 @@ const validations = {
   status: check_status,
   type: check_type,
   assignee: check_assignee,
+  createdBy: check_createdBy,
 };
 
 // master validate function. takes in parse object and returns true if all checks pass, otherwise
@@ -111,4 +114,11 @@ function check_assignee(assignee) {
   if (assignee === undefined) return null;
   if (ASSIGNEE_PATTERN.test(assignee)) return null;
   return `validate error: '${assignee}' is not a valid assignee`;
+}
+
+function check_createdBy(creator, cmd) {
+  if (cmd !== 'view') return `validate error: 'createdBy' is not a valid flag for '${cmd}'`;
+  if (creator === undefined) return null;
+  if (USERNAME_PATTERN.test(creator)) return null;
+  return `validate error: '${creator}' is not a valid username`;
 }

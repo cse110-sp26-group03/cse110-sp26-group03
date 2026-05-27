@@ -9,7 +9,7 @@
 // }
 
 // all valid commands
-const cmds = ['create', 'update', 'close', 'delete', 'version'];
+const cmds = ['create', 'update', 'close', 'delete', 'version', 'view', 'replay'];
 
 // all valid flags
 const possible_flags = [
@@ -19,7 +19,13 @@ const possible_flags = [
   'priority',
   'type',
   'assignee',
+  'all', 
+  'createdBy'
 ];
+
+const empty_flags = [
+  'all'
+]
 
 // shorthands for flags
 const flag_aliases = {
@@ -28,7 +34,11 @@ const flag_aliases = {
   p: 'priority',
   s: 'status',
   a: 'assignee',
+  cb: 'createdBy'
 };
+
+// flags that need to preserve capitalization.
+const preserve_case = ['title', 'desc', 'assignee', 'createdBy']
 
 // for cmds that need to have exact numbers of flags
 // ex. close and delete should only ever have 1 flag -> id
@@ -87,6 +97,7 @@ export function parse(argv) {
     case 'update':
     case 'close':
     case 'delete':
+    case 'view':
       if (in_between) flags['id'] = in_between; // map to "id" if in_between is not ""
       break;
     case 'version':
@@ -119,6 +130,9 @@ export function parse(argv) {
       if (flags[flag])
         throw new Error(`Duplicate flag '${flag}': --${flag} was already set`); // flag dupe check
 
+      if (flag === 'createdBy' && cmd !== 'view')
+        throw new Error(`Flag '--createdBy' can only be used with the 'view' command`);
+
       // take everything between this flag and next flag.
       // NOTE: next boundary is ANY dash-prefixed token (was "--"), matching the
       // detection above so a malformed flag like "-d" ends the current flag's value
@@ -133,17 +147,25 @@ export function parse(argv) {
 
       // join everything in between this and next flag into one string.
       // use raw_args for title, desc, and assignee to preserve capitalization
-      const preserve_case = ['title', 'desc', 'assignee'].includes(flag);
-      const flag_args = (preserve_case ? raw_args : args)
+      const flag_args = (preserve_case.includes(flag) ? raw_args : args)
         .slice(i + 1, next_flag_index)
         .join(' ');
+ 
+      if (empty_flags.includes(flag)){
 
-      // a flag that's present must carry a value. an empty (or whitespace-only)
-      // value means the user wrote the flag with nothing after it, e.g.
-      //      update manta-h35p --title --priority p2
-      // reject it here so blank values never reach the parse object.
-      if (flag_args.trim() === '')
-        throw new Error(`Missing value for flag '${current}'`);
+           // for flags that need to be called with no values.
+          if (flag_args.trim() !== '')
+          throw new Error(`--'${current}' flag cannot be called with a value. `);
+
+      } else {
+
+          // for flags that need values, verify a value is there. no blank values get through
+          if (flag_args.trim() === '')
+          throw new Error(`Missing value for flag '${flag}'`); 
+
+      }
+
+      
 
       // add flag and its info to the flag object.
       flags[flag] = flag_args;
@@ -180,6 +202,8 @@ export function parse(argv) {
       // needs id
       if (!flags['id']) throw new Error(`Missing required input: id`);
       break;
+    case 'view':
+      if (flags['title'] || flags['desc']) throw new Error('Cannot filter by title or description.\n Can only filter by: status, priority, type, assignee')
   }
 
   // for commands that expect an exact amount or range of flags
