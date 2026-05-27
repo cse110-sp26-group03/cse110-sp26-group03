@@ -94,35 +94,44 @@ nor `--status` is given, it adds `status != 'closed'`. Results come back
 
 ### `display(data)` — the formatting layer
 
-`display` runs on whatever `FETCH` returns and picks a formatter by checking the
-input:
+`display.js` isn't built yet, so this section describes the *idea* rather than a
+fixed implementation. The point is the contract — `display` consumes whatever
+`FETCH` returns and decides how to render it from the shape alone. The code
+below is one illustrative way to do that, not a locked-in design.
+
+The core idea: `display` picks a formatter by checking the input shape.
 
 ```js
-// pseudocode
+// example, not final — illustrates shape-based dispatch
 function display(data) {
   if (Array.isArray(data)) displayList(data);
   else                     displayIssue(data);
 }
 ```
 
-- **`displayIssue(issue)`** — always gets one object. Prints the full detail of
-  a single issue.
-- **`displayList(issues)`** — always gets an array. Prints a scrollable list;
-  having the array indices makes paging through it easy.
+- **`displayIssue(issue)`** — gets one object. Prints the full detail of a
+  single issue.
+- **`displayList(issues)`** — gets an array. Prints the list of issues.
 
 `display` shouldn't throw during normal use — it's just printing data that
 `FETCH` already checked. Any error handling is a safety net, not the main path.
 
-#### Paging through the list
+#### Paging through the list (one possible approach)
 
-The list view is meant to be scrollable, not one big dump:
+The list view is meant to be scrollable rather than one big dump. How that
+scrolling actually works is open — the following is an *example* of what it
+could look like, not a requirement:
 
-- Use `readline` (works in both Bun and Node) to listen for key presses.
+- Use something like `readline` (works in both Bun and Node) to listen for key
+  presses.
 - Arrow keys move between pages; rewrite the current line in place instead of
   reprinting everything.
 - Keep looping until the user presses **Esc** (or similar) to quit.
 - On the **first** page, "prev" does nothing; on the **last** page, "next" does
   nothing — and **no error**. These buttons can be greyed out or hidden.
+
+The takeaway is "scrollable, paged, doesn't error at the ends" — the exact
+mechanism is an implementation detail to be decided when `display.js` is built.
 
 ### How `index.js` connects it
 
@@ -151,5 +160,6 @@ just debug code and should be removed then.
   breaks display.
 - **Key casing differs.** DB rows are PascalCase but the event schema is
   camelCase ([[004-event-issue-object]]), which is easy to mix up.
-- **Paging adds complexity.** The key-press paging needs a `readline` loop and
-  line-redraw logic that the rest of the one-shot CLI doesn't have.
+- **Paging adds complexity.** A scrollable list needs interactive, stateful
+  rendering (e.g. a key-press loop with line redraws) that the rest of the
+  one-shot CLI doesn't have — whatever approach `display.js` lands on.
