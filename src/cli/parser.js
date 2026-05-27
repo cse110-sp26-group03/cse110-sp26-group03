@@ -201,10 +201,11 @@ export function parse(argv) {
     case 'delete':
       // needs id
       if (!flags['id']) throw new Error(`Missing required input: id`);
-      
+      if (flags['id'] && flags['id'].slice(0,6) !== "manta-") flags['id'] = `manta-${flags['id']}` // auto add prefix to allow shorthand id searching
+
       break;
     case 'view':
-      if (flags['id'] && flags['id'].slice(0,5) !== "manta") flags['id'] = `manta-${flags['id']}` // auto add prefix for view command to allow shorthand id searching
+      if (flags['id'] && flags['id'].slice(0,6) !== "manta-") flags['id'] = `manta-${flags['id']}` // auto add prefix to allow shorthand id searching
 
       if (flags['title'] || flags['desc']) throw new Error('Cannot filter by title or description.\n Can only filter by: status, priority, type, assignee')
   }
