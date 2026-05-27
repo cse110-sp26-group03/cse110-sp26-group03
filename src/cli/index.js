@@ -3,7 +3,7 @@
 //
 // Manta CLI entry point.
 //
-// Pipeline: argv -> parse -> validate -> create_event -> applyEvent -> print.
+// Pipeline: argv -> parse -> validate -> create_event -> syncFromLog -> applyEvent -> print.
 // Exception: version reads package.json and exits before storage.
 
 /* global process */
@@ -16,6 +16,7 @@ import { parse } from './parser.js';
 import { validate } from '../validation/validation.js';
 import { create_event } from './event.js';
 import { applyEvent } from '../storage/store.js';
+import { syncFromLog } from '../storage/replay.js';
 
 // 1. Parse argv -> { cmd, flags }.
 let parsed_command;
@@ -53,7 +54,18 @@ try {
   process.exit(1);
 }
 
-// 4. applyEvent (from src/storage/store.js) writes the event to both
+// 4. Rebuild the SQLite cache from the JSONL log. This catches up any
+//    events teammates added (e.g. after a `git pull`) so the cache
+//    matches the durable record before we apply the current command.
+//    No-op on first run when the log doesn't exist yet.
+try {
+  syncFromLog();
+} catch (err) {
+  console.error(err.message);
+  process.exit(1);
+}
+
+// 5. applyEvent (from src/storage/store.js) writes the event to both
 //    of Manta's stores:
 //    It returns the event back.
 //    On create events, storage generates the
@@ -65,7 +77,7 @@ try {
   process.exit(1);
 }
 
-// 5. Print a success message based on which command was run.
+// 6. Print a success message based on which command was run.
 //      - create  -> show the new issue's id and title
 //      - update  -> show which fields changed, formatted as "key=value"
 //      - close   -> confirm the id was closed

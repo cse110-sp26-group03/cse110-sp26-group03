@@ -39,18 +39,26 @@ const ID_MAX_RETRIES = 5;
  * Updates and deletes write to JSONL first (durability before visibility),
  * then SQLite.
  *
+ * When `opts.replay` is true, this function is being invoked by the
+ * replay layer to rebuild the SQLite cache from an existing JSONL log.
+ * In replay mode we trust event.issueId from the log (no regeneration,
+ * no retries) and we do NOT append to JSONL — the line is already in
+ * the file we're reading from.
+ *
  * @param {object} event - Event object per ADR-004 (created/updated/deleted).
+ * @param {object} [opts] - Apply options.
+ * @param {boolean} [opts.replay=false] - True when called from replay.js.
  * @returns {object} The persisted event (with issueId set for creates).
  * @throws {Error} If event.type is unrecognized.
  */
-export function applyEvent(event) {
+export function applyEvent(event, opts = {}) {
   switch (event.type) {
     case 'issue.created':
-      return applyCreate(event);
+      return applyCreate(event, opts);
     case 'issue.updated':
-      return applyUpdate(event);
+      return applyUpdate(event, opts);
     case 'issue.deleted':
-      return applyDelete(event);
+      return applyDelete(event, opts);
     default:
       throw buildStoreError(event.type, null, 'unrecognized event type.');
   }
@@ -61,16 +69,28 @@ export function applyEvent(event) {
 /**
  * Persist a create event.
  *
- * Generates a random ID and inserts into SQLite, retrying on UNIQUE
- * collision up to ID_MAX_RETRIES times. Appends to JSONL only after
- * SQLite accepts the row, so the log never records a collided ID.
+ * Normal mode: generates a random ID and inserts into SQLite, retrying
+ * on UNIQUE collision up to ID_MAX_RETRIES times. Appends to JSONL only
+ * after SQLite accepts the row, so the log never records a collided ID.
+ *
+ * Replay mode: uses event.issueId from the log as-is. No generation, no
+ * retries, no JSONL append. A UNIQUE error here means the log itself has
+ * a collision (two teammates picked the same suffix offline) — we let it
+ * surface rather than silently rewriting history.
  *
  * @param {object} event - A create event; event.issueId is filled in here.
+ * @param {object} [opts] - Apply options.
+ * @param {boolean} [opts.replay=false] - True when called from replay.js.
  * @returns {object} The event with its assigned issueId.
  * @throws {Error} If a unique ID can't be generated within ID_MAX_RETRIES,
  *                 or if SQLite rejects the insert for any other reason.
  */
-function applyCreate(event) {
+function applyCreate(event, opts = {}) {
+  if (opts.replay) {
+    insertIssue(event);
+    return event;
+  }
+
   for (let attempt = 1; attempt <= ID_MAX_RETRIES; attempt++) {
     event.issueId = generateIssueId();
 
@@ -101,11 +121,18 @@ function applyCreate(event) {
  * Checks the issue exists before writing anything, so we never log an
  * update for a missing issue. Then appends to JSONL and applies to SQLite.
  *
+ * In replay mode, the JSONL append is skipped because the line we are
+ * applying came from the log itself. Existence and empty-changes checks
+ * still run so a malformed log surfaces loudly instead of silently
+ * corrupting the cache.
+ *
  * @param {object} event - An update event with issueId and a changes object.
+ * @param {object} [opts] - Apply options.
+ * @param {boolean} [opts.replay=false] - True when called from replay.js.
  * @returns {object} The event, unchanged.
  * @throws {Error} If the issue doesn't exist or changes is empty.
  */
-function applyUpdate(event) {
+function applyUpdate(event, opts = {}) {
   if (!issueExists(event.issueId)) {
     throw buildStoreError(
       'update',
@@ -123,7 +150,9 @@ function applyUpdate(event) {
     );
   }
 
-  appendToLog(event);
+  if (!opts.replay) {
+    appendToLog(event);
+  }
   updateIssue(event);
   return event;
 }
@@ -134,11 +163,16 @@ function applyUpdate(event) {
  * Checks the issue exists before writing anything, so we never log a
  * delete for a missing issue. Then appends to JSONL and removes from SQLite.
  *
+ * In replay mode, the JSONL append is skipped because the line we are
+ * applying came from the log itself.
+ *
  * @param {object} event - A delete event with an issueId.
+ * @param {object} [opts] - Apply options.
+ * @param {boolean} [opts.replay=false] - True when called from replay.js.
  * @returns {object} The event, unchanged.
  * @throws {Error} If the issue doesn't exist
  */
-function applyDelete(event) {
+function applyDelete(event, opts = {}) {
   if (!issueExists(event.issueId)) {
     throw buildStoreError(
       'delete',
@@ -147,7 +181,9 @@ function applyDelete(event) {
     );
   }
 
-  appendToLog(event);
+  if (!opts.replay) {
+    appendToLog(event);
+  }
   deleteIssue(event);
   return event;
 }
