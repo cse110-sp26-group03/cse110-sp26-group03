@@ -63,7 +63,7 @@ export function FETCH(parse_obj) {
         .all(...params);
     }
   } catch (err) {
-    throw new Error('Query failed: ' + err.message);
+    throw new Error('Query failed: ' + err.message, { cause: err });
   }
 }
 
