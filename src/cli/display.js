@@ -15,14 +15,16 @@ const PAGE_SIZE = 5;
 
 // column widths for list display
 const COL = {
-    id:       8,
-    title:    50,
-    priority: 10,
-    status:   14,
-    type:     10,
+    id:        8,
+    title:     50,
+    priority:  10,
+    status:    14,
+    type:      10,
+    createdBy: 14,
 };
 
-const TABLE_WIDTH = COL.id + COL.title + COL.priority + COL.status + COL.type + 8;
+const TABLE_WIDTH =
+    COL.id + COL.title + COL.priority + COL.status + COL.type + COL.createdBy + 10;
 
 /**
  * Main display function. Dispatches to list or individual issue display
@@ -132,7 +134,8 @@ function print_header() {
         col("TITLE",    COL.title)    + "  " +
         col("PRIORITY", COL.priority) + "  " +
         col("STATUS",   COL.status)   + "  " +
-        col("TYPE",     COL.type);
+        col("TYPE",     COL.type)     + "  " +
+        col("CREATED BY", COL.createdBy);
     console.log(header);
     console.log("-".repeat(TABLE_WIDTH));
 }
@@ -148,7 +151,8 @@ function print_row(issue) {
         col(issue.Title,        COL.title)    + "  " +
         col(issue.Priority,     COL.priority) + "  " +
         col(issue.Status,       COL.status)   + "  " +
-        col(issue.IssueType,    COL.type);
+        col(issue.IssueType,    COL.type)     + "  " +
+        col(issue.CreatedBy,    COL.createdBy);
     console.log(row);
 }
 
@@ -223,11 +227,11 @@ function col(str, width) {
 //
 // DISPLAY list output (terminal):
 //
-// ID        TITLE                           PRIORITY    STATUS          TYPE
-// -------------------------------------------------------------------------------
-// 9fz0      My issue                        p5          open            task
-// ht8j      Issue                           p5          open            task
-// ...       ...                             ...         ...             ...
+// ID        TITLE                           PRIORITY    STATUS          TYPE        CREATED BY
+// -----------------------------------------------------------------------------------------------
+// 9fz0      My issue                        p5          open            task        ikey
+// ht8j      Issue                           p5          open            task        ikey
+// ...       ...                             ...         ...             ...         ...
 //
 //                           < prev.    next >
 //                              Page 1 of 3
