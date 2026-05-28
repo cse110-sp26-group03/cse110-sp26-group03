@@ -113,6 +113,10 @@ async function display_list(issues) {
 function render_page(issues, page, total_pages, is_first) {
     const lines = [];
 
+    // top margin so the table isn't flush against the invoking command
+    lines.push("");
+    lines.push("");
+
     lines.push(...header_lines());
 
     const start = page * PAGE_SIZE;
