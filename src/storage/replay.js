@@ -83,6 +83,7 @@ export function syncFromLog(logPath = DEFAULT_LOG_PATH) {
   // running hasher empty so the first append rolls forward correctly.
   if (!existsSync(logPath)) {
     rollingHasher = newHasher();
+    db.prepare(`DELETE FROM issues`).run();   // no log = no events = empty cache
     return false;
   }
 
