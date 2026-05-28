@@ -22,7 +22,7 @@
 import { appendFileSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
 import db from './db.js';
-import { recordAppend } from './replay.js';
+import { recordAppend, syncFromLog } from './replay.js';
 
 const DEFAULT_LOG_PATH = '.manta/manta.jsonl';
 
@@ -86,7 +86,7 @@ function applyCreate(event) {
 
     // SQLite accepted the ID. JSONL is the durable record.
     const line = appendToLog(event);
-    recordAppend(line)
+    recordAppend(line);
     return event;
   }
 
@@ -100,8 +100,10 @@ function applyCreate(event) {
 /**
  * Persist an update event.
  *
- * Checks the issue exists before writing anything, so we never log an
- * update for a missing issue. Then appends to JSONL and applies to SQLite.
+ * Checks the issue exists before writing anything, so we never log an update for a missing issue.
+ * If the issue doesn't exist, we call a replay function to update the SQLite from the JSONL.
+ * If the issue still doesn't exist in the updated SQLite, we throw an error.
+ * Otherwise, we append to the JSONL and apply the update to the SQLite.
  *
  * @param {object} event - An update event with issueId and a changes object.
  * @returns {object} The event, unchanged.
@@ -109,11 +111,14 @@ function applyCreate(event) {
  */
 function applyUpdate(event) {
   if (!issueExists(event.issueId)) {
-    throw buildStoreError(
-      'update',
-      event.issueId,
-      'no issue with that ID exists.',
-    );
+    syncFromLog();
+    if (!issueExists(event.issueId)) {
+      throw buildStoreError(
+        'update',
+        event.issueId,
+        'no issue with that ID exists.',
+      );
+    }
   }
 
   const fields = Object.keys(event.changes);
@@ -134,8 +139,10 @@ function applyUpdate(event) {
 /**
  * Persist a delete event.
  *
- * Checks the issue exists before writing anything, so we never log a
- * delete for a missing issue. Then appends to JSONL and removes from SQLite.
+ * Checks the issue exists before writing anything, so we never log a delete for a missing issue. 
+ * If the issue doesn't exist, we call a replay function to update the SQLite from the JSONL.
+ * If the issue still doesn't exist in the updated SQLite, we throw an error.
+ * Otherwise, we append to the JSONL and remove from the SQLite.
  *
  * @param {object} event - A delete event with an issueId.
  * @returns {object} The event, unchanged.
@@ -143,11 +150,14 @@ function applyUpdate(event) {
  */
 function applyDelete(event) {
   if (!issueExists(event.issueId)) {
-    throw buildStoreError(
-      'delete',
-      event.issueId,
-      'no issue with that ID exists.',
-    );
+    syncFromLog();
+    if (!issueExists(event.issueId)) {
+      throw buildStoreError(
+        'update',
+        event.issueId,
+        'no issue with that ID exists.',
+      );
+    }
   }
 
   const line = appendToLog(event);
