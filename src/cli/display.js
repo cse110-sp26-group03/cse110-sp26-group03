@@ -64,7 +64,8 @@ async function display_list(issues) {
     const total_pages = Math.ceil(issues.length / PAGE_SIZE);
     let page = 0;
 
-    render_page(issues, page, total_pages);
+    // first render appends after existing terminal output (no clear)
+    render_page(issues, page, total_pages, true);
 
     readline.emitKeypressEvents(process.stdin);
     if (process.stdin.isTTY) process.stdin.setRawMode(true);
@@ -73,62 +74,78 @@ async function display_list(issues) {
         process.stdin.on("keypress", (str, key) => {
             if (!key) return;
 
-            // ESC or ctrl+c to exit
+            // ESC or ctrl+c to exit — leave the render in history, drop to a new line
             if (key.name === "escape" || (key.ctrl && key.name === "c")) {
                 if (process.stdin.isTTY) process.stdin.setRawMode(false);
                 process.stdin.pause();
-                console.clear();
+                console.log("");
                 process.exit(0);
             }
 
             // right arrow
             if (key.name === "right" && page < total_pages - 1) {
                 page++;
-                render_page(issues, page, total_pages);
+                render_page(issues, page, total_pages, false);
             }
 
             //left arrow
             if (key.name === "left" && page > 0) {
                 page--;
-                render_page(issues, page, total_pages);
+                render_page(issues, page, total_pages, false);
             }
         });
     });
 }
 
 /**
- * Clear the terminal and render the current page of the issue list.
+ * Render the current page of the issue list.
+ *
+ * On the first render the output is appended after existing terminal output.
+ * On subsequent renders the previous page is overwritten in place by moving
+ * the cursor up over it and clearing downward — this keeps scrollback intact
+ * (unlike console.clear) so the table survives after exit.
  *
  * @param {object[]} issues      - Full array of issues from FETCH().
  * @param {number}   page        - Current page index.
  * @param {number}   total_pages - Total number of pages.
+ * @param {boolean}  is_first    - True for the initial render (no overwrite).
  */
-function render_page(issues, page, total_pages) {
-    console.clear();
+function render_page(issues, page, total_pages, is_first) {
+    const lines = [];
+
+    lines.push(...header_lines());
 
     const start = page * PAGE_SIZE;
     const slice = issues.slice(start, start + PAGE_SIZE);
-
-    print_header();
     for (const issue of slice) {
-        print_row(issue);
+        lines.push(row_line(issue));
     }
 
     // pad empty rows so layout stays stable across pages
     for (let i = slice.length; i < PAGE_SIZE; i++) {
-        console.log("");
+        lines.push("");
     }
 
-    console.log("");
-    print_pagination(page, total_pages);
-    console.log("");
-    console.log("Press ESC to exit");
+    lines.push("");
+    lines.push(...pagination_lines(page, total_pages));
+    lines.push("");
+    lines.push("Press ESC to exit");
+
+    // overwrite the previous render in place (skip on the first render)
+    if (!is_first) {
+        readline.moveCursor(process.stdout, 0, -lines.length);
+        readline.clearScreenDown(process.stdout);
+    }
+
+    console.log(lines.join("\n"));
 }
 
 /**
- * Render the table header row and separator line.
+ * Build the table header row and separator line.
+ *
+ * @returns {string[]} The header and separator lines.
  */
-function print_header() {
+function header_lines() {
     const header =
         col("ID",       COL.id)       + "  " +
         col("TITLE",    COL.title)    + "  " +
@@ -136,39 +153,42 @@ function print_header() {
         col("STATUS",   COL.status)   + "  " +
         col("TYPE",     COL.type)     + "  " +
         col("CREATED BY", COL.createdBy);
-    console.log(header);
-    console.log("-".repeat(TABLE_WIDTH));
+    return [header, "-".repeat(TABLE_WIDTH)];
 }
 
 /**
- * Render a single issue row in the list table.
+ * Build a single issue row for the list table.
  *
  * @param {object} issue - Issue object from FETCH().
+ * @returns {string} The formatted row.
  */
-function print_row(issue) {
-    const row =
+function row_line(issue) {
+    return (
         col(short_id(issue.ID), COL.id)       + "  " +
         col(issue.Title,        COL.title)    + "  " +
         col(issue.Priority,     COL.priority) + "  " +
         col(issue.Status,       COL.status)   + "  " +
         col(issue.IssueType,    COL.type)     + "  " +
-        col(issue.CreatedBy,    COL.createdBy);
-    console.log(row);
+        col(issue.CreatedBy,    COL.createdBy)
+    );
 }
 
 /**
- * Render the pagination bar with prev/next buttons in the center.
+ * Build the pagination bar with prev/next buttons in the center.
  *
  * @param {number} page        - Current page index (0-based).
  * @param {number} total_pages - Total number of pages.
+ * @returns {string[]} The nav and page-label lines.
  */
-function print_pagination(page, total_pages) {
+function pagination_lines(page, total_pages) {
     const nav = "< prev.    next >";
     const page_label = `Page ${page + 1} of ${total_pages}`;
     const nav_padding = Math.floor((TABLE_WIDTH - nav.length) / 2);
     const label_padding = Math.floor((TABLE_WIDTH - page_label.length) / 2);
-    console.log(" ".repeat(nav_padding) + nav);
-    console.log(" ".repeat(label_padding) + page_label);
+    return [
+        " ".repeat(nav_padding) + nav,
+        " ".repeat(label_padding) + page_label,
+    ];
 }
 
 // ---- Individual issue display --------------------------------------
