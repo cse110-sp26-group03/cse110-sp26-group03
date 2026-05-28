@@ -1,9 +1,6 @@
 import { Database } from 'bun:sqlite';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const db = new Database(join(__dirname, '../../.manta/manta.db'), {
+const db = new Database('.manta/manta.db', {
   readonly: true,
 });
 
