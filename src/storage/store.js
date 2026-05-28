@@ -6,25 +6,32 @@
 // (.manta/manta.jsonl, the source of truth, committed to git) and the
 // SQLite cache (.manta/manta.db, the local query layer, gitignored).
 //
-// Per backend ADR-008, this file exposes a single function, applyEvent(event),
-// which dispatches based on event.type. CLI commands, the MCP server,
-// and the replay layer all call applyEvent — none of them touch JSONL
-// or SQLite directly.
+// Per backend ADR-008, the main entry point is applyEvent(event), which
+// dispatches based on event.type. CLI commands call
+// applyEvent — they never touch JSONL or SQLite directly.
 //
-// Per frontend ADR-004, events come in three types — issue.created, issue.updated,
-// issue.deleted — each with a specific shape. store.js trusts events.js
-// to construct them correctly and does not validate them here.
+// store.js also exports the three SQLite-write helpers (insertIssue,
+// updateIssue, deleteIssue) for replay.js to reuse when rebuilding the
+// cache from the log. Replay does NOT call applyEvent — it has the real
+// IDs already, must not re-append to JSONL, and only needs to write
+// SQLite. Sharing these helpers keeps the live-write and replay paths
+// using the exact same SQL.
 //
-// Per backend ADR-005, store.js generates issue IDs on create events. SQLite's
-// PRIMARY KEY constraint catches the rare collision; store.js retries
-// up to 5 times before failing loudly.
+// Per frontend ADR-004, events come in three types — issue.created,
+// issue.updated, issue.deleted — each with a specific shape. store.js
+// trusts events.js to construct them correctly and does not validate
+// them here.
+//
+// Per backend ADR-005, store.js generates issue IDs on create events.
+// SQLite's PRIMARY KEY constraint catches the rare collision; store.js
+// retries up to 5 times before failing loudly.
 
 import { appendFileSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
 import db from './db.js';
-import { recordAppend, syncFromLog } from './replay.js';
+import { recordAppend } from './replay.js';
 
-const DEFAULT_LOG_PATH = '.manta/manta.jsonl';
+const DEFAULT_LOG_PATH = '.manta/manta.jsonl';  
 
 // Crockford base32 alphabet — drops i, l, o, u to avoid visual confusion.
 const CROCKFORD_ALPHABET = '0123456789abcdefghjkmnpqrstvwxyz';
@@ -100,10 +107,8 @@ function applyCreate(event) {
 /**
  * Persist an update event.
  *
- * Checks the issue exists before writing anything, so we never log an update for a missing issue.
- * If the issue doesn't exist, we call a replay function to update the SQLite from the JSONL.
- * If the issue still doesn't exist in the updated SQLite, we throw an error.
- * Otherwise, we append to the JSONL and apply the update to the SQLite.
+ * Checks the issue exists before writing anything, so we never log an
+ * update for a missing issue. Then appends to JSONL and applies to SQLite.
  *
  * @param {object} event - An update event with issueId and a changes object.
  * @returns {object} The event, unchanged.
@@ -111,14 +116,11 @@ function applyCreate(event) {
  */
 function applyUpdate(event) {
   if (!issueExists(event.issueId)) {
-    syncFromLog();
-    if (!issueExists(event.issueId)) {
-      throw buildStoreError(
-        'update',
-        event.issueId,
-        'no issue with that ID exists.',
-      );
-    }
+    throw buildStoreError(
+      'update',
+      event.issueId,
+      'no issue with that ID exists.',
+    );
   }
 
   const fields = Object.keys(event.changes);
@@ -139,10 +141,8 @@ function applyUpdate(event) {
 /**
  * Persist a delete event.
  *
- * Checks the issue exists before writing anything, so we never log a delete for a missing issue. 
- * If the issue doesn't exist, we call a replay function to update the SQLite from the JSONL.
- * If the issue still doesn't exist in the updated SQLite, we throw an error.
- * Otherwise, we append to the JSONL and remove from the SQLite.
+ * Checks the issue exists before writing anything, so we never log a
+ * delete for a missing issue. Then appends to JSONL and removes from SQLite.
  *
  * @param {object} event - A delete event with an issueId.
  * @returns {object} The event, unchanged.
@@ -150,14 +150,11 @@ function applyUpdate(event) {
  */
 function applyDelete(event) {
   if (!issueExists(event.issueId)) {
-    syncFromLog();
-    if (!issueExists(event.issueId)) {
-      throw buildStoreError(
-        'update',
-        event.issueId,
-        'no issue with that ID exists.',
-      );
-    }
+    throw buildStoreError(
+      'delete',
+      event.issueId,
+      'no issue with that ID exists.',
+    );
   }
 
   const line = appendToLog(event);
