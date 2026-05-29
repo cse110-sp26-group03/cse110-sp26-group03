@@ -6,7 +6,6 @@
 // Pipeline: argv -> parse -> validate -> create_event -> applyEvent -> print.
 // Exception: version reads package.json and exits before storage.
 
-
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
