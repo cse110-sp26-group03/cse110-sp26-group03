@@ -217,6 +217,7 @@ function parseLog(contents) {
     } catch (err) {
       throw new Error(
         `Cannot replay log: line ${i + 1} is not valid JSON. ${err.message}`,
+        { cause: err },
       );
     }
   }
