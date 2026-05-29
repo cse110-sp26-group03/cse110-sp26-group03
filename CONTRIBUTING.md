@@ -56,16 +56,29 @@ chore: configure eslint
 
 ## Commit Types
 
-| Type | Purpose |
-|---|---|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation |
-| `test` | Tests |
-| `style` | Styling/UI-only changes |
-| `refactor` | Code cleanup without behavior changes |
-| `chore` | Tooling/configuration |
+| Type | Purpose | Version Bump |
+|---|---|---|
+| `feat` | New feature | Minor |
+| `fix` | Bug fix | Patch |
+| `docs` | Documentation | None | 
+| `test` | Tests | None |
+| `style` | Styling/UI-only changes | None |
+| `refactor` | Code cleanup without behavior changes | None |
+| `chore` | Tooling/configuration | None |
 
+If your changes are large enough to warrant a **major** version bump, put `!` after the <type> 
+
+Example: `feat!: add issue creation modal`
+
+### What Triggers a Release
+
+Only commits with the following types generate a new version when merged to `main`:
+
+- `<type>!` → major bump (1.0.0 → 2.0.0)
+- `feat` → minor bump (1.0.0 → 1.1.0)
+- `fix` → patch bump (1.0.0 → 1.0.1)
+
+All other types (`docs`, `style`, `refactor`, `test`, `build`, `ci`, `chore`) do **not** trigger a release, but they will still appear in the changelog of the next release that includes a version-bumping commit.
 
 ## GitHub Issues
 
