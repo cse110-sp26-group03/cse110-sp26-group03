@@ -31,7 +31,7 @@ import { dirname } from 'path';
 import db from './db.js';
 import { recordAppend } from './replay.js';
 
-const DEFAULT_LOG_PATH = '.manta/manta.jsonl';  
+const DEFAULT_LOG_PATH = '.manta/manta.jsonl';
 
 // Crockford base32 alphabet — drops i, l, o, u to avoid visual confusion.
 const CROCKFORD_ALPHABET = '0123456789abcdefghjkmnpqrstvwxyz';

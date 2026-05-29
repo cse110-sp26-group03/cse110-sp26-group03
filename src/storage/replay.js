@@ -83,7 +83,7 @@ export function syncFromLog(logPath = DEFAULT_LOG_PATH) {
   // running hasher empty so the first append rolls forward correctly.
   if (!existsSync(logPath)) {
     rollingHasher = newHasher();
-    db.prepare(`DELETE FROM issues`).run();   // no log = no events = empty cache
+    db.prepare(`DELETE FROM issues`).run(); // no log = no events = empty cache
     return false;
   }
 
@@ -188,7 +188,9 @@ function applyEventToCache(event) {
       deleteIssue(event);
       break;
     default:
-      throw new Error(`Cannot replay event: unrecognized type "${event.type}".`);
+      throw new Error(
+        `Cannot replay event: unrecognized type "${event.type}".`,
+      );
   }
 }
 
