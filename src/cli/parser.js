@@ -22,7 +22,7 @@ const possible_flags = [
   'assignee',
 ];
 
-/** @type {Object<string, string>} Single-character flag aliases. */
+/** @type {Object<string, string>} */
 const flag_aliases = {
   t: 'title',
   d: 'desc',
@@ -36,7 +36,7 @@ const flag_aliases = {
  *
  * Commands not listed here have no count constraints at this stage.
  *
- * @type {Object<string, {min?: number, max?: number, msg: string}>}
+ * @type {Object<string, {min: number, max: number, msg: string}>}
  */
 const expected_flag_counts = {
   delete: { min: 1, max: 1, msg: 'Only an ID is expected' },
