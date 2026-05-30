@@ -4,7 +4,7 @@
 // Manta CLI entry point.
 //
 // Pipeline: argv -> parse -> validate -> create_event -> applyEvent -> print.
-// Exception: version reads package.json and exits before storage.
+// Exception: "version" reads package.json and exits before reaching storage.
 
 /* global process */
 
@@ -17,7 +17,8 @@ import { validate } from '../validation/validation.js';
 import { create_event } from './event.js';
 import { applyEvent } from '../storage/store.js';
 
-// 1. Parse argv -> { cmd, flags }.
+// ---- Step 1: Parse argv -----------------------------------------------
+
 let parsed_command;
 try {
   parsed_command = parse(process.argv);
@@ -25,6 +26,8 @@ try {
   console.error(err.message);
   process.exit(1);
 }
+
+// ---- Early exit: version ----------------------------------------------
 
 if (parsed_command.cmd === 'version') {
   const pkgPath = join(
@@ -36,7 +39,8 @@ if (parsed_command.cmd === 'version') {
   process.exit(0);
 }
 
-// 2. Validate the parsed command (required fields, enum values, formats).
+// ---- Step 2: Validate -------------------------------------------------
+
 try {
   validate(parsed_command);
 } catch (err) {
@@ -44,7 +48,8 @@ try {
   process.exit(1);
 }
 
-// 3. Build the storage event from the parsed command.
+// ---- Step 3: Build event ----------------------------------------------
+
 let event;
 try {
   event = create_event(parsed_command);
@@ -53,11 +58,10 @@ try {
   process.exit(1);
 }
 
-// 4. applyEvent (from src/storage/store.js) writes the event to both
-//    of Manta's stores:
-//    It returns the event back.
-//    On create events, storage generates the
-//    issue ID and fills it in on the returned event as event.issueId
+// ---- Step 4: Apply event to storage -----------------------------------
+// Writes to both JSONL and SQLite. On create events, storage generates
+// the issue ID and returns it on event.issueId.
+
 try {
   event = applyEvent(event);
 } catch (err) {
@@ -65,11 +69,8 @@ try {
   process.exit(1);
 }
 
-// 5. Print a success message based on which command was run.
-//      - create  -> show the new issue's id and title
-//      - update  -> show which fields changed, formatted as "key=value"
-//      - close   -> confirm the id was closed
-//      - delete  -> confirm the id was deleted
+// ---- Step 5: Print result ---------------------------------------------
+
 switch (parsed_command.cmd) {
   case 'create':
     console.log(`Created issue ${event.issueId}: ${event.issue.title}`);
