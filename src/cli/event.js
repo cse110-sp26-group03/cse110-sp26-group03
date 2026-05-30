@@ -1,5 +1,3 @@
-/* global process */
-
 // `event.js` is responsible for constructing event objects.
 
 // get the current user from OS username

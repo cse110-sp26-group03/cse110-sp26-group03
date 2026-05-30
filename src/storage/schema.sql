@@ -40,3 +40,13 @@ CREATE TABLE IF NOT EXISTS issues (
   UpdatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
   UpdatedBy TEXT NOT NULL DEFAULT 'local-user'
 );
+
+
+-- Key/value table for local cache bookkeeping that isn't issue data.
+-- Currently holds the replay checkpoint (a hash of the JSONL log) per
+-- ADR-007. Like the rest of this DB, it's local-only and gitignored --
+-- it can always be rebuilt by re-hashing and replaying the log.
+CREATE TABLE IF NOT EXISTS meta (
+  Key   TEXT PRIMARY KEY NOT NULL,
+  Value TEXT
+);
