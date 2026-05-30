@@ -1,7 +1,7 @@
 # ADR-006: Error Message Formatting
 
 ## Status
-Accepted | **Proposed** | Deprecated (bold selected)
+Accepted | Proposed| **Deprecated** (bold selected)
 
 **Date:** 2026-05-27  
 **Authors:** Angel

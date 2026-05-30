@@ -1,7 +1,5 @@
 # ADR-005: Parsed Issue Object Schema
 
-## Depreceated: DO NOT REFER TO, ASK IN SLACK/SEE OTHER DOCS
-
 ## Status
 Accepted | Proposed | **Deprecated (bold selected)**
 

@@ -1,7 +1,7 @@
 # ADR-008: User Identity: createdBy and updatedBy Fields
 
 ## Status
-**Proposed** | Accepted | Deprecated    
+Proposed | **Accepted** | Deprecated    
 **Date:** 2026-05-21  
 **Authors:** Katie Ngo
 
