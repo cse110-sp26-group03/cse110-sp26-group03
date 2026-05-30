@@ -46,7 +46,6 @@ try {
   process.exit(1);
 }
 
-// to test what the db actually fetches, for "view". Remove later when command is fully finished
 if (parsed_command.cmd === 'view') {
   try {
     const result = FETCH(parsed_command);
@@ -55,6 +54,7 @@ if (parsed_command.cmd === 'view') {
     console.error(err.message);
     process.exit(1);
   }
+  process.exit(0);
 }
 
 // 3. Build the storage event from the parsed command.

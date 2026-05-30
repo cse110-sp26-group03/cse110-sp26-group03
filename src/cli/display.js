@@ -13,6 +13,10 @@ import * as readline from "readline";
 
 const PAGE_SIZE = 5;
 
+const ALT_SCREEN_ON = "\x1b[?1049h";
+const ALT_SCREEN_OFF = "\x1b[?1049l";
+const CLEAR_SCREEN = "\x1b[2J\x1b[H";
+
 // column widths for list display
 const COL = {
     id:        8,
@@ -39,12 +43,72 @@ export async function DISPLAY(parse_obj, result) {
             if (Array.isArray(result)) {
                 await display_list(result);
             } else {
-                display_issue(result);
+                await display_issue(result);
             }
             break;
         default:
             throw new Error(`display error: '${parse_obj.cmd}' is not a supported display command`);
     }
+}
+
+/**
+ * Run an interactive view in the alternate screen buffer (clear + redraw on resize).
+ *
+ * @param {() => string[]} buildLines - Builds the lines to print.
+ * @param {(key: object) => boolean}  [onKey] - Return true to redraw after arrow keys, etc.
+ */
+async function run_alt_screen(buildLines, onKey) {
+    if (!process.stdout.isTTY) {
+        console.log(buildLines().join("\n"));
+        return;
+    }
+
+    process.stdout.write(ALT_SCREEN_ON);
+    let last_columns = process.stdout.columns;
+
+    function redraw() {
+        process.stdout.write(CLEAR_SCREEN + buildLines().join("\n") + "\n");
+        last_columns = process.stdout.columns;
+    }
+
+    redraw();
+
+    readline.emitKeypressEvents(process.stdin);
+    process.stdin.setRawMode(true);
+
+    let resize_timer;
+    const on_resize = () => {
+        const cols = process.stdout.columns;
+        if (typeof cols !== "number" || cols === last_columns) return;
+        clearTimeout(resize_timer);
+        resize_timer = setTimeout(redraw, 100);
+    };
+
+    process.stdout.on("resize", on_resize);
+
+    const cleanup = () => {
+        clearTimeout(resize_timer);
+        process.stdout.off("resize", on_resize);
+        process.stdout.write(ALT_SCREEN_OFF);
+    };
+
+    await new Promise(() => {
+        process.stdin.on("keypress", (str, key) => {
+            if (!key) return;
+
+            if (key.name === "escape" || (key.ctrl && key.name === "c")) {
+                cleanup();
+                process.stdin.setRawMode(false);
+                process.stdin.pause();
+                process.stdout.write("\n");
+                process.exit(0);
+            }
+
+            if (onKey?.(key)) {
+                redraw();
+            }
+        });
+    });
 }
 
 // ---- List display --------------------------------------------------
@@ -64,58 +128,30 @@ async function display_list(issues) {
     const total_pages = Math.ceil(issues.length / PAGE_SIZE);
     let page = 0;
 
-    // first render appends after existing terminal output (no clear)
-    render_page(issues, page, total_pages, true);
-
-    readline.emitKeypressEvents(process.stdin);
-    if (process.stdin.isTTY) process.stdin.setRawMode(true);
-
-    await new Promise((resolve) => {
-        process.stdin.on("keypress", (str, key) => {
-            if (!key) return;
-
-            // ESC or ctrl+c to exit — leave the render in history, drop to a new line
-            if (key.name === "escape" || (key.ctrl && key.name === "c")) {
-                if (process.stdin.isTTY) process.stdin.setRawMode(false);
-                process.stdin.pause();
-                console.log("");
-                process.exit(0);
-            }
-
-            // right arrow
+    await run_alt_screen(
+        () => build_list_page_lines(issues, page, total_pages),
+        (key) => {
             if (key.name === "right" && page < total_pages - 1) {
                 page++;
-                render_page(issues, page, total_pages, false);
+                return true;
             }
-
-            //left arrow
             if (key.name === "left" && page > 0) {
                 page--;
-                render_page(issues, page, total_pages, false);
+                return true;
             }
-        });
-    });
+            return false;
+        },
+    );
 }
 
 /**
- * Render the current page of the issue list.
- *
- * On the first render the output is appended after existing terminal output.
- * On subsequent renders the previous page is overwritten in place by moving
- * the cursor up over it and clearing downward — this keeps scrollback intact
- * (unlike console.clear) so the table survives after exit.
- *
- * @param {object[]} issues      - Full array of issues from FETCH().
- * @param {number}   page        - Current page index.
- * @param {number}   total_pages - Total number of pages.
- * @param {boolean}  is_first    - True for the initial render (no overwrite).
+ * @param {object[]} issues
+ * @param {number}   page
+ * @param {number}   total_pages
+ * @returns {string[]}
  */
-function render_page(issues, page, total_pages, is_first) {
+function build_list_page_lines(issues, page, total_pages) {
     const lines = [];
-
-    // top margin so the table isn't flush against the invoking command
-    lines.push("");
-    lines.push("");
 
     lines.push(...header_lines());
 
@@ -125,7 +161,6 @@ function render_page(issues, page, total_pages, is_first) {
         lines.push(row_line(issue));
     }
 
-    // pad empty rows so layout stays stable across pages
     for (let i = slice.length; i < PAGE_SIZE; i++) {
         lines.push("");
     }
@@ -135,13 +170,7 @@ function render_page(issues, page, total_pages, is_first) {
     lines.push("");
     lines.push("Press ESC to exit");
 
-    // overwrite the previous render in place (skip on the first render)
-    if (!is_first) {
-        readline.moveCursor(process.stdout, 0, -lines.length);
-        readline.clearScreenDown(process.stdout);
-    }
-
-    console.log(lines.join("\n"));
+    return lines;
 }
 
 /**
@@ -201,12 +230,73 @@ function pagination_lines(page, total_pages) {
  * Render the detailed view of a single issue.
  * Called when mt view <id> is run with a specific issue ID.
  *
- * TODO: implement individual issue display.
- *
  * @param {object} issue - Single issue object from FETCH().
  */
-function display_issue(issue) {
-    // TODO: implement in issue #122
+async function display_issue(issue) {
+    await run_alt_screen(() => {
+        const lines = build_issue_detail_lines(issue);
+        lines.push("");
+        lines.push("Press ESC to exit");
+        return lines;
+    });
+}
+
+/**
+ * @param {object} issue
+ * @returns {string[]}
+ */
+function build_issue_detail_lines(issue) {
+    const lines = [];
+    const width = TABLE_WIDTH;
+    const quarter = Math.floor(width / 4);
+
+    const title = (issue.Title ?? "-").toString();
+    const id = (issue.ID ?? "-").toString();
+
+    if (title.length + id.length + 1 <= width) {
+        lines.push(title.padEnd(width - id.length) + id);
+    } else {
+        lines.push(title);
+        lines.push(id.padStart(width));
+    }
+
+    lines.push("-".repeat(width));
+
+    const desc = (issue.Description ?? "").toString();
+    if (desc.length === 0) {
+        lines.push("");
+    } else {
+        for (const line of desc.split(/\r?\n/)) {
+            lines.push(line);
+        }
+    }
+
+    lines.push("");
+    lines.push("-".repeat(width));
+
+    const priority = issue.Priority == null || issue.Priority === ""
+        ? "-"
+        : String(issue.Priority).startsWith("p")
+          ? String(issue.Priority)
+          : `p${issue.Priority}`;
+
+    lines.push(
+        col(priority, quarter) +
+        col(issue.Assignee, quarter) +
+        col(issue.IssueType, quarter) +
+        col(issue.Status, quarter),
+    );
+
+    lines.push(dotted_line(width));
+
+    lines.push(
+        col(issue.CreatedBy, quarter) +
+        col(issue.CreatedAt, quarter) +
+        col(issue.UpdatedBy, quarter) +
+        col(issue.UpdatedAt, quarter),
+    );
+
+    return lines;
 }
 
 // ---- Helpers -------------------------------------------------------
@@ -234,30 +324,16 @@ function col(str, width) {
     return s.padEnd(width);
 }
 
-// ---- Input/Output --------------------------------------------------
-
-// DISPLAY list input (array from FETCH):
-// [
-//   {
-//     ID: "manta-9fz0",
-//     Title: "My issue",
-//     Status: "open",
-//     Priority: "p5",
-//     IssueType: "task",
-//     ...
-//   },
-//   ...
-// ]
-//
-// DISPLAY list output (terminal):
-//
-// ID        TITLE                           PRIORITY    STATUS          TYPE        CREATED BY
-// -----------------------------------------------------------------------------------------------
-// 9fz0      My issue                        p5          open            task        ikey
-// ht8j      Issue                           p5          open            task        ikey
-// ...       ...                             ...         ...             ...         ...
-//
-//                           < prev.    next >
-//                              Page 1 of 3
-//
-// Press ESC to exit
+/**
+ * Build a dotted separator line of the given width.
+ *
+ * @param {number} width - Total line width.
+ * @returns {string}
+ */
+function dotted_line(width) {
+    let line = "";
+    while (line.length < width) {
+        line += "- ";
+    }
+    return line.slice(0, width);
+}
