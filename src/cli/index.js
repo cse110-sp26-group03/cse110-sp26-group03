@@ -14,7 +14,7 @@ import { parse } from './parser.js';
 import { validate } from '../validation/validation.js';
 import { create_event } from './event.js';
 import { applyEvent } from '../storage/store.js';
-import { FETCH } from '../storage/fetch.js'
+import { FETCH } from '../storage/fetch.js';
 import { DISPLAY } from './display.js';
 import { syncFromLog } from '../storage/replay.js';
 
@@ -112,4 +112,3 @@ switch (parsed_command.cmd) {
     console.log(`Deleted issue ${event.issueId}`);
     break;
 }
-

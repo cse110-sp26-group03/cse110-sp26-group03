@@ -56,10 +56,12 @@ export function FETCH(parse_obj) {
         ? ' WHERE ' + conditions.join(' AND ')
         : '';
       return db
-        .query(`SELECT * FROM issues${where} 
+        .query(
+          `SELECT * FROM issues${where} 
           ORDER BY
           (status = 'closed'),
-          CAST(SUBSTR(priority, 3, LENGTH(priority) - 3) AS INTEGER)`)
+          CAST(SUBSTR(priority, 3, LENGTH(priority) - 3) AS INTEGER)`,
+        )
         .all(...params);
     }
   } catch (err) {
