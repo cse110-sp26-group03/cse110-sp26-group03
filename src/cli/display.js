@@ -1,5 +1,3 @@
-/* global process */
-
 import * as readline from 'readline';
 
 // Display layer for the mt view command.
@@ -62,8 +60,8 @@ export async function DISPLAY(parse_obj, result) {
 /**
  * Run an interactive view in the alternate screen buffer (clear + redraw on resize).
  *
- * @param {() => string[]} buildLines - Builds the lines to print.
- * @param {(key: object) => boolean}  [onKey] - Return true to redraw after arrow keys, etc.
+ * @param {function(): string[]} buildLines - Builds the lines to print.
+ * @param {function(Object): boolean} [onKey] - Return true to redraw after arrow keys, etc.
  */
 async function run_alt_screen(buildLines, onKey) {
   if (!process.stdout.isTTY) {
