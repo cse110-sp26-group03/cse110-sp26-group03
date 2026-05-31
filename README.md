@@ -85,12 +85,12 @@ Below is an overview of the currently supported flags + fields for CLI commands.
 | name | description | restrictions | additional notes | example |
 | --- | --- | --- | --- | --- |
 | ID | the manta ID of the issue | cannot be changed, assigned on creation | used to identify and update, close, delete issues | manta-hk3p |
-| title | the title of the issue | required on create, max 50 chars| can be updated/created with --title or -t | --title "sample title" | 
-| description | more detailed description of the issue | max 512 chars | can be updated/created with --desc or -d | --description "sample description" |
-| status | progress marker | allowed: 'open', 'in_progress', 'closed' | can be updated/created with --status or -s | -s "in_progress" | 
-| priority | importance marker | must be in the form p<number> with number being 0-9. p0 is highest priority. | can updated/created with --priority or -p | -p "p3" |
+| title | the title of the issue | required on create, max 50 chars| can be updated/created with --title or --t | --title "sample title" | 
+| description | more detailed description of the issue | max 512 chars | can be updated/created with --desc or --d | --description "sample description" |
+| status | progress marker | allowed: 'open', 'in_progress', 'closed' | can be updated/created with --status or --s | --s "in_progress" | 
+| priority | importance marker | must be in the form p<number> with number being 0-9. p0 is highest priority. | can updated/created with --priority or --p | --p "p3" |
 | issue type | what type of issue it is | allowed: 'bug', 'feature', 'task', 'docs', 'store' | can be updated/created with --type (no shorthand) | --type "bug" | 
-| assignee | who is working on the issue | a string with only a-z and A_Z | can be updated/created with --assignee or -a | -a "exampleassignee" |
+| assignee | who is working on the issue | a string with only a-z and A_Z | can be updated/created with --assignee or --a | --a "exampleassignee" |
 
 Note that quotes are optional, so `--title "sample title"` and `--title sample title` will produce the same title. 
 

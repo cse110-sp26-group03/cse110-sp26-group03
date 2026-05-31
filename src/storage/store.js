@@ -6,22 +6,30 @@
 // (.manta/manta.jsonl, the source of truth, committed to git) and the
 // SQLite cache (.manta/manta.db, the local query layer, gitignored).
 //
-// Per backend ADR-008, this file exposes a single function, applyEvent(event),
-// which dispatches based on event.type. CLI commands, the MCP server,
-// and the replay layer all call applyEvent — none of them touch JSONL
-// or SQLite directly.
+// Per backend ADR-008, the main entry point is applyEvent(event), which
+// dispatches based on event.type. CLI commands call
+// applyEvent — they never touch JSONL or SQLite directly.
 //
-// Per frontend ADR-004, events come in three types — issue.created, issue.updated,
-// issue.deleted — each with a specific shape. store.js trusts events.js
-// to construct them correctly and does not validate them here.
+// store.js also exports the three SQLite-write helpers (insertIssue,
+// updateIssue, deleteIssue) for replay.js to reuse when rebuilding the
+// cache from the log. Replay does NOT call applyEvent — it has the real
+// IDs already, must not re-append to JSONL, and only needs to write
+// SQLite. Sharing these helpers keeps the live-write and replay paths
+// using the exact same SQL.
 //
-// Per backend ADR-005, store.js generates issue IDs on create events. SQLite's
-// PRIMARY KEY constraint catches the rare collision; store.js retries
-// up to 5 times before failing loudly.
+// Per frontend ADR-004, events come in three types — issue.created,
+// issue.updated, issue.deleted — each with a specific shape. store.js
+// trusts events.js to construct them correctly and does not validate
+// them here.
+//
+// Per backend ADR-005, store.js generates issue IDs on create events.
+// SQLite's PRIMARY KEY constraint catches the rare collision; store.js
+// retries up to 5 times before failing loudly.
 
 import { appendFileSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
 import db from './db.js';
+import { recordAppend } from './replay.js';
 
 const DEFAULT_LOG_PATH = '.manta/manta.jsonl';
 
@@ -84,7 +92,8 @@ function applyCreate(event) {
     }
 
     // SQLite accepted the ID. JSONL is the durable record.
-    appendToLog(event);
+    const line = appendToLog(event);
+    recordAppend(line);
     return event;
   }
 
@@ -123,7 +132,8 @@ function applyUpdate(event) {
     );
   }
 
-  appendToLog(event);
+  const line = appendToLog(event);
+  recordAppend(line);
   updateIssue(event);
   return event;
 }
@@ -147,7 +157,8 @@ function applyDelete(event) {
     );
   }
 
-  appendToLog(event);
+  const line = appendToLog(event);
+  recordAppend(line);
   deleteIssue(event);
   return event;
 }
@@ -167,6 +178,7 @@ function appendToLog(event, logPath = DEFAULT_LOG_PATH) {
   mkdirSync(dirname(logPath), { recursive: true });
   const line = JSON.stringify(event) + '\n';
   appendFileSync(logPath, line, 'utf8');
+  return line;
 }
 
 // ---- SQLite reads (for validation) ---------------------------------
@@ -195,7 +207,7 @@ function issueExists(issueId) {
  * @throws {Error} UNIQUE constraint error if the ID already exists;
  *                 applyCreate catches this and retries.
  */
-function insertIssue(event) {
+export function insertIssue(event) {
   const i = event.issue;
   db.prepare(
     `
@@ -227,7 +239,7 @@ function insertIssue(event) {
  *
  * @param {object} event - An update event with issueId and a changes object.
  */
-function updateIssue(event) {
+export function updateIssue(event) {
   const fields = Object.keys(event.changes);
   if (fields.length === 0) return;
 
@@ -246,7 +258,7 @@ function updateIssue(event) {
  *
  * @param {object} event - A delete event with an issueId.
  */
-function deleteIssue(event) {
+export function deleteIssue(event) {
   db.prepare(`DELETE FROM issues WHERE ID = ?`).run(event.issueId);
 }
 

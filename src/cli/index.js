@@ -6,8 +6,6 @@
 // Pipeline: argv -> parse -> validate -> create_event -> applyEvent -> print.
 // Exceptions: version and view exit before the write path (see below).
 
-/* global process */
-
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
@@ -16,8 +14,9 @@ import { parse } from './parser.js';
 import { validate } from '../validation/validation.js';
 import { create_event } from './event.js';
 import { applyEvent } from '../storage/store.js';
-import { FETCH } from '../storage/fetch.js'
+import { FETCH } from '../storage/fetch.js';
 import { DISPLAY } from './display.js';
+import { syncFromLog } from '../storage/replay.js';
 
 // 1. Parse argv -> { cmd, flags }.
 let parsed_command;
@@ -75,6 +74,18 @@ try {
   process.exit(1);
 }
 
+// 3.5. Sync the local SQLite cache from the JSONL log.
+//      Cheap when nothing changed (hash matches the stored checkpoint and
+//      replay is skipped); does a full rebuild when teammates' events have
+//      arrived via git pull. Must run before applyEvent so that update/delete
+//      see the freshest issue set.
+try {
+  syncFromLog();
+} catch (err) {
+  console.error(err.message);
+  process.exit(1);
+}
+
 // 4. applyEvent (from src/storage/store.js) writes the event to both
 //    of Manta's stores:
 //    It returns the event back.
@@ -110,4 +121,3 @@ switch (parsed_command.cmd) {
     console.log(`Deleted issue ${event.issueId}`);
     break;
 }
-

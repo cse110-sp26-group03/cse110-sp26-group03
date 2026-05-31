@@ -1,7 +1,7 @@
 # ADR-004: Issue Event Object Schema
 
 ## Status
-Accepted | **Proposed** | Deprecated (bold selected)
+**Accepted** | Proposed | Deprecated (bold selected)
 
 **Date:** 2026-05-18  
 **Authors:** Angel
