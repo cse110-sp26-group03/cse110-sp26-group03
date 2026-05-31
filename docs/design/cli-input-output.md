@@ -81,29 +81,35 @@ mt update manta-h3kp --title Changed the title
 ```
 mt view
 
-   ID              TITLE                                   PRIORITY   STATUS        TYPE      ASSIGNEE
-   --------------------------------------------------------------------------------------------------
-   manta-h53kp     Changed the title                       p5         open          -         -
+   (interactive table in alternate terminal buffer — 5 issues per page)
+   ID        TITLE              PRIORITY    STATUS          TYPE        CREATED BY
+   --------------------------------------------------------------------------------
+   h3kp      Changed the title  p5          open            task        ikey
+   ...
 
+   < prev.    next >
+   Page 1 of 3
 
+   Press ESC to exit
 ```
 
 ```
 mt view manta-h3kp
 
-Issue manta-h3kp     Changed the title
+   Changed the title                                              manta-h3kp
+   -------------------------------------------------------------------------
+   Needs to be solved
 
-   > Needs to be solved
+   -------------------------------------------------------------------------
+   p5          -                   task                open
+   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ikey        2026-05-21T02:56:04.612Z     ikey        2026-05-21T02:56:04.612Z
 
-   Priority:    p5
-   Status:      open
-   Type:        -
-   Assignee:    -
-   Created by:  .. (name, email, whatever we decide to use)
-   Created at:  ISO timestamp
-   Updated at:  ISO timestamp
-
+   Press ESC to exit
 ```
+
+Both list and detail views use the alternate screen when run in a TTY; **ESC**
+returns to the normal shell. See ADR-009 for the full pipeline.
 
 
 ```

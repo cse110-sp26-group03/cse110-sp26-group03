@@ -1,7 +1,7 @@
 # ADR-009: `mt view` — Fetch and Display
 
 ## Status
-Accepted | **Proposed** | Deprecated (bold selected)
+**Accepted** | Proposed | Deprecated
 
 **Date:** 2026-05-27  
 **Authors:** Ike Okoye  
@@ -18,13 +18,14 @@ depending on what the parser gives it:
 - **View** — `mt view <id>`. Returns the one issue with that ID, or errors if
   there isn't one.
 
-The read path is two files:
+The read path is two files plus the CLI entry wiring:
 
-- `src/storage/fetch.js` — reads from SQLite and returns plain data. **Done.**
-- `src/cli/display.js` — formats that data for the terminal. **Not built yet.**
-  This ADR writes down the plan so the display work can start on its own.
+- `src/storage/fetch.js` — reads from SQLite and returns plain data.
+- `src/cli/display.js` — formats that data for the terminal.
+- `src/cli/index.js` — runs parse → validate → FETCH → DISPLAY, then exits
+  (skips the write path).
 
-The steps for `view` are: `argv → parse → validate → FETCH → display`. This
+The steps for `view` are: `argv → parse → validate → FETCH → DISPLAY`. This
 skips `event.js` / `store.js` — `view` only reads, so it never builds an event
 (see [[004-event-issue-object]] for the write path).
 
@@ -92,67 +93,56 @@ nor `--status` is given, it adds `status != 'closed'`. Results come back
 
 `fetch.js` opens the database **read-only**, so `view` can never change data.
 
-### `display(data)` — the formatting layer
+### `DISPLAY(parse_obj, result)` — the formatting layer
 
-`display.js` isn't built yet, so this section describes the *idea* rather than a
-fixed implementation. The point is the contract — `display` consumes whatever
-`FETCH` returns and decides how to render it from the shape alone. The code
-below is one illustrative way to do that, not a locked-in design.
-
-The core idea: `display` picks a formatter by checking the input shape.
+`DISPLAY` in `display.js` consumes whatever `FETCH` returned and picks a
+formatter from the shape of `result`:
 
 ```js
-// example, not final — illustrates shape-based dispatch
-function display(data) {
-  if (Array.isArray(data)) displayList(data);
-  else                     displayIssue(data);
-}
+if (Array.isArray(result)) await display_list(result);
+else                       await display_issue(result);
 ```
 
-- **`displayIssue(issue)`** — gets one object. Prints the full detail of a
-  single issue.
-- **`displayList(issues)`** — gets an array. Prints the list of issues.
+- **`display_list(issues)`** — paginated table (5 rows per page). Left/right
+  arrows change pages.
+- **`display_issue(issue)`** — full detail for one issue (title, description,
+  priority/assignee/type/status, audit fields).
 
-`display` shouldn't throw during normal use — it's just printing data that
-`FETCH` already checked. Any error handling is a safety net, not the main path.
+Both modes use the **alternate terminal screen buffer** when stdout is a TTY:
+the view clears and redraws on resize; **ESC** (or Ctrl+C) exits and returns to
+the normal prompt. Non-TTY output prints once with no interactivity.
 
-#### Paging through the list (one possible approach)
-
-The list view is meant to be scrollable rather than one big dump. How that
-scrolling actually works is open — the following is an *example* of what it
-could look like, not a requirement:
-
-- Use something like `readline` (works in both Bun and Node) to listen for key
-  presses.
-- Arrow keys move between pages; rewrite the current line in place instead of
-  reprinting everything.
-- Keep looping until the user presses **Esc** (or similar) to quit.
-- On the **first** page, "prev" does nothing; on the **last** page, "next" does
-  nothing — and **no error**. These buttons can be greyed out or hidden.
-
-The takeaway is "scrollable, paged, doesn't error at the ends" — the exact
-mechanism is an implementation detail to be decided when `display.js` is built.
+`DISPLAY` should not throw during normal use — it prints data `FETCH` already
+validated. Errors from `FETCH` or validation are caught in `index.js`.
 
 ### How `index.js` connects it
 
-Right now `index.js` has a temporary block that prints the raw `FETCH` result
-for `view` and exits. Once `display` exists, that block becomes
-`display(FETCH(parsed_command))`. The temporary `console.log(FETCH(...))` is
-just debug code and should be removed then.
+After global parse and validate, `index.js` handles `view`:
+
+```js
+const result = FETCH(parsed_command);
+await DISPLAY(parsed_command, result);
+process.exit(0);
+```
+
+Failures in `FETCH` or `DISPLAY` are caught, printed to stderr, and exit with
+code 1. The command never reaches `create_event` or `applyEvent`.
 
 ---
 
 ## Consequences
 
 ### Positive
-- **Clear split.** `fetch.js` handles data, `display.js` handles printing — each
-  can be built and tested on its own.
+- **Clear split.** `fetch.js` handles data, `display.js` handles printing, and
+  `index.js` wires the read-only path — each can be tested on its own.
 - **The return tells you the shape.** Since view returns an object and list
-  returns an array, `display` doesn't need an extra flag to know which one it
-  got.
+  returns an array, `display` does not need an extra flag to know which formatter
+  to use.
 - **Safe queries.** The fixed filter→column list plus `?` parameters keep the
-  list query safe from injection, and read-only mode means `view` can't change
+  list query safe from injection, and read-only mode means `view` cannot change
   anything.
+- **Alt screen avoids resize glitches.** Full clear-and-redraw on the alternate
+  buffer keeps list and detail views stable when the terminal is resized.
 
 ### Negative
 - **The two files are linked.** `display` has to know `FETCH` returns either an
@@ -160,6 +150,6 @@ just debug code and should be removed then.
   breaks display.
 - **Key casing differs.** DB rows are PascalCase but the event schema is
   camelCase ([[004-event-issue-object]]), which is easy to mix up.
-- **Paging adds complexity.** A scrollable list needs interactive, stateful
-  rendering (e.g. a key-press loop with line redraws) that the rest of the
-  one-shot CLI doesn't have — whatever approach `display.js` lands on.
+- **Interactive views exit via `process.exit`.** ESC handling lives in
+  `display.js`, so `index.js`'s `process.exit(0)` after `DISPLAY` mainly applies
+  to non-interactive runs; TTY sessions end inside `DISPLAY`.

@@ -4,7 +4,7 @@
 // Manta CLI entry point.
 //
 // Pipeline: argv -> parse -> validate -> create_event -> applyEvent -> print.
-// Exception: version reads package.json and exits before storage.
+// Exceptions: version and view exit before the write path (see below).
 
 /* global process */
 
@@ -46,6 +46,15 @@ try {
   process.exit(1);
 }
 
+/**
+ * Read-only view path: parse and validate already ran above.
+ * FETCH loads issue(s) from SQLite; DISPLAY renders list or detail (see ADR-009).
+ * Does not call create_event or applyEvent. Errors print to stderr and exit 1.
+ * On success, exits 0 (DISPLAY may exit earlier on ESC in an interactive TTY).
+ *
+ * @see ../storage/fetch.js FETCH
+ * @see ./display.js DISPLAY
+ */
 if (parsed_command.cmd === 'view') {
   try {
     const result = FETCH(parsed_command);
