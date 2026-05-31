@@ -15,7 +15,6 @@ test('applyEvent error message includes the offending type', () => {
   expect(() => applyEvent({ type: 'bogus.type' })).toThrow(/bogus\.type/);
 });
 
-
 test('applyEvent throws a real Error (not a plain throw)', () => {
   try {
     applyEvent({ type: 'bogus.type' });
