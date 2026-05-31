@@ -99,26 +99,24 @@ As a solo developer using AI agents, I want to create issues from my terminal an
 | Sprint 3 | May 17 | Development | CI pipeline set up (ESLint linter & Prettier styler), core ADRs finalized, create/update/close/delete working end-to-end |
 | Sprint 4 | May 24 | Ship | CD pipeline, JSDoc documentation, version control, development towards MVP or post-MVP features, peer code review with another team |
 
-### Current Status (May 22)
+### Current Status (May 30)
 
 **Done:**
 - Walking prototype: `mt create`, `mt update`, `mt close`, `mt delete` working end-to-end (CLI → JSONL + SQLite)
-- Full pipeline:  `user command line input → index.js → parser.js → validate.js → event.js → store.js → output to user`
-- CI pipeline, ESLint, Prettier
+- Write pipeline: `user input → index.js → parser.js → validate.js → event.js → syncFromLog → store.js → output`
+- `mt view`: interactive list (paginated) and single-issue detail in the alternate terminal buffer; ESC to exit
+- `replay.js` / `syncFromLog`: rebuild SQLite from JSONL when the log hash changes (see ADR-007)
+- CI pipeline, ESLint, Prettier, CD / changelog workflow
 
 **In progress:**
-- CD pipeline
-- `mt view`: list all open and in progress issues (no args); lists detailed issue information (manta-xxxx)
-- `replay.js`: rebuild SQLite from JSONL on startup and after `git pull`
-- migrate client from Beads (ex: mt bd migrate <path.to.beads.jsonl>)
-- JSDoc
+- migrate client from Beads (ex: `mt bd migrate <path.to.beads.jsonl>`)
+- JSDoc coverage across remaining frontend files
+- Installation and version updating polish
 	
-### What’s next (Sprint 4):
-To complete the MVP the following must be finished:
-- `mt view`
-- `replay.js` for JSONL/SQLite sync
-- Installation and version updating
+### What's next (Sprint 4):
+- Beads migration command
 - Additional flags and functionality improvements
+- Post-MVP features (dependencies, web dashboard, log compaction — see Future Work)
 
 ---
 
@@ -137,7 +135,7 @@ Issue data is stored in a local SQLite cache for fast queries. A JSONL file is k
 | update  | Updates an existing issue | mt update manta-xxxx --[optional field <field value>]... |
 | close | Closes an existing issue| mt close manta-xxxx |
 | delete | Deletes an existing issue | mt delete manta-xxxx |
-| view | Lists existing issues | mt view |
+| view | List or show one issue (interactive; ESC to exit) | `mt view`, `mt view manta-xxxx`, `mt view --priority p1 --all` |
 
 ### Supported flags/fields 
 

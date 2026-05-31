@@ -18,15 +18,20 @@ depending on what the parser gives it:
 - **View** — `mt view <id>`. Returns the one issue with that ID, or errors if
   there isn't one.
 
-The read path is two files plus the CLI entry wiring:
+The read path is three modules plus CLI wiring:
 
-- `src/storage/fetch.js` — reads from SQLite and returns plain data.
-- `src/cli/display.js` — formats that data for the terminal.
-- `src/cli/index.js` — runs parse → validate → FETCH → DISPLAY, then exits
-  (skips the write path).
+- `src/storage/fetch.js` — read-only SQLite queries; returns plain row objects.
+- `src/cli/display.js` — formats rows for the terminal (list table or detail).
+- `src/cli/index.js` — runs parse → validate → FETCH → DISPLAY, then exits.
+
+JSONL remains the source of truth ([[001-storage-layer]]). Write commands call
+`syncFromLog()` from `replay.js` before mutating ([[007-jsonl-checkpoints]]).
+**`mt view` does not call `syncFromLog`** — it reads whatever is already in the
+SQLite cache. After a `git pull` that changes `.manta/manta.jsonl`, the cache
+refreshes on the next write command; until then, `mt view` may show stale data.
 
 The steps for `view` are: `argv → parse → validate → FETCH → DISPLAY`. This
-skips `event.js` / `store.js` — `view` only reads, so it never builds an event
+skips `event.js`, `replay.js`, and `store.js` — `view` never appends to the log
 (see [[004-event-issue-object]] for the write path).
 
 ### What the parser already handles
@@ -58,8 +63,7 @@ These happen in `parser.js` before `FETCH` runs:
 | Missing ID | `flags.id` not found | **throws** an `Error` |
 
 A single lookup returns the object by itself, **not** an array with one item in
-it. Wrapping it would be pointless — display would just read `[0]`. Keeping the
-two shapes different is what lets `display` know which formatter to use.
+it. Keeping the two shapes different is what lets `DISPLAY` pick a formatter.
 
 **The object shape (from SQLite, PascalCase keys):**
 
@@ -81,22 +85,20 @@ two shapes different is what lets `display` know which formatter to use.
 
 These keys come straight from the `issues` table columns, so they're PascalCase
 here even though the event schema in [[004-event-issue-object]] uses camelCase.
-`display` reads whatever `FETCH` returns, so it has to use these PascalCase
-keys. `Assignee` can be `null`.
+`DISPLAY` reads whatever `FETCH` returns. `Assignee` can be `null`.
 
 **Filtering.** `FETCH` builds the `WHERE` clause from a fixed list that maps
 each filter (`status`, `priority`, `type`, `assignee`, `createdBy`) to its
 column. Only those known filters reach SQL, and every value is passed as a `?`
-parameter — user input is never glued into the query string. If neither `--all`
-nor `--status` is given, it adds `status != 'closed'`. Results come back
-`ORDER BY priority`.
+parameter. If neither `--all` nor `--status` is given, it adds `status != 'closed'`.
+Results come back ordered by priority.
 
-`fetch.js` opens the database **read-only**, so `view` can never change data.
+`fetch.js` opens the database **read-only**, so `view` cannot change data through
+this path.
 
 ### `DISPLAY(parse_obj, result)` — the formatting layer
 
-`DISPLAY` in `display.js` consumes whatever `FETCH` returned and picks a
-formatter from the shape of `result`:
+`DISPLAY` in `display.js` consumes whatever `FETCH` returned:
 
 ```js
 if (Array.isArray(result)) await display_list(result);
@@ -105,15 +107,14 @@ else                       await display_issue(result);
 
 - **`display_list(issues)`** — paginated table (5 rows per page). Left/right
   arrows change pages.
-- **`display_issue(issue)`** — full detail for one issue (title, description,
-  priority/assignee/type/status, audit fields).
+- **`display_issue(issue)`** — full detail (title, description, metadata rows).
 
 Both modes use the **alternate terminal screen buffer** when stdout is a TTY:
-the view clears and redraws on resize; **ESC** (or Ctrl+C) exits and returns to
-the normal prompt. Non-TTY output prints once with no interactivity.
+full clear-and-redraw on resize; **ESC** (or Ctrl+C) exits to the normal prompt.
+Non-TTY output prints once with no interactivity.
 
-`DISPLAY` should not throw during normal use — it prints data `FETCH` already
-validated. Errors from `FETCH` or validation are caught in `index.js`.
+`DISPLAY` should not throw during normal use. Errors from `FETCH` or validation
+are caught in `index.js`.
 
 ### How `index.js` connects it
 
@@ -126,30 +127,29 @@ process.exit(0);
 ```
 
 Failures in `FETCH` or `DISPLAY` are caught, printed to stderr, and exit with
-code 1. The command never reaches `create_event` or `applyEvent`.
+code 1. The command never reaches `syncFromLog`, `create_event`, or `applyEvent`.
+
+Write commands use a separate path:
+
+```js
+syncFromLog();   // refresh SQLite from JSONL if the log hash changed
+applyEvent(event);
+```
 
 ---
 
 ## Consequences
 
 ### Positive
-- **Clear split.** `fetch.js` handles data, `display.js` handles printing, and
-  `index.js` wires the read-only path — each can be tested on its own.
-- **The return tells you the shape.** Since view returns an object and list
-  returns an array, `display` does not need an extra flag to know which formatter
-  to use.
-- **Safe queries.** The fixed filter→column list plus `?` parameters keep the
-  list query safe from injection, and read-only mode means `view` cannot change
-  anything.
-- **Alt screen avoids resize glitches.** Full clear-and-redraw on the alternate
-  buffer keeps list and detail views stable when the terminal is resized.
+- **Clear split.** `fetch.js`, `display.js`, and `index.js` each have one job.
+- **The return shape selects the formatter.** List vs detail needs no extra flag.
+- **Safe queries.** Fixed filter→column mapping plus `?` parameters; read-only DB.
+- **Alt screen.** Resize-stable list and detail without stacking output in scrollback.
 
 ### Negative
-- **The two files are linked.** `display` has to know `FETCH` returns either an
-  object or an array, and has to use the PascalCase keys — changing either one
-  breaks display.
-- **Key casing differs.** DB rows are PascalCase but the event schema is
-  camelCase ([[004-event-issue-object]]), which is easy to mix up.
-- **Interactive views exit via `process.exit`.** ESC handling lives in
-  `display.js`, so `index.js`'s `process.exit(0)` after `DISPLAY` mainly applies
-  to non-interactive runs; TTY sessions end inside `DISPLAY`.
+- **Linked to FETCH row shape.** PascalCase keys and object-vs-array dispatch must
+  stay in sync between `fetch.js` and `display.js`.
+- **Key casing differs** from the event schema ([[004-event-issue-object]]).
+- **No replay on view.** Stale SQLite after a pull until a write command runs
+  `syncFromLog` (or replay is wired into view in a future change).
+- **Interactive exit via `process.exit`.** ESC is handled inside `display.js`.

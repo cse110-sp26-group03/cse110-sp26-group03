@@ -56,8 +56,8 @@ src/
 │   ├── db.js           opens .manta/manta.db
 │   ├── schema.sql      table definitions
 │   ├── store.js        writes to JSONL and SQLite
-│   ├── repo.js         read-only helpers for `mt view` / `mt list`
-│   └── replay.js       applies new JSONL lines
+│   ├── fetch.js        read-only queries for `mt view` (list + detail)
+│   └── replay.js       syncs SQLite from JSONL (`syncFromLog`)
 ├── events/
 │   └── events.js       builds event objects (pure functions)
 └── validation/

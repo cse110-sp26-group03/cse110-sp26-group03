@@ -69,7 +69,9 @@ mt view manta-xxxx
 
 Replace `manta-xxxx` with the ID printed by your first `create`. See the table at the end of the readme for additional information on supported flags and fields.
 
-`mt view` opens in a separate terminal view. Use **left/right arrows** to change pages in the list, and **ESC** to return to your shell. Filter examples: `mt view --priority p1`, `mt view --all`.
+`mt view` opens in a separate terminal view. Use **left/right arrows** to change pages in the list, and **ESC** to return to your shell. Filter examples: `mt view --priority p1`, `mt view --all`, `mt view --cb alice`.
+
+After a **`git pull`** that updates `.manta/manta.jsonl`, the SQLite cache refreshes on the next **write** command (`create`, `update`, `close`, `delete`). If `mt view` looks out of date right after a pull, run any write command or wait until you mutate an issue.
 
 ### Where your data lives
 

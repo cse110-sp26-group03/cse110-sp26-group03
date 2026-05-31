@@ -3,8 +3,9 @@
 //
 // Manta CLI entry point.
 //
-// Pipeline: argv -> parse -> validate -> create_event -> applyEvent -> print.
-// Exceptions: version and view exit before the write path (see below).
+// Pipeline:
+//   Write commands: argv -> parse -> validate -> create_event -> syncFromLog -> applyEvent -> print
+//   Read-only:      version and view exit before create_event (see below)
 
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
@@ -47,12 +48,15 @@ try {
 
 /**
  * Read-only view path: parse and validate already ran above.
- * FETCH loads issue(s) from SQLite; DISPLAY renders list or detail (see ADR-009).
- * Does not call create_event or applyEvent. Errors print to stderr and exit 1.
- * On success, exits 0 (DISPLAY may exit earlier on ESC in an interactive TTY).
+ * FETCH reads the SQLite cache (see fetch.js); DISPLAY renders list or detail (ADR-009).
+ * Does not call syncFromLog, create_event, or applyEvent — unlike write commands, view
+ * does not rebuild the cache from JSONL. After a git pull, run a write command first if
+ * the list looks stale, or rely on syncFromLog on the next create/update/close/delete.
+ * Errors print to stderr and exit 1. On success, exits 0 (DISPLAY exits on ESC in a TTY).
  *
  * @see ../storage/fetch.js FETCH
  * @see ./display.js DISPLAY
+ * @see ../../docs/adr/frontend/009-view-fetch-display.md
  */
 if (parsed_command.cmd === 'view') {
   try {

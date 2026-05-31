@@ -111,6 +111,10 @@ mt view manta-h3kp
 Both list and detail views use the alternate screen when run in a TTY; **ESC**
 returns to the normal shell. See ADR-009 for the full pipeline.
 
+`mt view` reads the SQLite cache only; it does not run `syncFromLog`. After a
+`git pull` that changes `.manta/manta.jsonl`, run a write command first if the
+cache may be stale (write commands call `syncFromLog` per ADR-007).
+
 
 ```
 mt close manta-h3kp
