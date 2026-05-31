@@ -1,3 +1,15 @@
+## [1.2.2](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.2.1...v1.2.2) (2026-05-31)
+
+
+### Bug Fixes
+
+* test semantic-release app ([05f211f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/05f211fc848239fff42c45cb0799e778b0e42c95))
+* test semantic-release app ([eeb7726](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/eeb7726ba0ab7122239414a84a9089fdc724f717))
+* test semantic-release app ([02c5952](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/02c5952cff9c9644e61e3d11dec5df47dcccff29))
+* test semantic-release app ([33144b0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/33144b0df8fd4b190c381150d008e843d757abc3))
+* updated token persistence in release.yml ([af908dd](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/af908dde4c317750b51162043e88382b26d79b0b))
+* updated token persistence in release.yml ([b0d736f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/b0d736f4a141bc49ccdf07f14df465f85fca897b))
+
 ## [1.2.1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.2.0...v1.2.1) (2026-05-31)
 
 
