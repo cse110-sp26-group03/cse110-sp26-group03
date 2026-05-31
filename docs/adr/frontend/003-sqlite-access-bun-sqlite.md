@@ -1,7 +1,7 @@
 # ADR-003: Storage Layer: `store.js`
 
 ## Status
-**Proposed** | Accepted | Deprecated
+Proposed | **Accepted** | Deprecated
 
 **Date:** 2026-05-16
 **Authors:** Scottin Pham

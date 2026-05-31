@@ -6,8 +6,6 @@
 // Pipeline: argv -> parse -> validate -> create_event -> applyEvent -> print.
 // Exception: version reads package.json and exits before storage.
 
-/* global process */
-
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
@@ -18,6 +16,7 @@ import { create_event } from './event.js';
 import { applyEvent } from '../storage/store.js';
 import { FETCH } from '../storage/fetch.js'
 import { DISPLAY } from './display.js';
+import { syncFromLog } from '../storage/replay.js';
 
 // 1. Parse argv -> { cmd, flags }.
 let parsed_command;
@@ -61,6 +60,18 @@ if (parsed_command.cmd === 'view') {
 let event;
 try {
   event = create_event(parsed_command);
+} catch (err) {
+  console.error(err.message);
+  process.exit(1);
+}
+
+// 3.5. Sync the local SQLite cache from the JSONL log.
+//      Cheap when nothing changed (hash matches the stored checkpoint and
+//      replay is skipped); does a full rebuild when teammates' events have
+//      arrived via git pull. Must run before applyEvent so that update/delete
+//      see the freshest issue set.
+try {
+  syncFromLog();
 } catch (err) {
   console.error(err.message);
   process.exit(1);
