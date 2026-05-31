@@ -1,6 +1,6 @@
 {
   "name": "manta",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "StringRays team project for CSE 110 Spring 2026",
   "bin": {
     "mt": "src/cli/index.js"

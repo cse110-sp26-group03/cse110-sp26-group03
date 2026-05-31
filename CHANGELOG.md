@@ -1,3 +1,16 @@
+# [1.2.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.1.0...v1.2.0) (2026-05-31)
+
+
+### Bug Fixes
+
+* add line 220 to fix error linter was catching ([7785a13](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/7785a13fc10da7cb83ba4377ce026857736f9166))
+* correct .gitattributes syntax (remove stray quotes) ([4618460](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/461846089b96f5be2bba990243a85d0e473acffc))
+
+
+### Features
+
+* add step 3.5 . Sync local sqlite before applying event, so user has most updated DB. ([02a65d0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/02a65d03cb11f858c0a195eda984b899a603aeac))
+
 # [1.1.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.0.0...v1.1.0) (2026-05-27)
 
 
