@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.2.0...v1.2.1) (2026-05-31)
+
+
+### Bug Fixes
+
+* new semantic release app ([1b1743f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/1b1743fa1ee4dcddb150e29113bb01d72a6b765c))
+
 # [1.2.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.1.0...v1.2.0) (2026-05-31)
 
 
