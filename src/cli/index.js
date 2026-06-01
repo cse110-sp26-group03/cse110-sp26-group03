@@ -18,6 +18,7 @@ import { applyEvent } from '../storage/store.js';
 import { FETCH } from '../storage/fetch.js';
 import { DISPLAY } from './display.js';
 import { syncFromLog } from '../storage/replay.js';
+import { init } from './init.js';
 
 // 1. Parse argv -> { cmd, flags }.
 let parsed_command;
@@ -38,6 +39,11 @@ try {
 } catch (err) {
   console.error(err.message);
   process.exit(1);
+}
+
+if (parsed_command.cmd === 'init') {
+  init();
+  process.exit(0);
 }
 
 if (parsed_command.cmd == 'sync') {
