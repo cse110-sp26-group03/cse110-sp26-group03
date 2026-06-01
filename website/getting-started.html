@@ -74,8 +74,8 @@ mt view</code></pre>
         <h2>Sync with teammates</h2>
         <p>After <code>git pull</code> updates <code>.manta/manta.jsonl</code>:</p>
         <ul>
-          <li>Write commands (<code>create</code>, <code>update</code>, …) refresh the cache automatically.</li>
-          <li>If <code>mt view</code> looks stale, run <code>mt sync</code> without creating an issue.</li>
+          <li>Every command refreshes the cache automatically before it runs — including <code>mt view</code>, so your list is always up to date.</li>
+          <li><code>mt sync</code> is available if you ever want to rebuild the cache on its own.</li>
         </ul>
 
         <figure class="figure">

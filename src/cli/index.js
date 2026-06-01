@@ -92,6 +92,19 @@ if (parsed_command.cmd === 'view') {
   process.exit(0);
 }
 
+// 2.5 Confirm destructive deletes. delete is irreversible (it removes the
+//      issue from both stores), so require an interactive y/n before
+//      proceeding. Only prompt when stdin is a real terminal: in tests, CI,
+//      or piped input (no TTY) there is nobody to answer, so proceed without
+//      prompting. Default is "no": anything other than y/yes aborts
+if (parsed_command.cmd === 'delete' && process.stdin.isTTY) {
+  const answer = prompt(`Delete issue ${parsed_command.flags.id}? [y/N]`);
+  if (!/^y(es)?$/i.test((answer ?? '').trim())) {
+    console.log('Deletion cancelled.');
+    process.exit(0);
+  }
+}
+
 // 3. Build the storage event from the parsed command.
 let event;
 try {

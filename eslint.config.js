@@ -14,6 +14,7 @@ export default defineConfig([
       globals: {
         ...globals.node,
         Bun: "readonly",
+        prompt: "readonly",
       },
     },
   },
