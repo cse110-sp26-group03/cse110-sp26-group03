@@ -192,7 +192,7 @@ a:hover {
   top: 0;
   width: 22px;
   height: 1.5px;
-  background: var(--ocean);
+  background: #fff;
   border-radius: 1px;
 }
 
@@ -210,12 +210,11 @@ a:hover {
 }
 
 .brand--panel {
-  color: var(--ocean);
+  color: #fff;
 }
 
-.brand--panel img {
-  filter: brightness(0) saturate(100%);
-  opacity: 0.88;
+.brand--panel:hover {
+  color: #fff;
 }
 
 @media (max-width: 720px) {
@@ -230,10 +229,6 @@ a:hover {
   }
 
   .site-nav-panel {
-    display: none;
-  }
-
-  .site-nav-panel.is-open {
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -242,6 +237,24 @@ a:hover {
     background: linear-gradient(180deg, var(--ocean) 0%, var(--ocean-mid) 100%);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    transform: translateY(-100%);
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+      visibility 0.35s;
+  }
+
+  .site-nav-panel.is-open {
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav-panel {
+      transition: none;
+    }
   }
 
   .site-nav-panel__head {
@@ -249,9 +262,9 @@ a:hover {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0.65rem 1rem 0.65rem 1.25rem;
-    background: #fff;
-    box-shadow: 0 1px 0 rgba(0, 43, 77, 0.08);
+    padding: 0.85rem 1.5rem;
+    background: linear-gradient(135deg, var(--ocean) 0%, var(--ocean-mid) 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
     flex-shrink: 0;
     position: sticky;
     top: 0;
@@ -305,6 +318,14 @@ a:hover {
 @media (min-width: 721px) {
   .site-nav-panel {
     display: block;
+    position: static;
+    inset: auto;
+    transform: none;
+    visibility: visible;
+    pointer-events: auto;
+    overflow: visible;
+    background: none;
+    transition: none;
   }
 
   .site-nav-panel__head {
