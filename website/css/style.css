@@ -126,7 +126,9 @@ a:hover {
   font-weight: 500;
   padding: 0.4rem 0.75rem;
   border-radius: 6px;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .site-nav a:hover {
@@ -173,7 +175,9 @@ a:hover {
   height: 1.5px;
   background: #fff;
   border-radius: 1px;
-  transition: transform 0.25s ease, top 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    top 0.25s ease;
 }
 
 .nav-toggle-icon::before {
@@ -299,7 +303,12 @@ main {
 
 /* Hero (home) */
 .hero {
-  background: linear-gradient(160deg, var(--ocean) 0%, var(--ocean-mid) 55%, var(--ocean-light) 100%);
+  background: linear-gradient(
+    160deg,
+    var(--ocean) 0%,
+    var(--ocean-mid) 55%,
+    var(--ocean-light) 100%
+  );
   color: #fff;
   margin: 0 -1.5rem 2.5rem;
   padding: 3rem 1.5rem 3.5rem;
@@ -399,7 +408,10 @@ h3 {
   font-weight: 600;
   text-decoration: none;
   font-size: 0.95rem;
-  transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+  transition:
+    transform 0.12s,
+    box-shadow 0.12s,
+    background 0.12s;
 }
 
 .btn:hover {
@@ -455,7 +467,9 @@ h3 {
   border-radius: var(--radius);
   padding: 1.25rem 1.35rem;
   box-shadow: var(--shadow);
-  transition: box-shadow 0.2s, border-color 0.2s;
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s;
 }
 
 .card:hover {

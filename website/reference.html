@@ -15,8 +15,8 @@
           <p class="section-label">Reference</p>
           <h1>Fields &amp; flags</h1>
           <p class="lead">
-            Everything you can set on an issue, view-only filters, and metadata assigned
-            automatically by Manta.
+            Everything you can set on an issue, view-only filters, and metadata
+            assigned automatically by Manta.
           </p>
         </header>
 
@@ -29,8 +29,9 @@
 
         <h2 id="ids">Issue IDs</h2>
         <p>
-          IDs look like <code>manta-h3kp</code> — four random Crockford base32 characters
-          (lowercase). Short suffixes work in commands (e.g. <code>mt view h3kp</code>).
+          IDs look like <code>manta-h3kp</code> — four random Crockford base32
+          characters (lowercase). Short suffixes work in commands (e.g.
+          <code>mt view h3kp</code>).
         </p>
 
         <h2 id="editable">Editable fields</h2>
@@ -57,17 +58,26 @@
               <tr>
                 <td>status</td>
                 <td><code>--status</code>, <code>-s</code></td>
-                <td><code>open</code>, <code>in_progress</code>, <code>closed</code></td>
+                <td>
+                  <code>open</code>, <code>in_progress</code>,
+                  <code>closed</code>
+                </td>
               </tr>
               <tr>
                 <td>priority</td>
                 <td><code>--priority</code>, <code>-p</code></td>
-                <td><code>p0</code>–<code>p9</code>; <code>p0</code> = highest (default often <code>p5</code>)</td>
+                <td>
+                  <code>p0</code>–<code>p9</code>; <code>p0</code> = highest
+                  (default often <code>p5</code>)
+                </td>
               </tr>
               <tr>
                 <td>issue type</td>
                 <td><code>--type</code></td>
-                <td><code>bug</code>, <code>feature</code>, <code>task</code>, <code>docs</code>, <code>store</code></td>
+                <td>
+                  <code>bug</code>, <code>feature</code>, <code>task</code>,
+                  <code>docs</code>, <code>store</code>
+                </td>
               </tr>
               <tr>
                 <td>assignee</td>
@@ -78,8 +88,11 @@
           </table>
         </div>
         <p>
-          Quotes are optional for simple values: <code>--title "hello"</code> and <code>--title hello</code> are the same.
-          Use quotes when a title or description contains spaces or shell-special characters (for example <code>&amp;</code>, <code>|</code>, <code>$</code>).
+          Quotes are optional for simple values:
+          <code>--title "hello"</code> and <code>--title hello</code> are the
+          same. Use quotes when a title or description contains spaces or
+          shell-special characters (for example <code>&amp;</code>,
+          <code>|</code>, <code>$</code>).
         </p>
 
         <h2 id="view-flags">View-only flags</h2>
@@ -108,8 +121,8 @@
         </div>
         <div class="callout">
           <strong>Note:</strong>
-          <code>--createdBy</code> cannot be used with create, update, close, or delete. It is
-          rejected by the parser.
+          <code>--createdBy</code> cannot be used with create, update, close, or
+          delete. It is rejected by the parser.
         </div>
 
         <h2 id="auto">Auto-assigned fields</h2>
@@ -132,7 +145,10 @@
               </tr>
               <tr>
                 <td>createdBy</td>
-                <td>OS username at creation; filter with <code>mt view --cb &lt;name&gt;</code></td>
+                <td>
+                  OS username at creation; filter with
+                  <code>mt view --cb &lt;name&gt;</code>
+                </td>
               </tr>
               <tr>
                 <td>updatedAt</td>
