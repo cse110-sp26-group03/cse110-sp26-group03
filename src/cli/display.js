@@ -22,6 +22,7 @@ const COL = {
   priority: 10,
   status: 14,
   type: 10,
+  assignee: 14,
   createdBy: 14,
 };
 
@@ -31,8 +32,9 @@ const TABLE_WIDTH =
   COL.priority +
   COL.status +
   COL.type +
+  COL.assignee +
   COL.createdBy +
-  10;
+  12;
 
 /**
  * Main display function. Dispatches to list or individual issue display
@@ -196,6 +198,8 @@ function header_lines() {
     '  ' +
     col('TYPE', COL.type) +
     '  ' +
+    col('ASSIGNEE', COL.assignee) +
+    '  ' +
     col('CREATED BY', COL.createdBy);
   return [header, '-'.repeat(TABLE_WIDTH)];
 }
@@ -217,6 +221,8 @@ function row_line(issue) {
     col(issue.Status, COL.status) +
     '  ' +
     col(issue.IssueType, COL.type) +
+    '  ' +
+    col(issue.Assignee, COL.assignee) +
     '  ' +
     col(issue.CreatedBy, COL.createdBy)
   );
@@ -264,7 +270,7 @@ async function display_issue(issue) {
 function build_issue_detail_lines(issue) {
   const lines = [];
   const width = TABLE_WIDTH;
-  const quarter = Math.floor(width / 4);
+  const half = Math.floor(width / 2);
 
   const title = (issue.Title ?? '-').toString();
   const id = (issue.ID ?? '-').toString();
@@ -279,8 +285,8 @@ function build_issue_detail_lines(issue) {
   lines.push('-'.repeat(width));
 
   const desc = (issue.Description ?? '').toString();
-  if (desc.length === 0) {
-    lines.push('');
+  if (desc.trim().length === 0) {
+    lines.push('<no description>');
   } else {
     for (const line of desc.split(/\r?\n/)) {
       lines.push(line);
@@ -298,19 +304,26 @@ function build_issue_detail_lines(issue) {
         : `p${issue.Priority}`;
 
   lines.push(
-    col(priority, quarter) +
-      col(issue.Assignee, quarter) +
-      col(issue.IssueType, quarter) +
-      col(issue.Status, quarter),
+    col(`Priority: ${priority}`, half) + col(`Status: ${val(issue.Status)}`, half),
+  );
+  lines.push(
+    col(`Assignee: ${val(issue.Assignee)}`, half) +
+      col(`Type: ${val(issue.IssueType)}`, half),
   );
 
   lines.push(dotted_line(width));
 
   lines.push(
-    col(issue.CreatedBy, quarter) +
-      col(issue.CreatedAt, quarter) +
-      col(issue.UpdatedBy, quarter) +
-      col(issue.UpdatedAt, quarter),
+    col(
+      `Created by: ${val(issue.CreatedBy)} @ ${fmt_date(issue.CreatedAt)}`,
+      width,
+    ),
+  );
+  lines.push(
+    col(
+      `Updated by: ${val(issue.UpdatedBy)} @ ${fmt_date(issue.UpdatedAt)}`,
+      width,
+    ),
   );
 
   return lines;
@@ -326,6 +339,50 @@ function build_issue_detail_lines(issue) {
  */
 function short_id(id) {
   return id.replace('manta-', '');
+}
+
+/**
+ * Coerce a field value for display, falling back to "-" when missing.
+ *
+ * @param {*} v - The raw field value.
+ * @returns {string} The value as a string, or "-" if null/empty.
+ */
+function val(v) {
+  return v == null || v === '' ? '-' : v.toString();
+}
+
+/**
+ * Format an ISO timestamp into a compact, readable form
+ * (YYYY-MM-DD HH:MM ZONE) in the machine's local timezone. Falls back to "-"
+ * when missing, or to the raw value if it can't be parsed as a date.
+ *
+ * @param {*} v - The raw timestamp value (typically an ISO 8601 string).
+ * @returns {string} The formatted date, or a sensible fallback.
+ */
+function fmt_date(v) {
+  if (v == null || v === '') return '-';
+  const d = new Date(v);
+  if (Number.isNaN(d.getTime())) return v.toString();
+  const pad = (n) => String(n).padStart(2, '0');
+  const date =
+    `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
+    `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return `${date} ${tz_abbrev(d)}`;
+}
+
+/**
+ * Get the short local timezone abbreviation (e.g. "PDT") for a date.
+ *
+ * @param {Date} d - The date to read the timezone from.
+ * @returns {string} The zone abbreviation, or "" if unavailable.
+ */
+function tz_abbrev(d) {
+  const part = new Intl.DateTimeFormat(undefined, {
+    timeZoneName: 'short',
+  })
+    .formatToParts(d)
+    .find((p) => p.type === 'timeZoneName');
+  return part?.value ?? '';
 }
 
 /**
