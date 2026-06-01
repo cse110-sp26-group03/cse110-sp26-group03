@@ -10,6 +10,7 @@ Plain HTML + CSS for GitHub Pages. No build step — edit files and push.
 | `getting-started.html` | Step-by-step install guide |
 | `commands.html` | **All commands** — cheat sheet, cards, expandable details |
 | `reference.html` | Fields and flags (canonical table) |
+| `team.html` | StringRays team roster, values, and links |
 | `components/` | Shared header & footer (loaded via `js/include.js`) |
 | `css/style.css` | Layout, cards, badges, dark code blocks |
 
