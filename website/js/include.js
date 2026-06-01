@@ -2,9 +2,17 @@
 (function () {
   const page = document.body.dataset.page;
 
+  function syncHeaderHeight() {
+    const header = document.querySelector('.site-header');
+    if (!header) return;
+    document.documentElement.style.setProperty(
+      '--site-header-height',
+      `${header.getBoundingClientRect().height}px`,
+    );
+  }
+
   function bindNavToggle() {
     const toggle = document.querySelector('.nav-toggle');
-    const closeBtn = document.querySelector('.nav-close');
     const panel = document.getElementById('site-nav-panel');
     const nav = document.querySelector('.site-nav');
     if (!toggle || !panel || !nav) return;
@@ -21,12 +29,10 @@
     };
 
     toggle.addEventListener('click', () => {
-      setOpen(!panel.classList.contains('is-open'));
+      const willOpen = !panel.classList.contains('is-open');
+      if (willOpen) syncHeaderHeight();
+      setOpen(willOpen);
     });
-
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => setOpen(false));
-    }
 
     nav.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => setOpen(false));
@@ -59,11 +65,15 @@
         loadFragment('site-header', 'components/header.html'),
         loadFragment('site-footer', 'components/footer.html'),
       ]);
+      syncHeaderHeight();
       setActiveNav();
       bindNavToggle();
     } catch {
       /* Static fallback: inline header/footer remain if fetch fails (e.g. file://) */
+      syncHeaderHeight();
       bindNavToggle();
     }
   });
+
+  window.addEventListener('resize', syncHeaderHeight);
 })();

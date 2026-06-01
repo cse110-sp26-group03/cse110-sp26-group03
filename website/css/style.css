@@ -24,6 +24,7 @@
   --max-width: 56rem;
   --font: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
   --mono: ui-monospace, 'SF Mono', 'Cascadia Code', monospace;
+  --site-header-height: 4.25rem;
 }
 
 *,
@@ -77,10 +78,6 @@ a:hover {
   gap: 1rem;
 }
 
-.header-nav-shell {
-  display: flex;
-  align-items: center;
-}
 
 .brand {
   display: flex;
@@ -134,9 +131,8 @@ a:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Mobile menu toggle — minimal lines, no chrome */
-.nav-toggle,
-.nav-close {
+/* Mobile menu toggle — hamburger morphs to X */
+.nav-toggle {
   display: none;
   align-items: center;
   justify-content: center;
@@ -151,14 +147,14 @@ a:hover {
   -webkit-tap-highlight-color: transparent;
 }
 
-.nav-toggle-icon,
-.nav-close-icon {
+.nav-toggle-icon {
   position: relative;
   display: block;
   width: 22px;
   height: 1.5px;
   background: #fff;
   border-radius: 1px;
+  transition: background 0.25s ease;
 }
 
 .nav-toggle-icon::before,
@@ -170,6 +166,7 @@ a:hover {
   height: 1.5px;
   background: #fff;
   border-radius: 1px;
+  transition: transform 0.25s ease, top 0.25s ease;
 }
 
 .nav-toggle-icon::before {
@@ -180,74 +177,57 @@ a:hover {
   top: 7px;
 }
 
-.nav-close-icon {
+.nav-toggle[aria-expanded='true'] .nav-toggle-icon {
   background: transparent;
 }
 
-.nav-close-icon::before,
-.nav-close-icon::after {
-  content: '';
-  position: absolute;
-  left: 0;
+.nav-toggle[aria-expanded='true'] .nav-toggle-icon::before {
   top: 0;
-  width: 22px;
-  height: 1.5px;
-  background: #fff;
-  border-radius: 1px;
-}
-
-.nav-close-icon::before {
   transform: rotate(45deg);
 }
 
-.nav-close-icon::after {
+.nav-toggle[aria-expanded='true'] .nav-toggle-icon::after {
+  top: 0;
   transform: rotate(-45deg);
 }
 
-/* Full-screen mobile drawer */
-.site-nav-panel__head {
-  display: none;
-}
-
-.brand--panel {
-  color: #fff;
-}
-
-.brand--panel:hover {
-  color: #fff;
-}
-
+/* Mobile drawer — slides down from the bottom edge of the top bar */
 @media (max-width: 720px) {
-  .header-nav-shell {
-    flex: 1;
-    justify-content: flex-end;
-    min-width: 0;
+  .site-header {
+    z-index: 201;
+  }
+
+  .header-inner {
+    position: relative;
+    z-index: 2;
   }
 
   .nav-toggle {
     display: flex;
+    margin-left: auto;
   }
 
   .site-nav-panel {
     display: flex;
     flex-direction: column;
     position: fixed;
-    inset: 0;
-    z-index: 200;
-    background: linear-gradient(180deg, var(--ocean) 0%, var(--ocean-mid) 100%);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    transform: translateY(-100%);
-    visibility: hidden;
+    top: var(--site-header-height);
+    left: 0;
+    right: 0;
+    z-index: 1;
+    max-height: 0;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--ocean-mid) 0%, var(--ocean) 100%);
     pointer-events: none;
-    transition:
-      transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-      visibility 0.35s;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 24px rgba(0, 43, 77, 0.2);
   }
 
   .site-nav-panel.is-open {
-    transform: translateY(0);
-    visibility: visible;
+    max-height: calc(100dvh - var(--site-header-height));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     pointer-events: auto;
   }
 
@@ -255,24 +235,12 @@ a:hover {
     .site-nav-panel {
       transition: none;
     }
-  }
 
-  .site-nav-panel__head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.85rem 1.5rem;
-    background: linear-gradient(135deg, var(--ocean) 0%, var(--ocean-mid) 100%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    flex-shrink: 0;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
-
-  .site-nav-panel__head .nav-close {
-    display: flex;
+    .nav-toggle-icon,
+    .nav-toggle-icon::before,
+    .nav-toggle-icon::after {
+      transition: none;
+    }
   }
 
   .site-nav-panel .site-nav {
@@ -319,17 +287,13 @@ a:hover {
   .site-nav-panel {
     display: block;
     position: static;
-    inset: auto;
-    transform: none;
-    visibility: visible;
-    pointer-events: auto;
+    max-height: none;
     overflow: visible;
+    pointer-events: auto;
     background: none;
+    border: none;
+    box-shadow: none;
     transition: none;
-  }
-
-  .site-nav-panel__head {
-    display: none !important;
   }
 }
 
