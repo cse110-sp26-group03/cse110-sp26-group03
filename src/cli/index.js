@@ -3,8 +3,9 @@
 //
 // Manta CLI entry point.
 //
-// Pipeline: argv -> parse -> validate -> create_event -> applyEvent -> print.
-// Exception: version reads package.json and exits before storage.
+// Pipeline:
+//   Write commands: argv -> parse -> validate -> create_event -> syncFromLog -> applyEvent -> print
+//   Read-only:      version and view exit before create_event (see below)
 
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
@@ -14,6 +15,8 @@ import { parse } from './parser.js';
 import { validate } from '../validation/validation.js';
 import { create_event } from './event.js';
 import { applyEvent } from '../storage/store.js';
+import { FETCH } from '../storage/fetch.js';
+import { DISPLAY } from './display.js';
 import { syncFromLog } from '../storage/replay.js';
 
 // 1. Parse argv -> { cmd, flags }.
@@ -41,6 +44,29 @@ try {
 } catch (err) {
   console.error(err.message);
   process.exit(1);
+}
+
+/**
+ * Read-only view path: parse and validate already ran above.
+ * FETCH reads the SQLite cache (see fetch.js); DISPLAY renders list or detail (ADR-009).
+ * Does not call syncFromLog, create_event, or applyEvent — unlike write commands, view
+ * does not rebuild the cache from JSONL. After a git pull, run a write command first if
+ * the list looks stale, or rely on syncFromLog on the next create/update/close/delete.
+ * Errors print to stderr and exit 1. On success, exits 0 (DISPLAY exits on ESC in a TTY).
+ *
+ * @see ../storage/fetch.js FETCH
+ * @see ./display.js DISPLAY
+ * @see ../../docs/adr/frontend/009-view-fetch-display.md
+ */
+if (parsed_command.cmd === 'view') {
+  try {
+    const result = FETCH(parsed_command);
+    await DISPLAY(parsed_command, result);
+  } catch (err) {
+    console.error(err.message);
+    process.exit(1);
+  }
+  process.exit(0);
 }
 
 // 3. Build the storage event from the parsed command.

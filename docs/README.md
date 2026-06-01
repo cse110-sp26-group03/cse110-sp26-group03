@@ -38,6 +38,13 @@ When sources disagree, use this priority:
 | **`README.md`** | This guide |
 | **`design/`** | Informal design artifacts (preferred location for new drafts) |
 | **`adr/`** | Official Architecture Decision Records |
+| **`mvp/`** | MVP scope, personas, acceptance criteria |
+
+#### `docs/mvp/`
+
+| File | Description |
+|------|-------------|
+| [`mvp.md`](mvp/mvp.md) | MVP problem statement, features, acceptance criteria, timeline |
 
 #### `docs/design/` (informal)
 
@@ -63,6 +70,7 @@ Grouped by area; each folder uses its own `001`, `002`, … numbering.
 | [`006-error-message-format.md`](adr/frontend/006-error-message-format.md) | Error message formatting |
 | [`007-data-driven-flag-validation.md`](adr/frontend/007-data-driven-flag-validation.md) | Data-driven CLI flag validation |
 | [`008-user-identity.md`](adr/frontend/008-user-identity.md) | `createdBy` / `updatedBy` fields |
+| [`009-view-fetch-display.md`](adr/frontend/009-view-fetch-display.md) | `mt view`: FETCH, DISPLAY, alt-screen UI |
 
 **`adr/backend/`**
 
@@ -74,9 +82,10 @@ Grouped by area; each folder uses its own `001`, `002`, … numbering.
 | [`004-migrating-from-beads.md`](adr/backend/004-migrating-from-beads.md) | Migration from Beads |
 | [`005-issue-id-format.md`](adr/backend/005-issue-id-format.md) | Issue ID format (`manta-…`) |
 | [`006-store-js.md`](adr/backend/006-store-js.md) | `store.js` responsibilities |
-| [`009-error-message-format.md`](adr/backend/009-error-message-format.md) | Backend error message format |
+| [`007-jsonl-checkpoints.md`](adr/backend/007-jsonl-checkpoints.md) | JSONL hash checkpoints + `replay.js` |
+| [`008-error-message-format.md`](adr/backend/008-error-message-format.md) | Backend error message format |
 
-*(Numbers 007–008 are unused in `backend/` as of this writing.)*
+*(Per-folder ADR numbering; gaps are historical.)*
 
 **`adr/CI/`**
 
@@ -84,6 +93,8 @@ Grouped by area; each folder uses its own `001`, `002`, … numbering.
 |------|--------|
 | [`001-eslint-linter.md`](adr/CI/001-eslint-linter.md) | ESLint |
 | [`002-prettier-code-formatter.md`](adr/CI/002-prettier-code-formatter.md) | Prettier |
+| [`003-jsdoc-documentation.md`](adr/CI/003-jsdoc-documentation.md) | JSDoc |
+| [`004-changelog-pipeline.md`](adr/CI/004-changelog-pipeline.md) | Release / changelog CI |
 
 **ADR naming:** `NNN-topic-slug.md`; title inside: `# ADR-NNN: …` (number is **per folder**, not global).
 
@@ -150,7 +161,10 @@ Maintained alongside implementation (see also backend/frontend ADRs).
 | [`src/storage/schema.sql`](../src/storage/schema.sql) | SQLite schema |
 | [`src/storage/store.js`](../src/storage/store.js) | Storage API (JSDoc) |
 | [`src/storage/db.js`](../src/storage/db.js) | Database access (JSDoc) |
-| [`src/cli/`](../src/cli/) | CLI parser and commands |
+| [`src/storage/fetch.js`](../src/storage/fetch.js) | Read-only queries for `mt view` |
+| [`src/storage/replay.js`](../src/storage/replay.js) | JSONL → SQLite sync (`syncFromLog`) |
+| [`src/cli/`](../src/cli/) | CLI entry, parser, display, events |
+| [`src/cli/display.js`](../src/cli/display.js) | `mt view` terminal formatting |
 | [`src/validation/validation.js`](../src/validation/validation.js) | Validation helpers |
 
 ---

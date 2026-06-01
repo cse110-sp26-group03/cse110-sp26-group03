@@ -67,17 +67,19 @@ mt close manta-xxxx
 # -> Delete issues
 mt delete manta-xxxx
 
+# -> View issues (interactive table; ESC to exit)
+mt view
+
+# -> View one issue by ID (short ID works too, e.g. mt view tzdb)
+mt view manta-xxxx
+
 ```
 
 Replace `manta-xxxx` with the ID printed by your first `create`. See the table at the end of the readme for additional information on supported flags and fields.
 
-### Viewing your issues (temporary workaround)
+`mt view` opens in a separate terminal view. Use **left/right arrows** to change pages in the list, and **ESC** to return to your shell. Filter examples: `mt view --priority p1`, `mt view --all`, `mt view --cb alice`.
 
-We're actively adding `mt show` / `mt list` so you can view issues directly from the CLI, but those commands aren't implemented yet. In the meantime, you can view your issues through a GUI:
-
-1. Install the **SQLite Viewer** extension by **Florian Klampfer** on VS Code ([Marketplace link](https://marketplace.visualstudio.com/items?itemName=qwtel.sqlite-viewer)).
-2. Create an issue on Manta (see the `mt create` command above).
-3. Go to the `.manta/` directory and open `manta.db` to view it in the visualizer.
+After a **`git pull`** that updates `.manta/manta.jsonl`, the SQLite cache refreshes on the next **write** command (`create`, `update`, `close`, `delete`). If `mt view` looks out of date right after a pull, run any write command or wait until you mutate an issue.
 
 ### Where your data lives
 
