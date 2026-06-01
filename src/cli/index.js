@@ -28,6 +28,23 @@ try {
   process.exit(1);
 }
 
+// 1.5 Sync the local SQLite cache from the JSONL log.
+//      Cheap when nothing changed (hash matches the stored checkpoint and
+//      replay is skipped); does a full rebuild when teammates' events have
+//      arrived via git pull. Must run before applyEvent so that update/delete
+//      see the freshest issue set.
+try {
+  syncFromLog();
+} catch (err) {
+  console.error(err.message);
+  process.exit(1);
+}
+
+if (parsed_command.cmd == 'sync') {
+  console.log('Synced successfully.');
+  process.exit(0); // no further logic needed.
+}
+
 if (parsed_command.cmd === 'version') {
   const pkgPath = join(
     dirname(fileURLToPath(import.meta.url)),
@@ -73,18 +90,6 @@ if (parsed_command.cmd === 'view') {
 let event;
 try {
   event = create_event(parsed_command);
-} catch (err) {
-  console.error(err.message);
-  process.exit(1);
-}
-
-// 3.5. Sync the local SQLite cache from the JSONL log.
-//      Cheap when nothing changed (hash matches the stored checkpoint and
-//      replay is skipped); does a full rebuild when teammates' events have
-//      arrived via git pull. Must run before applyEvent so that update/delete
-//      see the freshest issue set.
-try {
-  syncFromLog();
 } catch (err) {
   console.error(err.message);
   process.exit(1);

@@ -9,15 +9,10 @@
 // }
 
 // all valid commands
-const cmds = [
-  'create',
-  'update',
-  'close',
-  'delete',
-  'version',
-  'view',
-  'replay',
-];
+const cmds = ['create', 'update', 'close', 'delete', 'version', 'view', 'sync'];
+
+// for commands that expect no args
+const empty_cmds = ['version', 'sync'];
 
 // all valid flags
 const possible_flags = [
@@ -31,6 +26,7 @@ const possible_flags = [
   'createdBy',
 ];
 
+// for flags that expect no args
 const empty_flags = ['all'];
 
 // shorthands for flags
@@ -79,6 +75,12 @@ export function parse(argv) {
       `Unknown command '${cmd}': valid commands are ${cmds.join(', ')}`,
     ); // check if command exists
 
+  // throw error if flag is provided for an empty-flag command
+  if (empty_cmds.includes(cmd) && args.length > 1)
+    throw new Error(
+      `Unexpected argument(s) detected - 'mt ${cmd}' should be called with no arguments.`,
+    );
+
   // object to store all flag info
   const flags = {};
 
@@ -106,12 +108,6 @@ export function parse(argv) {
     case 'view':
       if (in_between) flags['id'] = in_between; // map to "id" if in_between is not ""
       break;
-    case 'version':
-      if (in_between)
-        throw new Error(
-          `Unexpected argument '${in_between.trim()}': version takes no arguments`,
-        );
-      break;
   }
 
   let i = first_flag === -1 ? args.length : first_flag; // start at the first flag if found. otherwise start at the end so the loop doesn't run
@@ -131,7 +127,7 @@ export function parse(argv) {
       // if flag is invalid, throws error and shows list of valid flags
       if (!possible_flags.includes(flag))
         throw new Error(
-          `Unknown flag '${flag}': valid flags are\n${possible_flags.join(', ')}`,
+          3`Unknown flag '${flag}': valid flags are\n${possible_flags.join(', ')}`,
         );
       if (flags[flag])
         throw new Error(`Duplicate flag '${flag}': --${flag} was already set`); // flag dupe check
@@ -232,9 +228,6 @@ export function parse(argv) {
         `Too many flags for '${cmd}:' ${expected_flag_counts[cmd].msg}`,
       );
   }
-
-  if (cmd === 'version' && Object.keys(flags).length > 0)
-    throw new Error(`Unexpected flags for 'version': no flags are expected`);
 
   //console.log(`cmd: ${cmd}`)
   //console.log("flags:", flags)
