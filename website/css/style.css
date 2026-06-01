@@ -37,6 +37,16 @@ html {
   scroll-behavior: smooth;
 }
 
+/*
+  Anchor jumps + sticky header:
+  Keep in-page targets from landing under the sticky header.
+*/
+main h2[id],
+main section[id],
+main details[id] {
+  scroll-margin-top: calc(var(--site-header-height) + 1rem);
+}
+
 body {
   margin: 0;
   font-family: var(--font);
