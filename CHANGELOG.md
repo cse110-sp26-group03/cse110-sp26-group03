@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.4.0...v1.5.0) (2026-06-01)
+
+
+### Features
+
+* added prompt to mt delete / docs: updated website ([2152f82](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/2152f8296820d5b43959cacc3dcf4986e6d72958))
+
 # [1.4.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.3.0...v1.4.0) (2026-06-01)
 
 
