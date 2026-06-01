@@ -9,10 +9,10 @@
 // }
 
 // all valid commands
-const cmds = ['create', 'update', 'close', 'delete', 'version', 'view', 'sync'];
+const cmds = ['create', 'update', 'close', 'delete', 'version', 'view', 'sync', 'init'];
 
 // for commands that expect no args
-const empty_cmds = ['version', 'sync'];
+const empty_cmds = ['version', 'sync', 'init'];
 
 // all valid flags
 const possible_flags = [
