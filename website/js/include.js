@@ -7,9 +7,27 @@
     const nav = document.querySelector('.site-nav');
     if (!toggle || !nav) return;
 
-    toggle.addEventListener('click', () => {
-      const open = nav.classList.toggle('is-open');
+    const setOpen = (open) => {
+      nav.classList.toggle('is-open', open);
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.setAttribute(
+        'aria-label',
+        open ? 'Close navigation menu' : 'Open navigation menu',
+      );
+    };
+
+    toggle.addEventListener('click', () => {
+      setOpen(!nav.classList.contains('is-open'));
+    });
+
+    nav.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => setOpen(false));
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.classList.contains('is-open')) {
+        setOpen(false);
+      }
     });
   }
 

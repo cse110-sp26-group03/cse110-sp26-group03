@@ -75,7 +75,12 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  flex-wrap: wrap;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem 0.35rem;
 }
 
 .brand {
@@ -133,35 +138,85 @@ a:hover {
 .nav-toggle {
   display: none;
   align-items: center;
-  gap: 0.4rem;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.35);
   color: #fff;
-  padding: 0.4rem 0.75rem;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
 }
 
 .nav-toggle-icon {
-  display: inline-block;
-  width: 14px;
+  position: relative;
+  display: block;
+  width: 18px;
   height: 2px;
   background: #fff;
-  box-shadow: 0 -5px 0 #fff, 0 5px 0 #fff;
+  border-radius: 1px;
+  transition: background 0.15s;
+}
+
+.nav-toggle-icon::before,
+.nav-toggle-icon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 18px;
+  height: 2px;
+  background: #fff;
+  border-radius: 1px;
+  transition: transform 0.15s, top 0.15s;
+}
+
+.nav-toggle-icon::before {
+  top: -6px;
+}
+
+.nav-toggle-icon::after {
+  top: 6px;
+}
+
+.nav-toggle[aria-expanded='true'] .nav-toggle-icon {
+  background: transparent;
+}
+
+.nav-toggle[aria-expanded='true'] .nav-toggle-icon::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.nav-toggle[aria-expanded='true'] .nav-toggle-icon::after {
+  top: 0;
+  transform: rotate(-45deg);
 }
 
 @media (max-width: 720px) {
+  .header-nav {
+    flex: 1;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    align-items: center;
+    min-width: 0;
+  }
+
+  .header-nav > nav {
+    flex-basis: 100%;
+  }
+
   .nav-toggle {
     display: flex;
   }
 
   .site-nav {
     display: none;
-    width: 100%;
     flex-direction: column;
-    padding: 0.5rem 0 0.25rem;
+    gap: 0.2rem;
+    padding: 0.65rem 0 0.15rem;
+    margin-top: 0.65rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.22);
   }
 
   .site-nav.is-open {
@@ -170,6 +225,7 @@ a:hover {
 
   .site-nav a {
     width: 100%;
+    padding: 0.55rem 0.75rem;
   }
 }
 
