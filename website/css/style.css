@@ -78,7 +78,6 @@ a:hover {
   gap: 1rem;
 }
 
-
 .brand {
   display: flex;
   align-items: center;
@@ -131,7 +130,7 @@ a:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Mobile menu toggle — hamburger morphs to X */
+/* Mobile nav */
 .nav-toggle {
   display: none;
   align-items: center;
@@ -139,12 +138,10 @@ a:hover {
   width: 2.75rem;
   height: 2.75rem;
   padding: 0;
-  margin: 0;
-  background: none;
   border: none;
+  background: none;
   cursor: pointer;
   flex-shrink: 0;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .nav-toggle-icon {
@@ -191,15 +188,9 @@ a:hover {
   transform: rotate(-45deg);
 }
 
-/* Mobile drawer — slides down from the bottom edge of the top bar */
 @media (max-width: 720px) {
   .site-header {
-    z-index: 201;
-  }
-
-  .header-inner {
-    position: relative;
-    z-index: 2;
+    z-index: 200;
   }
 
   .nav-toggle {
@@ -208,46 +199,29 @@ a:hover {
   }
 
   .site-nav-panel {
-    display: flex;
-    flex-direction: column;
     position: fixed;
     top: var(--site-header-height);
     left: 0;
     right: 0;
-    z-index: 1;
+    z-index: 199;
     max-height: 0;
     overflow: hidden;
     background: linear-gradient(180deg, var(--ocean-mid) 0%, var(--ocean) 100%);
-    pointer-events: none;
-    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     border-top: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 8px 24px rgba(0, 43, 77, 0.2);
+    pointer-events: none;
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .site-nav-panel.is-open {
     max-height: calc(100dvh - var(--site-header-height));
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
     pointer-events: auto;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .site-nav-panel {
-      transition: none;
-    }
-
-    .nav-toggle-icon,
-    .nav-toggle-icon::before,
-    .nav-toggle-icon::after {
-      transition: none;
-    }
-  }
-
   .site-nav-panel .site-nav {
-    flex: 1;
     flex-direction: column;
     gap: 0;
-    padding: 0.35rem 0 2rem;
+    padding: 0.25rem 0 1.5rem;
   }
 
   .site-nav-panel .site-nav li {
@@ -256,26 +230,22 @@ a:hover {
 
   .site-nav-panel .site-nav a {
     display: block;
-    width: 100%;
-    padding: 1.05rem 1.5rem;
+    padding: 1rem 1.5rem;
     border-radius: 0;
-    font-size: 0.95rem;
     font-weight: 600;
-    letter-spacing: 0.02em;
-    color: rgba(255, 236, 210, 0.95);
+    color: rgba(255, 255, 255, 0.92);
     background: transparent;
   }
 
   .site-nav-panel .site-nav a:hover,
   .site-nav-panel .site-nav a:focus-visible {
     color: #fff;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.08);
     text-decoration: none;
   }
 
   .site-nav-panel .site-nav a[aria-current='page'] {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.12);
   }
 
   body.nav-open {
@@ -285,14 +255,21 @@ a:hover {
 
 @media (min-width: 721px) {
   .site-nav-panel {
-    display: block;
     position: static;
     max-height: none;
     overflow: visible;
-    pointer-events: auto;
     background: none;
     border: none;
-    box-shadow: none;
+    pointer-events: auto;
+    transition: none;
+  }
+}
+
+@media (max-width: 720px) and (prefers-reduced-motion: reduce) {
+  .site-nav-panel,
+  .nav-toggle-icon,
+  .nav-toggle-icon::before,
+  .nav-toggle-icon::after {
     transition: none;
   }
 }
