@@ -29,8 +29,13 @@ export function init() {
     : '';
 
   if (!existing.includes(GITATTRIBUTES_LINE)) {
-    const separator = existing.length > 0 && !existing.endsWith('\n') ? '\n' : '';
-    writeFileSync(GITATTRIBUTES_PATH, existing + separator + GITATTRIBUTES_LINE + '\n', 'utf8');
+    const separator =
+      existing.length > 0 && !existing.endsWith('\n') ? '\n' : '';
+    writeFileSync(
+      GITATTRIBUTES_PATH,
+      existing + separator + GITATTRIBUTES_LINE + '\n',
+      'utf8',
+    );
   }
 
   console.log('Manta initialized.');

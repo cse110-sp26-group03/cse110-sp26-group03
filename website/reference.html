@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -10,10 +10,17 @@
     <header class="site-header">
       <div class="header-inner">
         <a class="brand" href="index.html">
-          <img src="assets/images/team_logo.jpg" alt="" width="36" height="36" />
+          <img
+            src="assets/images/team_logo.jpg"
+            alt=""
+            width="36"
+            height="36"
+          />
           Manta
         </a>
-        <button class="nav-toggle" type="button" aria-expanded="false">Menu</button>
+        <button class="nav-toggle" type="button" aria-expanded="false">
+          Menu
+        </button>
         <nav>
           <ul class="site-nav">
             <li><a href="index.html">Home</a></li>
@@ -27,12 +34,16 @@
 
     <main>
       <h1>Reference</h1>
-      <p class="lead">Fields you can set, flags you can pass, and metadata assigned automatically.</p>
+      <p class="lead">
+        Fields you can set, flags you can pass, and metadata assigned
+        automatically.
+      </p>
 
       <h2>Issue IDs</h2>
       <p>
-        IDs look like <code>manta-h3kp</code> — the suffix is four random Crockford base32 characters
-        (lowercase). You can often use just the suffix with <code>mt view</code> or update commands.
+        IDs look like <code>manta-h3kp</code> — the suffix is four random
+        Crockford base32 characters (lowercase). You can often use just the
+        suffix with <code>mt view</code> or update commands.
       </p>
 
       <h2>Editable fields</h2>
@@ -59,17 +70,25 @@
             <tr>
               <td>status</td>
               <td><code>--status</code>, <code>-s</code></td>
-              <td><code>open</code>, <code>in_progress</code>, <code>closed</code></td>
+              <td>
+                <code>open</code>, <code>in_progress</code>, <code>closed</code>
+              </td>
             </tr>
             <tr>
               <td>priority</td>
               <td><code>--priority</code>, <code>-p</code></td>
-              <td><code>p0</code>–<code>p9</code>; <code>p0</code> is highest (default often <code>p5</code>)</td>
+              <td>
+                <code>p0</code>–<code>p9</code>; <code>p0</code> is highest
+                (default often <code>p5</code>)
+              </td>
             </tr>
             <tr>
               <td>issue type</td>
               <td><code>--type</code></td>
-              <td><code>bug</code>, <code>feature</code>, <code>task</code>, <code>docs</code>, <code>store</code></td>
+              <td>
+                <code>bug</code>, <code>feature</code>, <code>task</code>,
+                <code>docs</code>, <code>store</code>
+              </td>
             </tr>
             <tr>
               <td>assignee</td>
@@ -79,7 +98,10 @@
           </tbody>
         </table>
       </div>
-      <p>Quotes around values are optional: <code>--title "hello"</code> and <code>--title hello</code> are equivalent.</p>
+      <p>
+        Quotes around values are optional: <code>--title "hello"</code> and
+        <code>--title hello</code> are equivalent.
+      </p>
 
       <h2>View-only flags</h2>
       <div class="table-wrap">
@@ -106,8 +128,9 @@
         </table>
       </div>
       <p>
-        Passing <code>--createdBy</code> to create, update, close, or delete is rejected. You cannot set
-        <code>createdBy</code> manually; it is assigned at creation time.
+        Passing <code>--createdBy</code> to create, update, close, or delete is
+        rejected. You cannot set <code>createdBy</code> manually; it is assigned
+        at creation time.
       </p>
 
       <h2>Auto-assigned fields</h2>
@@ -130,7 +153,10 @@
             </tr>
             <tr>
               <td>createdBy</td>
-              <td>OS username at creation; filter with <code>mt view --cb &lt;name&gt;</code></td>
+              <td>
+                OS username at creation; filter with
+                <code>mt view --cb &lt;name&gt;</code>
+              </td>
             </tr>
             <tr>
               <td>updatedAt</td>
@@ -147,9 +173,10 @@
 
     <footer class="site-footer">
       <p>
-        <a href="index.html">Home</a> ·
-        <a href="commands.html">Commands</a> ·
-        <a href="https://github.com/cse110-sp26-group03/cse110-sp26-group03">Source</a>
+        <a href="index.html">Home</a> · <a href="commands.html">Commands</a> ·
+        <a href="https://github.com/cse110-sp26-group03/cse110-sp26-group03"
+          >Source</a
+        >
       </p>
     </footer>
     <script src="js/nav.js"></script>
