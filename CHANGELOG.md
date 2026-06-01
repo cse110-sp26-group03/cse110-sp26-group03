@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.0...v1.5.1) (2026-06-01)
+
+
+### Bug Fixes
+
+* change Ori's bio on website ([5465650](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/54656501948d6f79aca7785c12a7845ecb73ff01))
+
 # [1.5.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.4.0...v1.5.0) (2026-06-01)
 
 
