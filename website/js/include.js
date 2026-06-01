@@ -4,28 +4,36 @@
 
   function bindNavToggle() {
     const toggle = document.querySelector('.nav-toggle');
+    const closeBtn = document.querySelector('.nav-close');
+    const panel = document.getElementById('site-nav-panel');
     const nav = document.querySelector('.site-nav');
-    if (!toggle || !nav) return;
+    if (!toggle || !panel || !nav) return;
 
     const setOpen = (open) => {
-      nav.classList.toggle('is-open', open);
+      panel.classList.toggle('is-open', open);
+      panel.setAttribute('aria-hidden', open ? 'false' : 'true');
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
       toggle.setAttribute(
         'aria-label',
         open ? 'Close navigation menu' : 'Open navigation menu',
       );
+      document.body.classList.toggle('nav-open', open);
     };
 
     toggle.addEventListener('click', () => {
-      setOpen(!nav.classList.contains('is-open'));
+      setOpen(!panel.classList.contains('is-open'));
     });
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => setOpen(false));
+    }
 
     nav.querySelectorAll('a').forEach((link) => {
       link.addEventListener('click', () => setOpen(false));
     });
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && nav.classList.contains('is-open')) {
+      if (e.key === 'Escape' && panel.classList.contains('is-open')) {
         setOpen(false);
       }
     });
