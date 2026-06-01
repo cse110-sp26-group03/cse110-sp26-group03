@@ -304,7 +304,8 @@ function build_issue_detail_lines(issue) {
         : `p${issue.Priority}`;
 
   lines.push(
-    col(`Priority: ${priority}`, half) + col(`Status: ${val(issue.Status)}`, half),
+    col(`Priority: ${priority}`, half) +
+      col(`Status: ${val(issue.Status)}`, half),
   );
   lines.push(
     col(`Assignee: ${val(issue.Assignee)}`, half) +
