@@ -136,6 +136,7 @@ Issue data is stored in a local SQLite cache for fast queries. A JSONL file is k
 | close | Closes an existing issue| mt close manta-xxxx |
 | delete | Deletes an existing issue | mt delete manta-xxxx |
 | view | List or show one issue (interactive; ESC to exit) | `mt view`, `mt view manta-xxxx`, `mt view --priority p1 --all` |
+| sync | Refreshes the local SQLite cache from the JSONL event log (e.g. after a `git pull`) | mt sync |
 
 ### Supported flags/fields 
 
@@ -150,8 +151,11 @@ Below is an overview of the currently supported flags + fields for CLI commands.
 | priority | importance marker | must be in the form p<number> with number being 0-9. p0 is highest priority. | can updated/created with --priority or -p | -p "p3" |
 | issue type | what type of issue it is | allowed: 'bug', 'feature', 'task', 'docs', 'store' | can be updated/created with --type (no shorthand) | --type "bug" | 
 | assignee | who is working on the issue | a string with only a-z and A_Z | can be updated/created with --assignee or -a | -a "exampleassignee" |
+| createdBy | who created the issue (auto-assigned) | **`mt view` only**; filters the list by creator. Rejected on create/update/close/delete | use with --createdBy or --cb | `mt view --createdBy alice` |
 
 Note that quotes are optional, so `--title "sample title"` and `--title sample title` will produce the same title. 
+
+The `--createdBy` flag (alias `--cb`) is a read-only filter that works **only with `mt view`** — it cannot be used to set a value on create/update, and passing it to any command other than `view` is rejected by the parser. 
 
 ---
 
