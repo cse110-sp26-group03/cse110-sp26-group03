@@ -1,3 +1,17 @@
+# [1.4.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.3.0...v1.4.0) (2026-06-01)
+
+
+### Bug Fixes
+
+* allow browser globals for website static JS in ESLint ([05161df](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/05161df99cca9f216153df1255e5f8a6b724cb70))
+* use PAT for semantic-release ([7c2b4cb](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/7c2b4cbc0f6a880d09677ca9153e911d705e045f))
+
+
+### Features
+
+* add npm publishing for manta-it distribution ([21940d2](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/21940d2a51603a20bf449139ecc88745c36a56da))
+* added mt sync || refactor: cleaned up parsing logic ([d41011c](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/d41011c7c7d27de81a77ae591644a83d1e71ff7c))
+
 # [1.3.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.2.0...v1.3.0) (2026-06-01)
 
 
