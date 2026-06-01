@@ -4,6 +4,14 @@ View our team here: [StringRays](admin/team.md)
 
 View our Agile Team Status Video here: [Youtube Link](https://www.youtube.com/watch?v=EK99ER9aCGg)
 
+## Install
+
+Manta is available on npm: [npmjs.com/package/manta-it](https://www.npmjs.com/package/manta-it)
+
+```bash
+bun install -g manta-it
+```
+
 ## Getting Started
 
 A short guide to running Manta locally and trying a few commands.
