@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Manta — local-first issue tracker</title>
+    <meta
+      name="description"
+      content="Manta is a terminal issue tracker that stores data in your repo and syncs through git."
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="index.html">
+          <img
+            src="assets/images/team_logo.jpg"
+            alt=""
+            width="36"
+            height="36"
+          />
+          Manta
+        </a>
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-nav"
+        >
+          Menu
+        </button>
+        <nav>
+          <ul class="site-nav" id="site-nav">
+            <li><a href="index.html" aria-current="page">Home</a></li>
+            <li><a href="getting-started.html">Getting started</a></li>
+            <li><a href="commands.html">Commands</a></li>
+            <li><a href="reference.html">Reference</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1>Manta</h1>
+      <p class="lead">
+        A local-first issue tracker for the terminal. No accounts, no cloud —
+        issues live in your project under <code>.manta/</code> and sync with
+        your team through git.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="getting-started.html">Get started</a>
+        <a
+          class="btn btn-secondary"
+          href="https://www.npmjs.com/package/manta-it"
+          target="_blank"
+          rel="noopener"
+          >npm: manta-it</a
+        >
+      </div>
+
+      <h2>Install</h2>
+      <p>
+        Manta runs on <a href="https://bun.sh">Bun</a>. Install globally from
+        npm:
+      </p>
+      <pre><code>bun install -g manta-it</code></pre>
+      <p>Then try:</p>
+      <pre><code>mt version
+mt create "My first issue" --priority p1
+mt view</code></pre>
+
+      <h2>What you can do</h2>
+      <ul>
+        <li>
+          <strong>Create, update, close, delete</strong> issues from the CLI
+        </li>
+        <li>
+          <strong>Browse issues</strong> with <code>mt view</code> (interactive
+          table, ESC to exit)
+        </li>
+        <li>
+          <strong>Stay in sync</strong> after <code>git pull</code> with
+          <code>mt sync</code>
+        </li>
+        <li>
+          <strong>Point AI agents</strong> at issue IDs in your repo — no extra
+          integration
+        </li>
+      </ul>
+
+      <figure class="figure">
+        <img
+          src="assets/images/current-structure.png"
+          alt="Diagram of Manta data flow: CLI, JSONL log, SQLite cache, and git"
+          width="800"
+        />
+        <figcaption>
+          Issues are written to a JSONL log; SQLite caches them for fast
+          queries.
+        </figcaption>
+      </figure>
+
+      <h2>Guide sections</h2>
+      <ul>
+        <li>
+          <a href="getting-started.html">Getting started</a> — install, first
+          commands, where data lives
+        </li>
+        <li>
+          <a href="commands.html">Commands</a> — create, update, view, sync, and
+          more
+        </li>
+        <li>
+          <a href="reference.html">Reference</a> — fields, flags, and
+          auto-assigned metadata
+        </li>
+      </ul>
+
+      <div class="callout">
+        <strong>Contributors &amp; course reviewers:</strong>
+        Architecture docs and ADRs stay in the
+        <a
+          href="https://github.com/cse110-sp26-group03/cse110-sp26-group03/tree/main/docs"
+          >GitHub repo</a
+        >.
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        StringRays · CSE 110 ·
+        <a href="https://github.com/cse110-sp26-group03/cse110-sp26-group03"
+          >Source</a
+        >
+        ·
+        <a
+          href="https://github.com/cse110-sp26-group03/cse110-sp26-group03/blob/main/admin/team.md"
+          >Team</a
+        >
+      </p>
+    </footer>
+    <script src="js/nav.js"></script>
+  </body>
+</html>

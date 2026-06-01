@@ -1,5 +1,7 @@
 # Documentation Guide
 
+**End-user guide (install, commands, reference):** [GitHub Pages site](https://cse110-sp26-group03.github.io/cse110-sp26-group03/) — source in [`website/`](../website/).
+
 Quick reference for reviewers and teammates. Lists **all** project documentation in this repository and how the pieces relate.
 
 ## How documentation fits together

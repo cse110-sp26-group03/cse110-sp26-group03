@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Commands — Manta</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="index.html">
+          <img
+            src="assets/images/team_logo.jpg"
+            alt=""
+            width="36"
+            height="36"
+          />
+          Manta
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false">
+          Menu
+        </button>
+        <nav>
+          <ul class="site-nav">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="getting-started.html">Getting started</a></li>
+            <li><a href="commands.html" aria-current="page">Commands</a></li>
+            <li><a href="reference.html">Reference</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <h1>Commands</h1>
+      <p class="lead">
+        All commands start with <code>mt</code>. Expand a section for usage and
+        examples.
+      </p>
+
+      <div class="command-list">
+        <details>
+          <summary><code>mt init</code></summary>
+          <div class="command-body">
+            <p>
+              Initializes Manta in the current directory (creates
+              <code>.manta/</code> if needed). No arguments or flags.
+            </p>
+            <pre><code>mt init</code></pre>
+          </div>
+        </details>
+
+        <details>
+          <summary><code>mt version</code></summary>
+          <div class="command-body">
+            <p>
+              Prints the installed Manta version from <code>package.json</code>.
+              No flags or arguments.
+            </p>
+            <pre><code>mt version
+# 1.2.0</code></pre>
+          </div>
+        </details>
+
+        <details>
+          <summary><code>mt create</code></summary>
+          <div class="command-body">
+            <p>
+              Creates a new issue. Title is required (positional or
+              <code>--title</code>).
+            </p>
+            <pre><code>mt create "My new issue" --desc "Needs to be solved" --priority p1 --assignee bob</code></pre>
+            <p>
+              Optional flags: <code>--desc</code>, <code>--status</code>,
+              <code>--priority</code>, <code>--type</code>,
+              <code>--assignee</code>. See
+              <a href="reference.html">Reference</a>.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary><code>mt update</code></summary>
+          <div class="command-body">
+            <p>
+              Updates one or more fields on an existing issue. At least one
+              field flag is required besides the ID.
+            </p>
+            <pre><code>mt update manta-h3kp --title "Changed the title" --status in_progress</code></pre>
+          </div>
+        </details>
+
+        <details>
+          <summary><code>mt view</code></summary>
+          <div class="command-body">
+            <p>
+              Lists issues or shows one issue in detail. Uses an alternate
+              terminal screen when run in a TTY; press <strong>ESC</strong> to
+              return to your shell.
+            </p>
+            <ul>
+              <li>
+                <strong>List:</strong> <code>mt view</code> — paginated table;
+                use left/right arrows to change pages.
+              </li>
+              <li>
+                <strong>Detail:</strong> <code>mt view manta-h3kp</code> — short
+                IDs work (e.g. <code>mt view h3kp</code>).
+              </li>
+              <li>
+                <strong>Filters:</strong> <code>mt view --priority p1</code>,
+                <code>mt view --all</code>, <code>mt view --cb alice</code>
+              </li>
+            </ul>
+            <pre><code>mt view
+mt view manta-h3kp
+mt view --priority p1 --all
+mt view --createdBy alice</code></pre>
+            <p>
+              <code>--createdBy</code> (alias <code>--cb</code>) is
+              <strong>view-only</strong> — it filters the list by who created
+              the issue.
+            </p>
+            <div class="callout">
+              <strong>After git pull:</strong> <code>mt view</code> reads the
+              SQLite cache only. Run <code>mt sync</code> (or any write command)
+              first if the list may be stale.
+            </div>
+          </div>
+        </details>
+
+        <details>
+          <summary><code>mt sync</code></summary>
+          <div class="command-body">
+            <p>
+              Rebuilds the local SQLite cache from
+              <code>.manta/manta.jsonl</code>. No arguments or flags.
+            </p>
+            <pre><code>mt sync
+# Synced successfully.</code></pre>
+            <p>
+              Use after <code>git pull</code> when teammates’ issues arrived in
+              the log and you want an up-to-date view without creating an issue.
+            </p>
+          </div>
+        </details>
+
+        <details>
+          <summary><code>mt close</code></summary>
+          <div class="command-body">
+            <p>Marks an issue as closed (updates status only).</p>
+            <pre><code>mt close manta-h3kp</code></pre>
+          </div>
+        </details>
+
+        <details>
+          <summary><code>mt delete</code></summary>
+          <div class="command-body">
+            <p>
+              Permanently removes an issue. You will be asked to confirm
+              (<code>y/n</code>).
+            </p>
+            <pre><code>mt delete manta-h3kp</code></pre>
+            <figure class="figure">
+              <img
+                src="assets/images/close-delete.png"
+                alt="Flowchart for closing and deleting issues"
+                width="600"
+              />
+            </figure>
+          </div>
+        </details>
+      </div>
+
+      <p>Field and flag details: <a href="reference.html">Reference</a></p>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        <a href="index.html">Home</a> ·
+        <a href="https://github.com/cse110-sp26-group03/cse110-sp26-group03"
+          >Source</a
+        >
+      </p>
+    </footer>
+    <script src="js/nav.js"></script>
+  </body>
+</html>
