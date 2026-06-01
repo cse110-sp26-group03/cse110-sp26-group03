@@ -3,187 +3,283 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Commands — Manta</title>
+    <title>All commands — Manta</title>
+    <meta
+      name="description"
+      content="Complete reference for every Manta CLI command: mt create, view, sync, init, and more."
+    />
     <link rel="stylesheet" href="css/style.css" />
   </head>
-  <body>
-    <header class="site-header">
-      <div class="header-inner">
-        <a class="brand" href="index.html">
-          <img
-            src="assets/images/team_logo.jpg"
-            alt=""
-            width="36"
-            height="36"
-          />
-          Manta
-        </a>
-        <button class="nav-toggle" type="button" aria-expanded="false">
-          Menu
-        </button>
-        <nav>
-          <ul class="site-nav">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="getting-started.html">Getting started</a></li>
-            <li><a href="commands.html" aria-current="page">Commands</a></li>
-            <li><a href="reference.html">Reference</a></li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+  <body data-page="commands">
+    <header class="site-header" id="site-header"></header>
 
     <main>
-      <h1>Commands</h1>
-      <p class="lead">
-        All commands start with <code>mt</code>. Expand a section for usage and
-        examples.
-      </p>
+      <div class="page-content">
+        <header class="page-header">
+          <p class="section-label">CLI reference</p>
+          <h1>All commands</h1>
+          <p class="lead">
+            Every command starts with <code>mt</code>. Use the cheat sheet for a quick
+            lookup, or expand a section below for examples and notes.
+          </p>
+        </header>
 
-      <div class="command-list">
-        <details>
-          <summary><code>mt init</code></summary>
-          <div class="command-body">
-            <p>
-              Initializes Manta in the current directory (creates
-              <code>.manta/</code> if needed). No arguments or flags.
-            </p>
-            <pre><code>mt init</code></pre>
-          </div>
-        </details>
+        <nav class="toc-inline" aria-label="Jump to section">
+          <a href="#cheat-sheet">Cheat sheet</a>
+          <a href="#setup">Setup</a>
+          <a href="#issues">Issues</a>
+          <a href="#sync">Sync</a>
+          <a href="#details">Full details</a>
+        </nav>
 
-        <details>
-          <summary><code>mt version</code></summary>
-          <div class="command-body">
-            <p>
-              Prints the installed Manta version from <code>package.json</code>.
-              No flags or arguments.
-            </p>
-            <pre><code>mt version
-# 1.2.0</code></pre>
-          </div>
-        </details>
+        <h2 id="cheat-sheet">Cheat sheet</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Command</th>
+                <th>Type</th>
+                <th>Summary</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>mt init</code></td>
+                <td><span class="badge badge-setup">Setup</span></td>
+                <td>Initialize <code>.manta/</code> in the current directory</td>
+              </tr>
+              <tr>
+                <td><code>mt version</code></td>
+                <td><span class="badge badge-read">Read</span></td>
+                <td>Print installed package version</td>
+              </tr>
+              <tr>
+                <td><code>mt create</code></td>
+                <td><span class="badge badge-write">Write</span></td>
+                <td>Create a new issue (title required)</td>
+              </tr>
+              <tr>
+                <td><code>mt update</code></td>
+                <td><span class="badge badge-write">Write</span></td>
+                <td>Change fields on an existing issue</td>
+              </tr>
+              <tr>
+                <td><code>mt view</code></td>
+                <td><span class="badge badge-read">Read</span></td>
+                <td>List or show issues (interactive in TTY)</td>
+              </tr>
+              <tr>
+                <td><code>mt close</code></td>
+                <td><span class="badge badge-write">Write</span></td>
+                <td>Mark an issue as closed</td>
+              </tr>
+              <tr>
+                <td><code>mt delete</code></td>
+                <td><span class="badge badge-write">Write</span></td>
+                <td>Remove an issue (with confirmation)</td>
+              </tr>
+              <tr>
+                <td><code>mt sync</code></td>
+                <td><span class="badge badge-sync">Sync</span></td>
+                <td>Rebuild SQLite cache from the JSONL log</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-        <details>
-          <summary><code>mt create</code></summary>
-          <div class="command-body">
-            <p>
-              Creates a new issue. Title is required (positional or
-              <code>--title</code>).
-            </p>
-            <pre><code>mt create "My new issue" --desc "Needs to be solved" --priority p1 --assignee bob</code></pre>
-            <p>
-              Optional flags: <code>--desc</code>, <code>--status</code>,
-              <code>--priority</code>, <code>--type</code>,
-              <code>--assignee</code>. See
-              <a href="reference.html">Reference</a>.
-            </p>
-          </div>
-        </details>
-
-        <details>
-          <summary><code>mt update</code></summary>
-          <div class="command-body">
-            <p>
-              Updates one or more fields on an existing issue. At least one
-              field flag is required besides the ID.
-            </p>
-            <pre><code>mt update manta-h3kp --title "Changed the title" --status in_progress</code></pre>
-          </div>
-        </details>
-
-        <details>
-          <summary><code>mt view</code></summary>
-          <div class="command-body">
-            <p>
-              Lists issues or shows one issue in detail. Uses an alternate
-              terminal screen when run in a TTY; press <strong>ESC</strong> to
-              return to your shell.
-            </p>
-            <ul>
-              <li>
-                <strong>List:</strong> <code>mt view</code> — paginated table;
-                use left/right arrows to change pages.
-              </li>
-              <li>
-                <strong>Detail:</strong> <code>mt view manta-h3kp</code> — short
-                IDs work (e.g. <code>mt view h3kp</code>).
-              </li>
-              <li>
-                <strong>Filters:</strong> <code>mt view --priority p1</code>,
-                <code>mt view --all</code>, <code>mt view --cb alice</code>
-              </li>
-            </ul>
-            <pre><code>mt view
-mt view manta-h3kp
-mt view --priority p1 --all
-mt view --createdBy alice</code></pre>
-            <p>
-              <code>--createdBy</code> (alias <code>--cb</code>) is
-              <strong>view-only</strong> — it filters the list by who created
-              the issue.
-            </p>
-            <div class="callout">
-              <strong>After git pull:</strong> <code>mt view</code> reads the
-              SQLite cache only. Run <code>mt sync</code> (or any write command)
-              first if the list may be stale.
+        <h2 id="setup">Setup commands</h2>
+        <div class="command-grid">
+          <article class="command-card">
+            <div class="command-card-top">
+              <p class="cmd-name">mt init</p>
+              <span class="badge badge-setup">Setup</span>
             </div>
-          </div>
-        </details>
+            <p>Creates <code>.manta/</code> if it does not exist. Run once per project directory.</p>
+            <a href="#cmd-init">Details ↓</a>
+          </article>
+          <article class="command-card">
+            <div class="command-card-top">
+              <p class="cmd-name">mt version</p>
+              <span class="badge badge-read">Read</span>
+            </div>
+            <p>Prints SemVer from <code>package.json</code>. No flags or arguments.</p>
+            <a href="#cmd-version">Details ↓</a>
+          </article>
+        </div>
 
-        <details>
-          <summary><code>mt sync</code></summary>
-          <div class="command-body">
-            <p>
-              Rebuilds the local SQLite cache from
-              <code>.manta/manta.jsonl</code>. No arguments or flags.
-            </p>
-            <pre><code>mt sync
+        <h2 id="issues">Issue commands</h2>
+        <div class="command-grid">
+          <article class="command-card">
+            <div class="command-card-top">
+              <p class="cmd-name">mt create</p>
+              <span class="badge badge-write">Write</span>
+            </div>
+            <p>New issue with title + optional flags (priority, assignee, type, …).</p>
+            <a href="#cmd-create">Details ↓</a>
+          </article>
+          <article class="command-card">
+            <div class="command-card-top">
+              <p class="cmd-name">mt update</p>
+              <span class="badge badge-write">Write</span>
+            </div>
+            <p>Change one or more fields. Requires issue ID + at least one flag.</p>
+            <a href="#cmd-update">Details ↓</a>
+          </article>
+          <article class="command-card">
+            <div class="command-card-top">
+              <p class="cmd-name">mt view</p>
+              <span class="badge badge-read">Read</span>
+            </div>
+            <p>Paginated list or single-issue detail. Filters: <code>--priority</code>, <code>--all</code>, <code>--cb</code>.</p>
+            <a href="#cmd-view">Details ↓</a>
+          </article>
+          <article class="command-card">
+            <div class="command-card-top">
+              <p class="cmd-name">mt close</p>
+              <span class="badge badge-write">Write</span>
+            </div>
+            <p>Sets status to closed. Only the issue ID is required.</p>
+            <a href="#cmd-close">Details ↓</a>
+          </article>
+          <article class="command-card">
+            <div class="command-card-top">
+              <p class="cmd-name">mt delete</p>
+              <span class="badge badge-write">Write</span>
+            </div>
+            <p>Permanently removes an issue after <code>y/n</code> confirmation.</p>
+            <a href="#cmd-delete">Details ↓</a>
+          </article>
+        </div>
+
+        <h2 id="sync">Sync</h2>
+        <div class="command-grid">
+          <article class="command-card">
+            <div class="command-card-top">
+              <p class="cmd-name">mt sync</p>
+              <span class="badge badge-sync">Sync</span>
+            </div>
+            <p>Refresh SQLite from <code>manta.jsonl</code> after <code>git pull</code>.</p>
+            <a href="#cmd-sync">Details ↓</a>
+          </article>
+        </div>
+
+        <section class="command-section" id="details">
+          <h2>Full command details</h2>
+          <p>Expand any command for examples, flags, and tips.</p>
+
+          <div class="command-list">
+            <details id="cmd-init">
+              <summary><code>mt init</code></summary>
+              <div class="command-body">
+                <p>
+                  Initializes Manta in the current working directory. Creates
+                  <code>.manta/</code> and required files if missing. No arguments or flags.
+                </p>
+                <pre><code>mt init</code></pre>
+              </div>
+            </details>
+
+            <details id="cmd-version">
+              <summary><code>mt version</code></summary>
+              <div class="command-body">
+                <p>Prints the installed Manta version. Subcommand only — <code>mt --version</code> is not supported.</p>
+                <pre><code>mt version
+# 1.3.0</code></pre>
+              </div>
+            </details>
+
+            <details id="cmd-create">
+              <summary><code>mt create</code></summary>
+              <div class="command-body">
+                <p>
+                  Creates a new issue. <strong>Title is required</strong> — pass it as a positional
+                  argument or with <code>--title</code> / <code>-t</code>.
+                </p>
+                <pre><code>mt create "My new issue"
+mt create "Bug fix" --desc "Repro steps" --priority p1 --type bug --assignee alice</code></pre>
+                <p>
+                  Optional: <code>--desc</code>, <code>--status</code>, <code>--priority</code>,
+                  <code>--type</code>, <code>--assignee</code>.
+                  <a href="reference.html">Full field reference →</a>
+                </p>
+              </div>
+            </details>
+
+            <details id="cmd-update">
+              <summary><code>mt update</code></summary>
+              <div class="command-body">
+                <p>Updates fields on an existing issue. Provide the ID plus at least one field flag.</p>
+                <pre><code>mt update manta-h3kp --title "New title"
+mt update manta-h3kp --status in_progress --priority p0</code></pre>
+              </div>
+            </details>
+
+            <details id="cmd-view" open>
+              <summary><code>mt view</code></summary>
+              <div class="command-body">
+                <p>
+                  Browse issues in an interactive table (TTY) or show one issue in detail.
+                  Press <strong>ESC</strong> to exit. Use <strong>← / →</strong> to paginate the list.
+                </p>
+                <pre><code>mt view
+mt view manta-h3kp
+mt view h3kp                    # short ID works
+mt view --priority p1
+mt view --all                   # include closed
+mt view --createdBy alice
+mt view --cb alice              # alias for --createdBy</code></pre>
+                <div class="callout callout-tip">
+                  <strong>Stale list after git pull?</strong>
+                  Run <code>mt sync</code> first — <code>view</code> reads SQLite only and does not
+                  replay the log by itself.
+                </div>
+              </div>
+            </details>
+
+            <details id="cmd-sync">
+              <summary><code>mt sync</code></summary>
+              <div class="command-body">
+                <p>
+                  Rebuilds the local SQLite cache from <code>.manta/manta.jsonl</code>. Cheap when
+                  nothing changed; full replay when teammates’ events arrived via git.
+                </p>
+                <pre><code>mt sync
 # Synced successfully.</code></pre>
-            <p>
-              Use after <code>git pull</code> when teammates’ issues arrived in
-              the log and you want an up-to-date view without creating an issue.
-            </p>
-          </div>
-        </details>
+              </div>
+            </details>
 
-        <details>
-          <summary><code>mt close</code></summary>
-          <div class="command-body">
-            <p>Marks an issue as closed (updates status only).</p>
-            <pre><code>mt close manta-h3kp</code></pre>
-          </div>
-        </details>
+            <details id="cmd-close">
+              <summary><code>mt close</code></summary>
+              <div class="command-body">
+                <p>Closes an issue (sets status to <code>closed</code>). Only the issue ID is required.</p>
+                <pre><code>mt close manta-h3kp</code></pre>
+              </div>
+            </details>
 
-        <details>
-          <summary><code>mt delete</code></summary>
-          <div class="command-body">
-            <p>
-              Permanently removes an issue. You will be asked to confirm
-              (<code>y/n</code>).
-            </p>
-            <pre><code>mt delete manta-h3kp</code></pre>
-            <figure class="figure">
-              <img
-                src="assets/images/close-delete.png"
-                alt="Flowchart for closing and deleting issues"
-                width="600"
-              />
-            </figure>
+            <details id="cmd-delete">
+              <summary><code>mt delete</code></summary>
+              <div class="command-body">
+                <p>Deletes an issue permanently. Manta prompts for confirmation (<code>y/n</code>).</p>
+                <pre><code>mt delete manta-h3kp</code></pre>
+                <figure class="figure">
+                  <img
+                    src="assets/images/close-delete.png"
+                    alt="Flowchart for closing and deleting issues"
+                    width="600"
+                  />
+                </figure>
+              </div>
+            </details>
           </div>
-        </details>
+        </section>
+
+        <p class="text-center" style="margin-top: 2rem">
+          <a class="btn btn-outline" href="reference.html">Fields &amp; flags reference</a>
+        </p>
       </div>
-
-      <p>Field and flag details: <a href="reference.html">Reference</a></p>
     </main>
 
-    <footer class="site-footer">
-      <p>
-        <a href="index.html">Home</a> ·
-        <a href="https://github.com/cse110-sp26-group03/cse110-sp26-group03"
-          >Source</a
-        >
-      </p>
-    </footer>
-    <script src="js/nav.js"></script>
+    <footer class="site-footer" id="site-footer"></footer>
+    <script src="js/include.js"></script>
   </body>
 </html>
