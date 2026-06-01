@@ -22,6 +22,7 @@ import { dirname } from 'path';
 
 const DEFAULT_DB_PATH = '.manta/manta.db';
 const SCHEMA_URL = new URL('./schema.sql', import.meta.url);
+//test
 
 /**
  * Open a Manta SQLite database, apply PRAGMAs, and run schema.sql.
