@@ -41,8 +41,8 @@ try {
 }
 
 if (parsed_command.cmd == 'sync') {
-  console.log('Synced successfully.')
-  process.exit(0) // no further logic needed.
+  console.log('Synced successfully.');
+  process.exit(0); // no further logic needed.
 }
 
 if (parsed_command.cmd === 'version') {

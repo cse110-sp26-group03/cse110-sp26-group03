@@ -9,18 +9,10 @@
 // }
 
 // all valid commands
-const cmds = [
-  'create',
-  'update',
-  'close',
-  'delete',
-  'version',
-  'view',
-  'sync',
-];
+const cmds = ['create', 'update', 'close', 'delete', 'version', 'view', 'sync'];
 
 // for commands that expect no args
-const empty_cmds = ['version', 'sync']
+const empty_cmds = ['version', 'sync'];
 
 // all valid flags
 const possible_flags = [
@@ -85,8 +77,9 @@ export function parse(argv) {
 
   // throw error if flag is provided for an empty-flag command
   if (empty_cmds.includes(cmd) && args.length > 1)
-    throw new Error(`Unexpected argument(s) detected - 'mt ${cmd}' should be called with no arguments.`)
-    
+    throw new Error(
+      `Unexpected argument(s) detected - 'mt ${cmd}' should be called with no arguments.`,
+    );
 
   // object to store all flag info
   const flags = {};
@@ -124,7 +117,6 @@ export function parse(argv) {
 
     // flag found
     if (current.startsWith('-')) {
-
       // reject anything that isn't exactly "--<name>", ex. -, -t, ---, ---title
       if (!/^--[a-z]/.test(current))
         throw new Error(`Invalid flag '${current}': flags must start with --`);
@@ -134,8 +126,8 @@ export function parse(argv) {
 
       // if flag is invalid, throws error and shows list of valid flags
       if (!possible_flags.includes(flag))
-        throw new Error(3
-          `Unknown flag '${flag}': valid flags are\n${possible_flags.join(', ')}`,
+        throw new Error(
+          3`Unknown flag '${flag}': valid flags are\n${possible_flags.join(', ')}`,
         );
       if (flags[flag])
         throw new Error(`Duplicate flag '${flag}': --${flag} was already set`); // flag dupe check
