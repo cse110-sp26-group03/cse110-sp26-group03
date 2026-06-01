@@ -12,7 +12,7 @@ Manta is available on npm: [npmjs.com/package/manta-it](https://www.npmjs.com/pa
 bun install -g manta-it
 ```
 
-## Getting Started
+## Getting Started with Manta
 
 A short guide to running Manta locally and trying a few commands.
 
