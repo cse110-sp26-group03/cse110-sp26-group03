@@ -1,3 +1,19 @@
+# [1.2.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.1.0...v1.2.0) (2026-06-01)
+
+
+### Bug Fixes
+
+* add line 220 to fix error linter was catching ([7785a13](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/7785a13fc10da7cb83ba4377ce026857736f9166))
+* correct .gitattributes syntax (remove stray quotes) ([4618460](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/461846089b96f5be2bba990243a85d0e473acffc))
+* use PAT for semantic-release ([93b4b68](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/93b4b68dcd7ff102738fd1cae71d766f42f62b0f))
+* use PAT for semantic-release ([de59c86](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/de59c862d272c43bb7e9c059ba4484bc6db1273f))
+
+
+### Features
+
+* add npm publishing for manta-it distribution ([f7bf46f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/f7bf46fefb09e0a519b4ccbfaf0476c61dd52c0f))
+* add step 3.5 . Sync local sqlite before applying event, so user has most updated DB. ([02a65d0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/02a65d03cb11f858c0a195eda984b899a603aeac))
+
 # [1.1.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.0.0...v1.1.0) (2026-05-27)
 
 
