@@ -1,3 +1,13 @@
+# [1.3.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.2.0...v1.3.0) (2026-06-01)
+
+
+### Features
+
+* added mt sync ([f7d7ea1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/f7d7ea1c3758bcd93c46feaa8433c19b92889a29))
+* added mt sync || refactor: cleaned up parsing logic ([b42e22c](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/b42e22c7df166708a63eeb64c67c5928f7f315bd))
+* init.js ([37004a8](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/37004a850a65bd216c7b18c7e8643861b44b8115))
+* init.js ([99a832f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/99a832f403a65614219ae84b96bcf6e70d4006ac))
+
 # [1.2.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.1.0...v1.2.0) (2026-06-01)
 
 
