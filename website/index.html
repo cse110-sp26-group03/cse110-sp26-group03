@@ -10,137 +10,107 @@
     />
     <link rel="stylesheet" href="css/style.css" />
   </head>
-  <body>
-    <header class="site-header">
-      <div class="header-inner">
-        <a class="brand" href="index.html">
-          <img
-            src="assets/images/team_logo.jpg"
-            alt=""
-            width="36"
-            height="36"
-          />
-          Manta
-        </a>
-        <button
-          class="nav-toggle"
-          type="button"
-          aria-expanded="false"
-          aria-controls="site-nav"
-        >
-          Menu
-        </button>
-        <nav>
-          <ul class="site-nav" id="site-nav">
-            <li><a href="index.html" aria-current="page">Home</a></li>
-            <li><a href="getting-started.html">Getting started</a></li>
-            <li><a href="commands.html">Commands</a></li>
-            <li><a href="reference.html">Reference</a></li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+  <body data-page="home">
+    <header class="site-header" id="site-header"></header>
 
     <main>
-      <h1>Manta</h1>
-      <p class="lead">
-        A local-first issue tracker for the terminal. No accounts, no cloud —
-        issues live in your project under <code>.manta/</code> and sync with
-        your team through git.
-      </p>
+      <section class="hero">
+        <div class="hero-inner">
+          <h1>Track issues from your terminal</h1>
+          <p class="lead">
+            Manta is local-first: no accounts, no cloud. Issues live in
+            <code>.manta/</code> inside your project and sync with teammates through
+            git.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="getting-started.html">Get started</a>
+            <a class="btn btn-secondary" href="commands.html">All commands</a>
+            <a
+              class="btn btn-secondary"
+              href="https://www.npmjs.com/package/manta-it"
+              target="_blank"
+              rel="noopener"
+              >npm: manta-it</a
+            >
+          </div>
+        </div>
+      </section>
 
-      <div class="hero-actions">
-        <a class="btn btn-primary" href="getting-started.html">Get started</a>
-        <a
-          class="btn btn-secondary"
-          href="https://www.npmjs.com/package/manta-it"
-          target="_blank"
-          rel="noopener"
-          >npm: manta-it</a
-        >
-      </div>
-
-      <h2>Install</h2>
-      <p>
-        Manta runs on <a href="https://bun.sh">Bun</a>. Install globally from
-        npm:
-      </p>
-      <pre><code>bun install -g manta-it</code></pre>
-      <p>Then try:</p>
-      <pre><code>mt version
+      <div class="page-content">
+        <pre><code>bun install -g manta-it
+mt init
 mt create "My first issue" --priority p1
 mt view</code></pre>
 
-      <h2>What you can do</h2>
-      <ul>
-        <li>
-          <strong>Create, update, close, delete</strong> issues from the CLI
-        </li>
-        <li>
-          <strong>Browse issues</strong> with <code>mt view</code> (interactive
-          table, ESC to exit)
-        </li>
-        <li>
-          <strong>Stay in sync</strong> after <code>git pull</code> with
-          <code>mt sync</code>
-        </li>
-        <li>
-          <strong>Point AI agents</strong> at issue IDs in your repo — no extra
-          integration
-        </li>
-      </ul>
+        <h2>Why Manta?</h2>
+        <div class="card-grid">
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">⌨️</div>
+            <h3>Terminal-native</h3>
+            <p>Create, update, and browse issues without leaving your shell.</p>
+            <a class="card-link" href="commands.html">See all commands →</a>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">📁</div>
+            <h3>Lives in your repo</h3>
+            <p>JSONL event log + SQLite cache under <code>.manta/</code>.</p>
+            <a class="card-link" href="getting-started.html#storage">Where data lives →</a>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">🔀</div>
+            <h3>Git-friendly sync</h3>
+            <p>Push and pull issues like code. Run <code>mt sync</code> after a pull.</p>
+            <a class="card-link" href="commands.html#sync">Sync command →</a>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">🤖</div>
+            <h3>Agent-ready</h3>
+            <p>Point AI tools at <code>manta-xxxx</code> IDs in structured local files.</p>
+            <a class="card-link" href="reference.html">Field reference →</a>
+          </article>
+        </div>
 
-      <figure class="figure">
-        <img
-          src="assets/images/current-structure.png"
-          alt="Diagram of Manta data flow: CLI, JSONL log, SQLite cache, and git"
-          width="800"
-        />
-        <figcaption>
-          Issues are written to a JSONL log; SQLite caches them for fast
-          queries.
-        </figcaption>
-      </figure>
+        <figure class="figure">
+          <img
+            src="assets/images/current-structure.png"
+            alt="Diagram of Manta: CLI, JSONL log, SQLite cache, and git"
+            width="800"
+          />
+          <figcaption>
+            Writes go to the event log; reads use SQLite for speed.
+          </figcaption>
+        </figure>
 
-      <h2>Guide sections</h2>
-      <ul>
-        <li>
-          <a href="getting-started.html">Getting started</a> — install, first
-          commands, where data lives
-        </li>
-        <li>
-          <a href="commands.html">Commands</a> — create, update, view, sync, and
-          more
-        </li>
-        <li>
-          <a href="reference.html">Reference</a> — fields, flags, and
-          auto-assigned metadata
-        </li>
-      </ul>
+        <h2>Documentation</h2>
+        <div class="card-grid">
+          <article class="card">
+            <h3>Getting started</h3>
+            <p>Install Bun, link the CLI, run your first commands.</p>
+            <a class="card-link" href="getting-started.html">Read guide →</a>
+          </article>
+          <article class="card">
+            <h3>All commands</h3>
+            <p>Full cheat sheet for every <code>mt</code> subcommand.</p>
+            <a class="card-link" href="commands.html">Command reference →</a>
+          </article>
+          <article class="card">
+            <h3>Fields &amp; flags</h3>
+            <p>Priorities, statuses, view filters, and auto-assigned fields.</p>
+            <a class="card-link" href="reference.html">Open reference →</a>
+          </article>
+        </div>
 
-      <div class="callout">
-        <strong>Contributors &amp; course reviewers:</strong>
-        Architecture docs and ADRs stay in the
-        <a
-          href="https://github.com/cse110-sp26-group03/cse110-sp26-group03/tree/main/docs"
-          >GitHub repo</a
-        >.
+        <div class="callout callout-tip">
+          <strong>For contributors:</strong>
+          Architecture decisions and ADRs are in the
+          <a href="https://github.com/cse110-sp26-group03/cse110-sp26-group03/tree/main/docs"
+            >GitHub repo</a
+          >.
+        </div>
       </div>
     </main>
 
-    <footer class="site-footer">
-      <p>
-        StringRays · CSE 110 ·
-        <a href="https://github.com/cse110-sp26-group03/cse110-sp26-group03"
-          >Source</a
-        >
-        ·
-        <a
-          href="https://github.com/cse110-sp26-group03/cse110-sp26-group03/blob/main/admin/team.md"
-          >Team</a
-        >
-      </p>
-    </footer>
-    <script src="js/nav.js"></script>
+    <footer class="site-footer" id="site-footer"></footer>
+    <script src="js/include.js"></script>
   </body>
 </html>

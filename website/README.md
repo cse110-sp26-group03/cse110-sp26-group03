@@ -2,14 +2,16 @@
 
 Plain HTML + CSS for GitHub Pages. No build step — edit files and push.
 
-## Pages
+## Structure
 
-| File | Purpose |
+| Path | Purpose |
 |------|---------|
-| `index.html` | Landing + install |
-| `getting-started.html` | Install, first commands, sync workflow |
-| `commands.html` | Command reference (`<details>` dropdowns) |
+| `index.html` | Landing hero + feature cards |
+| `getting-started.html` | Step-by-step install guide |
+| `commands.html` | **All commands** — cheat sheet, cards, expandable details |
 | `reference.html` | Fields and flags (canonical table) |
+| `components/` | Shared header & footer (loaded via `js/include.js`) |
+| `css/style.css` | Layout, cards, badges, dark code blocks |
 
 ## Local preview
 

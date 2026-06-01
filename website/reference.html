@@ -6,179 +6,152 @@
     <title>Reference — Manta</title>
     <link rel="stylesheet" href="css/style.css" />
   </head>
-  <body>
-    <header class="site-header">
-      <div class="header-inner">
-        <a class="brand" href="index.html">
-          <img
-            src="assets/images/team_logo.jpg"
-            alt=""
-            width="36"
-            height="36"
-          />
-          Manta
-        </a>
-        <button class="nav-toggle" type="button" aria-expanded="false">
-          Menu
-        </button>
-        <nav>
-          <ul class="site-nav">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="getting-started.html">Getting started</a></li>
-            <li><a href="commands.html">Commands</a></li>
-            <li><a href="reference.html" aria-current="page">Reference</a></li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+  <body data-page="reference">
+    <header class="site-header" id="site-header"></header>
 
     <main>
-      <h1>Reference</h1>
-      <p class="lead">
-        Fields you can set, flags you can pass, and metadata assigned
-        automatically.
-      </p>
+      <div class="page-content">
+        <header class="page-header">
+          <p class="section-label">Reference</p>
+          <h1>Fields &amp; flags</h1>
+          <p class="lead">
+            Everything you can set on an issue, view-only filters, and metadata assigned
+            automatically by Manta.
+          </p>
+        </header>
 
-      <h2>Issue IDs</h2>
-      <p>
-        IDs look like <code>manta-h3kp</code> — the suffix is four random
-        Crockford base32 characters (lowercase). You can often use just the
-        suffix with <code>mt view</code> or update commands.
-      </p>
+        <nav class="toc-inline" aria-label="Jump to section">
+          <a href="#ids">Issue IDs</a>
+          <a href="#editable">Editable fields</a>
+          <a href="#view-flags">View filters</a>
+          <a href="#auto">Auto-assigned</a>
+        </nav>
 
-      <h2>Editable fields</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Field</th>
-              <th>Flags</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>title</td>
-              <td><code>--title</code>, <code>-t</code></td>
-              <td>Required on create; max 50 characters</td>
-            </tr>
-            <tr>
-              <td>description</td>
-              <td><code>--desc</code>, <code>-d</code></td>
-              <td>Max 512 characters</td>
-            </tr>
-            <tr>
-              <td>status</td>
-              <td><code>--status</code>, <code>-s</code></td>
-              <td>
-                <code>open</code>, <code>in_progress</code>, <code>closed</code>
-              </td>
-            </tr>
-            <tr>
-              <td>priority</td>
-              <td><code>--priority</code>, <code>-p</code></td>
-              <td>
-                <code>p0</code>–<code>p9</code>; <code>p0</code> is highest
-                (default often <code>p5</code>)
-              </td>
-            </tr>
-            <tr>
-              <td>issue type</td>
-              <td><code>--type</code></td>
-              <td>
-                <code>bug</code>, <code>feature</code>, <code>task</code>,
-                <code>docs</code>, <code>store</code>
-              </td>
-            </tr>
-            <tr>
-              <td>assignee</td>
-              <td><code>--assignee</code>, <code>-a</code></td>
-              <td>Letters <code>a-z</code> and <code>A-Z</code> only</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p>
-        Quotes around values are optional: <code>--title "hello"</code> and
-        <code>--title hello</code> are equivalent.
-      </p>
+        <h2 id="ids">Issue IDs</h2>
+        <p>
+          IDs look like <code>manta-h3kp</code> — four random Crockford base32 characters
+          (lowercase). Short suffixes work in commands (e.g. <code>mt view h3kp</code>).
+        </p>
 
-      <h2>View-only flags</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Flag</th>
-              <th>Alias</th>
-              <th>Used with</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><code>--createdBy</code></td>
-              <td><code>--cb</code></td>
-              <td><code>mt view</code> only — filters list by creator</td>
-            </tr>
-            <tr>
-              <td><code>--all</code></td>
-              <td>—</td>
-              <td><code>mt view</code> — include closed issues in the list</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p>
-        Passing <code>--createdBy</code> to create, update, close, or delete is
-        rejected. You cannot set <code>createdBy</code> manually; it is assigned
-        at creation time.
-      </p>
+        <h2 id="editable">Editable fields</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Flags</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>title</td>
+                <td><code>--title</code>, <code>-t</code></td>
+                <td>Required on create; max 50 characters</td>
+              </tr>
+              <tr>
+                <td>description</td>
+                <td><code>--desc</code>, <code>-d</code></td>
+                <td>Max 512 characters</td>
+              </tr>
+              <tr>
+                <td>status</td>
+                <td><code>--status</code>, <code>-s</code></td>
+                <td><code>open</code>, <code>in_progress</code>, <code>closed</code></td>
+              </tr>
+              <tr>
+                <td>priority</td>
+                <td><code>--priority</code>, <code>-p</code></td>
+                <td><code>p0</code>–<code>p9</code>; <code>p0</code> = highest (default often <code>p5</code>)</td>
+              </tr>
+              <tr>
+                <td>issue type</td>
+                <td><code>--type</code></td>
+                <td><code>bug</code>, <code>feature</code>, <code>task</code>, <code>docs</code>, <code>store</code></td>
+              </tr>
+              <tr>
+                <td>assignee</td>
+                <td><code>--assignee</code>, <code>-a</code></td>
+                <td>Letters <code>a-z</code> and <code>A-Z</code> only</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          Quotes are optional: <code>--title "hello"</code> and <code>--title hello</code> are the same.
+        </p>
 
-      <h2>Auto-assigned fields</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Field</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>ID</td>
-              <td>Assigned on create; cannot change</td>
-            </tr>
-            <tr>
-              <td>createdAt</td>
-              <td>ISO timestamp (UTC) at creation</td>
-            </tr>
-            <tr>
-              <td>createdBy</td>
-              <td>
-                OS username at creation; filter with
-                <code>mt view --cb &lt;name&gt;</code>
-              </td>
-            </tr>
-            <tr>
-              <td>updatedAt</td>
-              <td>ISO timestamp of the most recent edit</td>
-            </tr>
-            <tr>
-              <td>updatedBy</td>
-              <td>OS username of the most recent editor</td>
-            </tr>
-          </tbody>
-        </table>
+        <h2 id="view-flags">View-only flags</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Flag</th>
+                <th>Alias</th>
+                <th>Used with</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>--createdBy</code></td>
+                <td><code>--cb</code></td>
+                <td><code>mt view</code> — filter list by creator</td>
+              </tr>
+              <tr>
+                <td><code>--all</code></td>
+                <td>—</td>
+                <td><code>mt view</code> — include closed issues</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout">
+          <strong>Note:</strong>
+          <code>--createdBy</code> cannot be used with create, update, close, or delete. It is
+          rejected by the parser.
+        </div>
+
+        <h2 id="auto">Auto-assigned fields</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Field</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>ID</td>
+                <td>Assigned on create; cannot change</td>
+              </tr>
+              <tr>
+                <td>createdAt</td>
+                <td>ISO timestamp (UTC) at creation</td>
+              </tr>
+              <tr>
+                <td>createdBy</td>
+                <td>OS username at creation; filter with <code>mt view --cb &lt;name&gt;</code></td>
+              </tr>
+              <tr>
+                <td>updatedAt</td>
+                <td>ISO timestamp of the most recent edit</td>
+              </tr>
+              <tr>
+                <td>updatedBy</td>
+                <td>OS username of the most recent editor</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p style="margin-top: 2rem">
+          <a class="btn btn-outline" href="commands.html">← All commands</a>
+        </p>
       </div>
     </main>
 
-    <footer class="site-footer">
-      <p>
-        <a href="index.html">Home</a> · <a href="commands.html">Commands</a> ·
-        <a href="https://github.com/cse110-sp26-group03/cse110-sp26-group03"
-          >Source</a
-        >
-      </p>
-    </footer>
-    <script src="js/nav.js"></script>
+    <footer class="site-footer" id="site-footer"></footer>
+    <script src="js/include.js"></script>
   </body>
 </html>
