@@ -1,3 +1,12 @@
+## [1.5.2](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.1...v1.5.2) (2026-06-02)
+
+
+### Bug Fixes
+
+* test release app token ([fd206f7](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/fd206f74ef9e10393bcda90aec0a2d8aa3104fa2))
+* test semantic release npm publish ([343c601](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/343c601a10e07d2240993c786eec14745a42ba01))
+* test semantic release npm publish ([2df97e2](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/2df97e2482022b740950103c20fba9d9274ce8a9))
+
 ## [1.5.1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.0...v1.5.1) (2026-06-01)
 
 
