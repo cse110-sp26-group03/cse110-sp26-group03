@@ -1,3 +1,10 @@
+## [1.5.3](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.2...v1.5.3) (2026-06-02)
+
+
+### Bug Fixes
+
+* exclude non-package files from npm release ([84a5df0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/84a5df06044f2315b60170b7623eaced4b711ef4))
+
 ## [1.5.2](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.1...v1.5.2) (2026-06-02)
 
 
