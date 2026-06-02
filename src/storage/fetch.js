@@ -100,9 +100,7 @@ function fetchIssueList(flags) {
     }
   }
 
-  const where = conditions.length
-    ? ' WHERE ' + conditions.join(' AND ')
-    : '';
+  const where = conditions.length ? ' WHERE ' + conditions.join(' AND ') : '';
   return db
     .query(
       `SELECT * FROM issues${where}
