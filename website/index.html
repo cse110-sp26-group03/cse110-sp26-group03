@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Manta — local-first issue tracker</title>
+    <meta
+      name="description"
+      content="Manta is a terminal issue tracker that stores data in your repo and syncs through git."
+    />
+    <link rel="stylesheet" href="css/style.css?v=2" />
+  </head>
+  <body data-page="home">
+    <header class="site-header" id="site-header"></header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-inner">
+          <h1>Track issues from your terminal</h1>
+          <p class="lead">
+            Manta is local-first: no accounts, no cloud. Issues live in
+            <code>.manta/</code> inside your project and sync with teammates
+            through git.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="getting-started.html"
+              >Get started</a
+            >
+            <a class="btn btn-secondary" href="commands.html">All commands</a>
+            <a
+              class="btn btn-secondary"
+              href="https://www.npmjs.com/package/manta-it"
+              target="_blank"
+              rel="noopener"
+              >npm: manta-it</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <div class="page-content">
+        <pre><code>bun install -g manta-it
+mt init
+mt create "My first issue" --priority p1
+mt view</code></pre>
+
+        <h2>Why Manta?</h2>
+        <div class="card-grid">
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">⌨️</div>
+            <h3>Terminal-native</h3>
+            <p>Create, update, and browse issues without leaving your shell.</p>
+            <a class="card-link" href="commands.html">See all commands →</a>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">📁</div>
+            <h3>Lives in your repo</h3>
+            <p>JSONL event log + SQLite cache under <code>.manta/</code>.</p>
+            <a class="card-link" href="getting-started.html#storage"
+              >Where data lives →</a
+            >
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">🔀</div>
+            <h3>Git-friendly sync</h3>
+            <p>
+              Push and pull issues like code. Every command refreshes your cache
+              automatically.
+            </p>
+            <a class="card-link" href="commands.html#sync">Sync command →</a>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true">🤖</div>
+            <h3>Agent-ready</h3>
+            <p>
+              Point AI tools at <code>manta-xxxx</code> IDs in structured local
+              files.
+            </p>
+            <a class="card-link" href="reference.html">Field reference →</a>
+          </article>
+        </div>
+
+        <figure class="figure">
+          <img
+            src="assets/images/current-structure.png"
+            alt="Diagram of Manta: CLI, JSONL log, SQLite cache, and git"
+            width="800"
+          />
+          <figcaption>
+            Writes go to the event log; reads use SQLite for speed.
+          </figcaption>
+        </figure>
+
+        <h2>Documentation</h2>
+        <div class="card-grid">
+          <article class="card">
+            <h3>Getting started</h3>
+            <p>Install Bun, link the CLI, run your first commands.</p>
+            <a class="card-link" href="getting-started.html">Read guide →</a>
+          </article>
+          <article class="card">
+            <h3>All commands</h3>
+            <p>Full cheat sheet for every <code>mt</code> subcommand.</p>
+            <a class="card-link" href="commands.html">Command reference →</a>
+          </article>
+          <article class="card">
+            <h3>Fields &amp; flags</h3>
+            <p>Priorities, statuses, view filters, and auto-assigned fields.</p>
+            <a class="card-link" href="reference.html">Open reference →</a>
+          </article>
+        </div>
+
+        <div class="callout callout-tip">
+          <strong>For contributors:</strong>
+          Architecture decisions and ADRs are in the
+          <a
+            href="https://github.com/cse110-sp26-group03/cse110-sp26-group03/tree/main/docs"
+            >GitHub repo</a
+          >.
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer" id="site-footer"></footer>
+    <script src="js/include.js?v=2"></script>
+  </body>
+</html>

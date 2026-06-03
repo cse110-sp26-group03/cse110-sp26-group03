@@ -1,6 +1,6 @@
 {
-  "name": "manta",
-  "version": "1.1.0",
+  "name": "manta-it",
+  "version": "1.5.3",
   "description": "StringRays team project for CSE 110 Spring 2026",
   "bin": {
     "mt": "src/cli/index.js"
@@ -8,7 +8,7 @@
   "type": "module",
   "scripts": {
     "lint": "eslint .",
-    "test": "echo 'tests not yet written'",
+    "test": "bun test backend-test frontend-test",
     "prettier": "bunx prettier . --write",
     "jsdoc": "bunx jsdoc -c jsdoc.json"
   },
@@ -22,7 +22,7 @@
   "bugs": {
     "url": "https://github.com/cse110-sp26-group03/cse110-sp26-group03/issues"
   },
-  "homepage": "https://github.com/cse110-sp26-group03/cse110-sp26-group03#readme",
+  "homepage": "https://cse110-sp26-group03.github.io/cse110-sp26-group03/",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@semantic-release/changelog": "^6.0.3",

@@ -1,7 +1,8 @@
 # ADR-002: Input Validation: In-House Helpers
 
 ## Status
-**Proposed** | Accepted | Deprecated
+
+Proposed | **Accepted** | Deprecated
 
 **Date:** 2026-05-16
 **Authors:** Scottin Pham

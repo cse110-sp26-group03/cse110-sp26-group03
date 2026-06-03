@@ -1,3 +1,148 @@
+## [1.5.3](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.2...v1.5.3) (2026-06-02)
+
+
+### Bug Fixes
+
+* exclude non-package files from npm release ([84a5df0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/84a5df06044f2315b60170b7623eaced4b711ef4))
+
+## [1.5.2](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.1...v1.5.2) (2026-06-02)
+
+
+### Bug Fixes
+
+* test release app token ([fd206f7](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/fd206f74ef9e10393bcda90aec0a2d8aa3104fa2))
+* test semantic release npm publish ([343c601](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/343c601a10e07d2240993c786eec14745a42ba01))
+* test semantic release npm publish ([2df97e2](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/2df97e2482022b740950103c20fba9d9274ce8a9))
+
+## [1.5.1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.0...v1.5.1) (2026-06-01)
+
+
+### Bug Fixes
+
+* change Ori's bio on website ([5465650](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/54656501948d6f79aca7785c12a7845ecb73ff01))
+
+# [1.5.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.4.0...v1.5.0) (2026-06-01)
+
+
+### Features
+
+* added prompt to mt delete / docs: updated website ([2152f82](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/2152f8296820d5b43959cacc3dcf4986e6d72958))
+
+# [1.4.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.3.0...v1.4.0) (2026-06-01)
+
+
+### Bug Fixes
+
+* allow browser globals for website static JS in ESLint ([05161df](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/05161df99cca9f216153df1255e5f8a6b724cb70))
+* use PAT for semantic-release ([7c2b4cb](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/7c2b4cbc0f6a880d09677ca9153e911d705e045f))
+
+
+### Features
+
+* add npm publishing for manta-it distribution ([21940d2](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/21940d2a51603a20bf449139ecc88745c36a56da))
+* added mt sync || refactor: cleaned up parsing logic ([d41011c](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/d41011c7c7d27de81a77ae591644a83d1e71ff7c))
+
+# [1.3.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.2.0...v1.3.0) (2026-06-01)
+
+
+### Features
+
+* added mt sync ([f7d7ea1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/f7d7ea1c3758bcd93c46feaa8433c19b92889a29))
+* added mt sync || refactor: cleaned up parsing logic ([b42e22c](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/b42e22c7df166708a63eeb64c67c5928f7f315bd))
+* init.js ([37004a8](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/37004a850a65bd216c7b18c7e8643861b44b8115))
+* init.js ([99a832f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/99a832f403a65614219ae84b96bcf6e70d4006ac))
+
+# [1.2.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.1.0...v1.2.0) (2026-06-01)
+
+
+### Bug Fixes
+
+* --all flag now works properly ([15d80ba](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/15d80ba35d53a385c848bb4a779d128a694822fa))
+* add line 220 to fix error linter was catching ([7785a13](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/7785a13fc10da7cb83ba4377ce026857736f9166))
+* added cause to error throw ([95cc3e1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/95cc3e1d93175eab5217b641102d0a80c9416b98))
+* bug fixes, code styling ([19c3b5d](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/19c3b5d7e0ae81537968be095fefad4e69552945))
+* correct .gitattributes syntax (remove stray quotes) ([4618460](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/461846089b96f5be2bba990243a85d0e473acffc))
+* fixed validation.js bug ([b3cfc4e](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/b3cfc4e3f8e1a0619840ba862060e7d2cf011069))
+* use PAT for semantic-release ([93b4b68](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/93b4b68dcd7ff102738fd1cae71d766f42f62b0f))
+* use PAT for semantic-release ([de59c86](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/de59c862d272c43bb7e9c059ba4484bc6db1273f))
+
+
+### Features
+
+* add createdBy column to mt view list behavior ([c118422](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/c1184225ca08464f11e2d83c2bfec74a11df84e3))
+* add npm publishing for manta-it distribution ([f7bf46f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/f7bf46fefb09e0a519b4ccbfaf0476c61dd52c0f))
+* add step 3.5 . Sync local sqlite before applying event, so user has most updated DB. ([02a65d0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/02a65d03cb11f858c0a195eda984b899a603aeac))
+* added display.js + list functionality + updated index.js ([b88ef8c](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/b88ef8c03dc2dd17f2916e2fa9d696b83b719e9a))
+* added fetch.js + added "view" command, "createdBy" flag, and "all" flag to parser and validator ([e3409df](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/e3409df3f4e95cbe9cb46c82d718c8505dc5127e))
+* added shorthand id searching, bug fixes ([61c466f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/61c466f1eddaf2add68c28cfee49da86d7b454a8))
+* alt-screen view for list and issue detail ([d31fef9](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/d31fef91eb23df0bd1815e23139a140bec163d8d))
+
+# [1.2.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.1.0...v1.2.0) (2026-06-01)
+
+
+### Bug Fixes
+
+* --all flag now works properly ([15d80ba](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/15d80ba35d53a385c848bb4a779d128a694822fa))
+* add line 220 to fix error linter was catching ([7785a13](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/7785a13fc10da7cb83ba4377ce026857736f9166))
+* added cause to error throw ([95cc3e1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/95cc3e1d93175eab5217b641102d0a80c9416b98))
+* bug fixes, code styling ([19c3b5d](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/19c3b5d7e0ae81537968be095fefad4e69552945))
+* correct .gitattributes syntax (remove stray quotes) ([4618460](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/461846089b96f5be2bba990243a85d0e473acffc))
+* fixed validation.js bug ([b3cfc4e](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/b3cfc4e3f8e1a0619840ba862060e7d2cf011069))
+* use PAT for semantic-release ([93b4b68](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/93b4b68dcd7ff102738fd1cae71d766f42f62b0f))
+* use PAT for semantic-release ([de59c86](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/de59c862d272c43bb7e9c059ba4484bc6db1273f))
+
+
+### Features
+
+* add createdBy column to mt view list behavior ([c118422](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/c1184225ca08464f11e2d83c2bfec74a11df84e3))
+* add npm publishing for manta-it distribution ([f7bf46f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/f7bf46fefb09e0a519b4ccbfaf0476c61dd52c0f))
+* add step 3.5 . Sync local sqlite before applying event, so user has most updated DB. ([02a65d0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/02a65d03cb11f858c0a195eda984b899a603aeac))
+* added display.js + list functionality + updated index.js ([b88ef8c](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/b88ef8c03dc2dd17f2916e2fa9d696b83b719e9a))
+* added fetch.js + added "view" command, "createdBy" flag, and "all" flag to parser and validator ([e3409df](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/e3409df3f4e95cbe9cb46c82d718c8505dc5127e))
+* added shorthand id searching, bug fixes ([61c466f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/61c466f1eddaf2add68c28cfee49da86d7b454a8))
+* alt-screen view for list and issue detail ([d31fef9](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/d31fef91eb23df0bd1815e23139a140bec163d8d))
+
+# [1.2.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.1.0...v1.2.0) (2026-06-01)
+
+
+### Bug Fixes
+
+* --all flag now works properly ([15d80ba](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/15d80ba35d53a385c848bb4a779d128a694822fa))
+* add line 220 to fix error linter was catching ([7785a13](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/7785a13fc10da7cb83ba4377ce026857736f9166))
+* added cause to error throw ([95cc3e1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/95cc3e1d93175eab5217b641102d0a80c9416b98))
+* bug fixes, code styling ([19c3b5d](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/19c3b5d7e0ae81537968be095fefad4e69552945))
+* correct .gitattributes syntax (remove stray quotes) ([4618460](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/461846089b96f5be2bba990243a85d0e473acffc))
+* fixed validation.js bug ([b3cfc4e](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/b3cfc4e3f8e1a0619840ba862060e7d2cf011069))
+* use PAT for semantic-release ([93b4b68](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/93b4b68dcd7ff102738fd1cae71d766f42f62b0f))
+* use PAT for semantic-release ([de59c86](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/de59c862d272c43bb7e9c059ba4484bc6db1273f))
+
+
+### Features
+
+* add createdBy column to mt view list behavior ([c118422](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/c1184225ca08464f11e2d83c2bfec74a11df84e3))
+* add npm publishing for manta-it distribution ([f7bf46f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/f7bf46fefb09e0a519b4ccbfaf0476c61dd52c0f))
+* add step 3.5 . Sync local sqlite before applying event, so user has most updated DB. ([02a65d0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/02a65d03cb11f858c0a195eda984b899a603aeac))
+* added display.js + list functionality + updated index.js ([b88ef8c](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/b88ef8c03dc2dd17f2916e2fa9d696b83b719e9a))
+* added fetch.js + added "view" command, "createdBy" flag, and "all" flag to parser and validator ([e3409df](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/e3409df3f4e95cbe9cb46c82d718c8505dc5127e))
+* added shorthand id searching, bug fixes ([61c466f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/61c466f1eddaf2add68c28cfee49da86d7b454a8))
+* alt-screen view for list and issue detail ([d31fef9](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/d31fef91eb23df0bd1815e23139a140bec163d8d))
+
+# [1.2.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.1.0...v1.2.0) (2026-06-01)
+
+
+### Bug Fixes
+
+* add line 220 to fix error linter was catching ([7785a13](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/7785a13fc10da7cb83ba4377ce026857736f9166))
+* correct .gitattributes syntax (remove stray quotes) ([4618460](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/461846089b96f5be2bba990243a85d0e473acffc))
+* use PAT for semantic-release ([93b4b68](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/93b4b68dcd7ff102738fd1cae71d766f42f62b0f))
+* use PAT for semantic-release ([de59c86](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/de59c862d272c43bb7e9c059ba4484bc6db1273f))
+
+
+### Features
+
+* add npm publishing for manta-it distribution ([f7bf46f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/f7bf46fefb09e0a519b4ccbfaf0476c61dd52c0f))
+* add step 3.5 . Sync local sqlite before applying event, so user has most updated DB. ([02a65d0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/02a65d03cb11f858c0a195eda984b899a603aeac))
+
 # [1.1.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.0.0...v1.1.0) (2026-05-27)
 
 

@@ -14,6 +14,7 @@ Issue IDs take the form `manta-<suffix>` where `<suffix>` is a 4-character rando
 > - --priority
 > - --type
 > - --assignee
+> - --createdBy (alias `--cb`) — **`mt view` only**; filters the list by issue creator. Using it with any other command (create/update/close/delete) is rejected by the parser.
 
 ### Rough list of commands:
 
@@ -45,6 +46,10 @@ Issue IDs take the form `manta-<suffix>` where `<suffix>` is a 4-character rando
 >>>> - if no id is provided, a list of all issues are returned. otherwise, details of corresponding issue are displayed
 >>>> - if flags are provided and id isn't provided, you should be able to filter by flag by adding it:
 >>>>> ex. - mt view --priority p1 will return a list of p1 issues.
+>>>> - `--createdBy <name>` (alias `--cb`) filters the list by who created the issue (ex. `mt view --createdBy alice`). This flag is **exclusive to `mt view`** — it cannot be used with create, update, close, or delete.
+
+> - mt sync
+>>> - refreshes the local SQLite cache from the JSONL event log (`.manta/manta.jsonl`). Takes no positional arguments and no flags. Cheap when nothing changed (the log hash matches the stored checkpoint, so replay is skipped); does a full rebuild when teammates' events have arrived via `git pull` (see ADR-007). Useful for refreshing the cache after a pull so `mt view` is up to date without having to run a write command. **Implemented.**
 
 
 # Sample I/O
@@ -81,29 +86,50 @@ mt update manta-h3kp --title Changed the title
 ```
 mt view
 
-   ID              TITLE                                   PRIORITY   STATUS        TYPE      ASSIGNEE
-   --------------------------------------------------------------------------------------------------
-   manta-h53kp     Changed the title                       p5         open          -         -
+   (interactive table in alternate terminal buffer — 5 issues per page)
+   ID        TITLE              PRIORITY    STATUS          TYPE        CREATED BY
+   --------------------------------------------------------------------------------
+   h3kp      Changed the title  p5          open            task        ikey
+   ...
 
+   < prev.    next >
+   Page 1 of 3
 
+   Press ESC to exit
 ```
 
 ```
 mt view manta-h3kp
 
-Issue manta-h3kp     Changed the title
+   Changed the title                                              manta-h3kp
+   -------------------------------------------------------------------------
+   Needs to be solved
 
-   > Needs to be solved
+   -------------------------------------------------------------------------
+   p5          -                   task                open
+   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+   ikey        2026-05-21T02:56:04.612Z     ikey        2026-05-21T02:56:04.612Z
 
-   Priority:    p5
-   Status:      open
-   Type:        -
-   Assignee:    -
-   Created by:  .. (name, email, whatever we decide to use)
-   Created at:  ISO timestamp
-   Updated at:  ISO timestamp
+   Press ESC to exit
+```
+
+Both list and detail views use the alternate screen when run in a TTY; **ESC**
+returns to the normal shell. See ADR-009 for the full pipeline.
+
+`mt view` reads the SQLite cache only; it does not run `syncFromLog`. After a
+`git pull` that changes `.manta/manta.jsonl`, run `mt sync` (or any write
+command) first if the cache may be stale — both call `syncFromLog` per ADR-007.
+
 
 ```
+mt sync
+
+   Synced successfully.
+```
+
+`mt sync` rebuilds the SQLite cache from the JSONL log without writing a new
+event. It is the lightweight way to pick up teammates' changes after a
+`git pull` so `mt view` reflects the latest issues.
 
 
 ```

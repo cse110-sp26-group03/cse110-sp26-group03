@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Getting started — Manta</title>
+    <link rel="stylesheet" href="css/style.css?v=2" />
+  </head>
+  <body data-page="getting-started">
+    <header class="site-header" id="site-header"></header>
+
+    <main>
+      <div class="page-content">
+        <header class="page-header">
+          <p class="section-label">Quick start</p>
+          <h1>Getting started</h1>
+          <p class="lead">
+            Install Manta, initialize your project, and run your first commands
+            in under five minutes.
+          </p>
+        </header>
+
+        <ol class="steps">
+          <li>
+            <h3 class="mt-0">Install Bun</h3>
+            <p>Manta requires <a href="https://bun.sh">Bun</a>.</p>
+            <pre><code>curl -fsSL https://bun.sh/install | bash
+bun --version</code></pre>
+          </li>
+          <li>
+            <h3 class="mt-0">Install Manta</h3>
+            <pre><code>bun install -g manta-it</code></pre>
+            <p>
+              Or from source:
+              <a
+                href="https://github.com/cse110-sp26-group03/cse110-sp26-group03"
+                >clone the repo</a
+              >, then <code>bun install</code> and <code>bun link</code>.
+            </p>
+          </li>
+          <li>
+            <h3 class="mt-0">Initialize your project</h3>
+            <pre><code>cd your-project
+mt init</code></pre>
+          </li>
+          <li>
+            <h3 class="mt-0">Create and view an issue</h3>
+            <pre><code>mt create "My first issue" --priority p1
+mt view</code></pre>
+            <p>
+              Use the ID from <code>create</code> for update/close/delete
+              commands.
+            </p>
+          </li>
+        </ol>
+
+        <h2 id="storage">Where your data lives</h2>
+        <p>
+          Manta creates <code>.manta/</code> in your
+          <strong>current working directory</strong>:
+        </p>
+        <div class="card-grid">
+          <article class="card">
+            <h3><code>manta.jsonl</code></h3>
+            <p>
+              Append-only event log — the source of truth. Commit this to git.
+            </p>
+          </article>
+          <article class="card">
+            <h3><code>manta.db</code></h3>
+            <p>
+              SQLite cache for fast reads. Regenerated from the log; gitignored.
+            </p>
+          </article>
+        </div>
+
+        <h2>Identity on issues</h2>
+        <p>
+          <code>createdBy</code> and <code>updatedBy</code> are set
+          automatically from your OS username (<code>USER</code> /
+          <code>USERNAME</code>). You never type them manually.
+        </p>
+
+        <h2>Sync with teammates</h2>
+        <p>
+          After <code>git pull</code> updates <code>.manta/manta.jsonl</code>:
+        </p>
+        <ul>
+          <li>
+            Every command refreshes the cache automatically before it runs —
+            including <code>mt view</code>, so your list is always up to date.
+          </li>
+          <li>
+            <code>mt sync</code> is available if you ever want to rebuild the
+            cache on its own.
+          </li>
+        </ul>
+
+        <figure class="figure">
+          <img
+            src="assets/images/create-update.png"
+            alt="Flowchart for creating and updating issues"
+            width="700"
+          />
+          <figcaption>Creating and updating issues through the CLI.</figcaption>
+        </figure>
+
+        <div class="hero-actions" style="margin-top: 2rem">
+          <a class="btn btn-outline" href="commands.html">All commands</a>
+          <a class="btn btn-outline" href="reference.html"
+            >Fields &amp; flags</a
+          >
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer" id="site-footer"></footer>
+    <script src="js/include.js?v=2"></script>
+  </body>
+</html>
