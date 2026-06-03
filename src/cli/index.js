@@ -11,6 +11,8 @@ import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
+import updateNotifier from 'update-notifier';
+
 import { parse } from './parser.js';
 import { validate } from '../validation/validation.js';
 import { create_event } from './event.js';
@@ -19,6 +21,28 @@ import { FETCH } from '../storage/fetch.js';
 import { DISPLAY } from './display.js';
 import { syncFromLog } from '../storage/replay.js';
 import { init } from './init.js';
+
+// ---- Step 0: Async update check ---------------------------------------
+// Checks the npm registry at most once per 24h (cached by update-notifier).
+// Non-blocking: the request fires in the background and the banner is
+// printed on the run AFTER a new version is detected, never the same run.
+// Respects NO_UPDATE_NOTIFIER=1 out of the box. See CI ADR-006.
+
+const pkgPath = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '../../package.json',
+);
+const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
+
+updateNotifier({
+  pkg,
+  updateCheckInterval: 1000 * 60 * 60 * 24, // 24h
+}).notify({
+  isGlobal: true,
+  message:
+    'Update available: {currentVersion} → {latestVersion}\n' +
+    'Run `bun update -g manta-it` to upgrade.',
+});
 
 // ---- Step 1: Parse argv -----------------------------------------------
 
@@ -56,12 +80,7 @@ if (parsed_command.cmd == 'sync') {
 }
 
 if (parsed_command.cmd === 'version') {
-  const pkgPath = join(
-    dirname(fileURLToPath(import.meta.url)),
-    '../../package.json',
-  );
-  const { version } = JSON.parse(readFileSync(pkgPath, 'utf8'));
-  console.log(version);
+  console.log(pkg.version);
   process.exit(0);
 }
 

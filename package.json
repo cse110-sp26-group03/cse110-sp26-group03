@@ -23,6 +23,9 @@
     "url": "https://github.com/cse110-sp26-group03/cse110-sp26-group03/issues"
   },
   "homepage": "https://cse110-sp26-group03.github.io/cse110-sp26-group03/",
+  "dependencies": {
+    "update-notifier": "^7.3.1"
+  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@semantic-release/changelog": "^6.0.3",

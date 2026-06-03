@@ -6,18 +6,13 @@ Proposed | **Accepted** | Deprecated
 
 Date: 2026-05-23  Authors: TianLin Zhao
 
+Revised: 2026-05-29 — release workflow now delegated to ADR-004 (semantic-release). The decision in this ADR (location of the version field) is unchanged; only the "how the field gets bumped" paragraph has been updated to reflect the automated pipeline now in place on `main`.
+
 ---
 
 ## Context
 
-Per spec from Helena, Manta needs to adopt versioning using [SemVer](https://semver.org/) — a `MAJOR.MINOR.PATCH` scheme that communicates the nature of changes between releases.
-
-Before we can version releases, we need to decide **where the version number lives**. Right now Manta has two places that already carry a version, and they disagree:
-
-- `package.json` declares `"version": "0.0.1"`.
-- `CHANGELOG.md` states the project "follows Semantic Versioning" and already has a `[0.1.0]` entry.
-
-This inconsistency is exactly the problem this ADR exists to fix: without a single agreed-upon source, no one can say what version Manta actually is. This ADR decides the fixed storage location for the version; other files (changelog, CLI output, ...) should get the version from it.
+Manta has more than one location carrying a version number, and they currently disagree. Without a single agreed-upon source, no one can say what version Manta actually is. This ADR decides the fixed storage location for the version; other files (changelog, CLI output, ...) should derive from it.
 
 ## Considered Options
 
@@ -35,15 +30,7 @@ Supporting roles, all derived from that field:
 - **`CHANGELOG.md`:** continues to document every release with a `## [x.y.z] - YYYY-MM-DD` entry. It is human-maintained release notes; its latest version heading must match `package.json`.
 - **Git tags:** each release is tagged `vX.Y.Z` on GitHub to mark the commit.
 
-**Workflow for releasing a new version: update** `package.json` → add a `CHANGELOG.md` entry → tag the commit `vX.Y.Z`.
-
-### Implementation (`mt version`)
-
-Implemented in `src/cli/index.js` and `src/cli/parser.js`:
-
-1. **Parse:** `version` is a valid command in `parser.js`. It rejects positional arguments and flags (e.g. `mt version extra`, `mt version --priority p1`).
-2. **Print:** After parse, `index.js` resolves `package.json` relative to the CLI entry (`../../package.json` from `src/cli/`), reads the `version` field, prints it to stdout, and exits before validation, event creation, or storage.
-3. **Output:** Prints the version string only (e.g. `0.0.1`), with no prefix or extra formatting.
+**Workflow for releasing a new version:** delegated to [ADR-004](../CI/004-changelog-pipeline.md). On every push to `main`, `semantic-release` reads the new conventional commits, bumps `package.json`'s `version` field, appends a matching `## [x.y.z] - YYYY-MM-DD` entry to `CHANGELOG.md`, commits both files back to `main` with `chore(release): x.y.z [skip ci]`, and creates the `vX.Y.Z` git tag plus GitHub Release. All three locations (`package.json`, `CHANGELOG.md`, the tag) stay in sync because they are produced in one job from the same commits — which is exactly what this ADR's "single source of truth" choice was meant to enable.
 
 ## Consequences
 
@@ -53,10 +40,10 @@ Implemented in `src/cli/index.js` and `src/cli/parser.js`:
 - `mt version` reflects the real shipped version because it reads the same field, with no constant to forget.
 
 **Negative:**
-- The changelog and git tag are still updated by hand, so a release can ship with a mismatched changelog entry or missing tag if the process is not followed. 
-- Reading `package.json` at runtime means the CLI must resolve its own package root, which needs care across install locations.
+- The failure mode shifts from the release step to the commit step: because `semantic-release` derives the version from commit messages, a mis-typed prefix (`feat:` vs `fix:` vs `chore:`) produces the wrong version bump or no release at all. Mistakes now happen at commit time, not release time, and are harder to spot in review.
 
 ## References
 - SemVer specification: https://semver.org/
 - npm `package.json` `version` field: https://docs.npmjs.com/cli/v10/configuring-npm/package-json#version
+- [ADR-004 (CI)](../CI/004-changelog-pipeline.md): Changelog and release automation via `semantic-release` — the workflow this ADR delegates to.
 - Issue #74: [Docs] Add Versioning
