@@ -174,7 +174,7 @@ function applyDelete(event) {
  * @param {object} event - The event to record.
  * @param {string} [logPath] - Log path override (mainly for testing).
  */
-function appendToLog(event, logPath = DEFAULT_LOG_PATH) {
+export function appendToLog(event, logPath = DEFAULT_LOG_PATH) {
   mkdirSync(dirname(logPath), { recursive: true });
   const line = JSON.stringify(event) + '\n';
   appendFileSync(logPath, line, 'utf8');
