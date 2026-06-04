@@ -94,7 +94,7 @@ These rules apply to parsed flag values before they are mapped into event object
 | `title` | on `create` (parser) | — | optional on `update`; if present, under 50 characters |
 | `desc` | no | — | if present, under 512 characters |
 | `priority` | yes (parser default) | `p5` | `p` + single digit `0`–`9` (e.g. `p2`, `p7`) |
-| `status` | yes (parser default) | `open` | `open`, `in_progress`, `closed` |
+| `status` | yes (parser default) | `open` | `open`, `in_progress`, `blocked`, `closed` |
 | `type` | no | — | if present: `bug`, `feature`, `task`, `docs`, `store` |
 | `assignee` | no | — | if present: letters only (`a`–`z`, `A`–`Z`), any length |
 
@@ -123,7 +123,7 @@ Issue Fields:
 |---|---|---|---|---|
 | `title` | string | CLI input | required on create | Under 50 characters when set (see validation table) |
 | `description` | string | CLI input | `""` | Under 512 characters when set |
-| `status` | string | parser / CLI | `"open"` | `open`, `in_progress`, `closed` |
+| `status` | string | parser / CLI | `"open"` | `open`, `in_progress`, `blocked`, `closed` |
 | `priority` | string | parser / CLI | `"p5"` | `p0`–`p9`; parser default `p5` if omitted |
 | `issueType` | string | CLI input | `"task"` | `bug`, `feature`, `task`, `docs`, `store` |
 | `assignee` | string \| null | CLI input | `null` | Letters only when set; otherwise `null` |
