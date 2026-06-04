@@ -85,7 +85,8 @@ function compute_layout(width) {
   }
 
   const total =
-    cols.reduce((s, c) => s + widths.get(c.key), 0) + (cols.length - 1) * GAP.length;
+    cols.reduce((s, c) => s + widths.get(c.key), 0) +
+    (cols.length - 1) * GAP.length;
   return { cols, widths, total };
 }
 
