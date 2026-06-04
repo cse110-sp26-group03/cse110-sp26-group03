@@ -35,7 +35,7 @@ export async function clear(logPath = DEFAULT_LOG_PATH, confirm = null) {
     return true;
   } catch (err) {
     if (err.code === 'ENOENT') {
-      throw new Error(`No log file was found at ${logPath}`);
+      throw new Error(`No log file was found at ${logPath}`, { cause: err });
     }
     throw err;
   }
