@@ -89,6 +89,28 @@ if (parsed_command.cmd === 'view') {
   process.exit(0);
 }
 
+// ---- Early exit: migrate ----------------------------------------------
+// Migration reads a Beads JSONL export, translates each issue into a
+// Manta issue.created event, and appends directly to .manta/manta.jsonl
+// using store.js's appendToLog. After all events are written, the
+// migrate function calls syncFromLog itself to rebuild SQLite.
+// Does not go through create_event or applyEvent.
+
+if (parsed_command.cmd === 'migrate') {
+  try {
+    const { migrateBeads } = await import('./migrate.js');
+    const result = migrateBeads(parsed_command.flags.path);
+    console.log(`\nMigration complete:`);
+    console.log(`  Migrated: ${result.migrated}`);
+    console.log(`  Skipped (already exist): ${result.skipped}`);
+    console.log(`  Failed: ${result.failed}`);
+  } catch (err) {
+    console.error(err.message);
+    process.exit(1);
+  }
+  process.exit(0);
+}
+
 // ---- Step 2.5: Confirm destructive deletes ----------------------------
 // Delete is irreversible (removes from both stores), so require an
 // interactive y/n when stdin is a real terminal. In tests, CI, or piped
