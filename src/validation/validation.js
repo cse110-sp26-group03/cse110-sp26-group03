@@ -36,7 +36,7 @@ const possible_flags = {
   delete: ['id'],
   view: ['id', 'priority', 'status', 'type', 'assignee', 'createdBy'],
   migrate: ['path'],
-  clear: ['path']
+  clear: ['path'],
 };
 
 /**
@@ -76,7 +76,7 @@ const validations = {
 export function validate(parse_obj) {
   const { cmd, flags } = parse_obj;
 
-  if (!(cmd in possible_flags)) return true // only check commands that need to be validated.
+  if (!(cmd in possible_flags)) return true; // only check commands that need to be validated.
 
   for (const flag of possible_flags[cmd]) {
     const error_msg = validations[flag](flags[flag], cmd);

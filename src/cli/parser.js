@@ -25,7 +25,7 @@ const cmds = [
   'sync',
   'init',
   'migrate',
-  'clear'
+  'clear',
 ];
 
 // for commands that are called with no args
@@ -33,7 +33,7 @@ const cmds = [
 const empty_cmds = ['version', 'sync', 'init'];
 
 // for commands that are called with no flags
-const no_flag_cmds = ['migrate', 'clear']
+const no_flag_cmds = ['migrate', 'clear'];
 
 /** @type {Array.<string>} */
 const possible_flags = [
@@ -143,7 +143,7 @@ export function parse(argv) {
       if (in_between) flags['path'] = in_between;
       break;
     case 'clear':
-      flags['path'] = in_between || DEFAULT_LOG_PATH // use default log path if none is provided
+      flags['path'] = in_between || DEFAULT_LOG_PATH; // use default log path if none is provided
       break;
   }
 
@@ -205,8 +205,6 @@ export function parse(argv) {
     }
   }
 
-  
-
   // ---- Defaults and required-field checks -----------------------------
 
   switch (cmd) {
@@ -245,7 +243,7 @@ export function parse(argv) {
       if (!flags['path']) {
         throw new Error(
           `Missing required input: path to Beads JSONL file. \n` +
-          `Usage: mt migrate <path/to/beads.jsonl>`
+            `Usage: mt migrate <path/to/beads.jsonl>`,
         );
       }
       break;
@@ -253,7 +251,7 @@ export function parse(argv) {
       if (!flags['path']) {
         throw new Error(
           `Missing required input: path to Manta JSONL file. \n` +
-          `Usage: mt clear <path/to/manta.jsonl>`
+            `Usage: mt clear <path/to/manta.jsonl>`,
         );
       }
       break;

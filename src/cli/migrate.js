@@ -54,7 +54,9 @@ import db from '../storage/db.js';
  */
 export function migrateBeads(beadsLogPath) {
   if (!existsSync(beadsLogPath)) {
-    throw new Error(`Cannot migrate: Beads log not found at "${beadsLogPath}".`);
+    throw new Error(
+      `Cannot migrate: Beads log not found at "${beadsLogPath}".`,
+    );
   }
 
   const contents = readFileSync(beadsLogPath, 'utf8');

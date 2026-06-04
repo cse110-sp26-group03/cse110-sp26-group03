@@ -19,7 +19,7 @@ import { FETCH } from '../storage/fetch.js';
 import { DISPLAY } from './display.js';
 import { syncFromLog } from '../storage/replay.js';
 import { init } from './init.js';
-import { clear } from './clear.js'
+import { clear } from './clear.js';
 
 // ---- Step 1: Parse argv -----------------------------------------------
 
@@ -34,14 +34,12 @@ try {
 // ---- Step 2: Validate -------------------------------------------------
 // skips commands that are not in the possible_flags table (commands that don't need validation)
 
-
 try {
   validate(parsed_command);
 } catch (err) {
   console.error(err.message);
   process.exit(1);
 }
-
 
 // Early exit command: clear
 // Clearing wipes the entire log, so confirm on a real terminal — but only
@@ -50,24 +48,22 @@ try {
 // prompt for a no-op. Falls through to syncFromLog afterward so the SQLite
 // cache is rebuilt (emptied) to match the cleared log.
 
-if (parsed_command.cmd === 'clear'){
-
+if (parsed_command.cmd === 'clear') {
   try {
     const confirm = process.stdin.isTTY
-      ? () => /^y(es)?$/i.test((prompt('Clear the entire log? [y/N]') ?? '').trim())
+      ? () =>
+          /^y(es)?$/i.test((prompt('Clear the entire log? [y/N]') ?? '').trim())
       : null;
-    const changes = await clear(parsed_command.flags.path, confirm)
+    const changes = await clear(parsed_command.flags.path, confirm);
     if (changes === null) {
-      console.log('Clear cancelled.')
-      process.exit(0)
+      console.log('Clear cancelled.');
+      process.exit(0);
     }
-    console.log(changes ? "Log cleared." : "Log is already empty.")
-
+    console.log(changes ? 'Log cleared.' : 'Log is already empty.');
   } catch (err) {
-    console.error(err.message)
-    process.exit(1)
+    console.error(err.message);
+    process.exit(1);
   }
-
 }
 
 // ---- Step 1.5: Sync SQLite cache from JSONL log -----------------------
@@ -81,10 +77,13 @@ try {
 
   // early exit on sync and clear
   if (parsed_command.cmd === 'sync' || parsed_command.cmd === 'clear') {
-    console.log(madeChanges ? 'Synced successfully.' : 'Already up to date; no new events to sync.')
+    console.log(
+      madeChanges
+        ? 'Synced successfully.'
+        : 'Already up to date; no new events to sync.',
+    );
     process.exit(0);
   }
-
 } catch (err) {
   console.error(err.message);
   process.exit(1);
@@ -96,7 +95,6 @@ if (parsed_command.cmd === 'init') {
   init();
   process.exit(0);
 }
-
 
 if (parsed_command.cmd === 'version') {
   const pkgPath = join(

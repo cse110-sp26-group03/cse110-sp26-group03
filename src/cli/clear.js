@@ -2,7 +2,6 @@ import { truncate, stat } from 'node:fs/promises';
 
 const DEFAULT_LOG_PATH = '.manta/manta.jsonl';
 
-
 // ---- Public API ----------------------------------------------------
 /**
  * Clears the contents of the manta log file by truncating it to 0 bytes.
@@ -22,20 +21,22 @@ const DEFAULT_LOG_PATH = '.manta/manta.jsonl';
  *   filesystem error.
  */
 export async function clear(logPath = DEFAULT_LOG_PATH, confirm = null) {
-    try {
-        const { size } = await stat(logPath);
-        if (size === 0) { // already empty. no changes to make
-            return false;
-        }
-        if (confirm && !(await confirm())) { // file has content; ask first
-            return null;
-        }
-        await truncate(logPath, 0);
-        return true;
-    } catch (err) {
-        if (err.code === 'ENOENT') {
-            throw new Error(`No log file was found at ${logPath}`);
-        }
-        throw err;
+  try {
+    const { size } = await stat(logPath);
+    if (size === 0) {
+      // already empty. no changes to make
+      return false;
     }
+    if (confirm && !(await confirm())) {
+      // file has content; ask first
+      return null;
+    }
+    await truncate(logPath, 0);
+    return true;
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      throw new Error(`No log file was found at ${logPath}`);
+    }
+    throw err;
+  }
 }
