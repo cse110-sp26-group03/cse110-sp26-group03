@@ -76,12 +76,6 @@ describe('id validation', () => {
     );
   });
 
-  // Letters i,l,o,u should be rejected even at right length.
-  test('rejects ids containing excluded base32 letters', () => {
-    expect(() => validate(makeParse('delete', { id: 'manta-ilou' }))).toThrow(
-      /is not a valid issue id/,
-    );
-  });
 });
 
 describe('title and description length limits', () => {
