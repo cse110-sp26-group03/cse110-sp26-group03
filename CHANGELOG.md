@@ -1,3 +1,24 @@
+# [1.7.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.6.0...v1.7.0) (2026-06-04)
+
+
+### Bug Fixes
+
+* attach cause to clear ENOENT error ([3169ede](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/3169ede2b98cfaa48fa8fb1917fcfd0d6f679e7a))
+* use jsdoc-parseable type for clear confirm param ([17920a7](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/17920a7691360a366eea79d7e302986c0cbb401d))
+
+
+### Features
+
+* add beads migration, clear command, and responsive views ([74e6751](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/74e6751bf9843a823117c8aa69fa8f78d25ea398))
+* add block status to schema ([9bad499](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/9bad499eb6660cf3f0f2bbdb8a1d4165ad5d254e))
+* add clear api , so users can clear their jsonl and index can call the api. ([95739c2](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/95739c2631ea24d8aacfb31d960ec68808380c30))
+* add migrate functionality to allow users to migrate from beads to manta. ([437263f](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/437263fee115cde87320da5dc016bfaf7a994df6))
+* make list and detail views responsive to terminal width ([37860b3](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/37860b37f8dbcd8f4a7c83120de07e827e7e22ed))
+* parse clear command and reject flags on no-flag commands ([05cf267](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/05cf2671126489b0adfb6f5f6a2cd32818966687))
+* support confirmation callback and empty-check in clear ([853bf56](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/853bf5649762eee17701e7a93409b81f5575c384))
+* validate clear command and skip non-validated commands ([05ca773](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/05ca773e09c608c3cdaa348f06a7ff4e8d350194))
+* wire up clear command and pre-check delete target ([441d3d8](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/441d3d81d8cfe8470042beba81e6966caf42e37f))
+
 # [1.6.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.3...v1.6.0) (2026-06-04)
 
 
