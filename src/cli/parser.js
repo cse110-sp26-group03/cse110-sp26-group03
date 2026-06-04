@@ -1,14 +1,19 @@
-// parse object format:
+// src/cli/parser.js
 //
-// {
-//   cmd: "create",
-//   flags: {
-//     title: "Hello world",
-//     priority: "p2"
-//   }
-// }
+// Manta's argv parser (Stage 1 validation).
+//
+// Converts raw process.argv into a parse object { cmd, flags } that
+// the rest of the pipeline consumes. Handles command extraction,
+// positional arguments (title for create, ID for update/close/delete/view),
+// flag aliases, and flag-value pairing.
+//
+// Stage 1 checks are structural: unknown commands, unknown flags,
+// missing values, duplicate flags, and flag-count constraints.
+// Stage 2 (validation.js) handles semantic checks on the flag values.
 
-// all valid commands
+// ---- Constants --------------------------------------------------------
+
+/** @type {Array.<string>} */
 const cmds = [
   'create',
   'update',
@@ -20,10 +25,10 @@ const cmds = [
   'init',
 ];
 
-// for commands that expect no args
+/** @type {Array.<string>} */
 const empty_cmds = ['version', 'sync', 'init'];
 
-// all valid flags
+/** @type {Array.<string>} */
 const possible_flags = [
   'title',
   'desc',
@@ -35,10 +40,10 @@ const possible_flags = [
   'createdBy',
 ];
 
-// for flags that expect no args
+/** @type {Array.<string>} */
 const empty_flags = ['all'];
 
-// shorthands for flags
+/** @type {Object.<string, string>} */
 const flag_aliases = {
   t: 'title',
   d: 'desc',
@@ -48,12 +53,14 @@ const flag_aliases = {
   cb: 'createdBy',
 };
 
-// flags that need to preserve capitalization.
+/** @type {Array.<string>} */
 const preserve_case = ['title', 'desc', 'assignee', 'createdBy'];
 
-// for cmds that need to have exact numbers of flags
-// ex. close and delete should only ever have 1 flag -> id
-
+/**
+ * Expected flag counts for commands with strict arity.
+ *
+ * Commands not listed here have no count constraints at this stage.
+ */
 const expected_flag_counts = {
   delete: { min: 1, max: 1, msg: 'Only an ID is expected' },
   close: { min: 1, max: 1, msg: 'Only an ID is expected' },
@@ -63,138 +70,126 @@ const expected_flag_counts = {
   },
 };
 
-// returns parse object if argv is parsed successfully, otherwise throws error. Use try/catch
-// only runs basic/surface level checks (Stage 1 validation)
-// Stage 2 validation (command-specific validation) is handled by validate.js
+// ---- Public API -------------------------------------------------------
+
+/**
+ * Parse process.argv into a command-and-flags object.
+ *
+ * Expects argv[0..1] to be the runtime and script path (stripped here).
+ * The first real token is the command; everything between the command
+ * and the first --flag is treated as a positional argument (title for
+ * create, issue ID for update/close/delete/view).
+ *
+ * @param {Array.<string>} argv - The raw process.argv array.
+ * @returns {object} The parsed command and its flags as { cmd, flags }.
+ * @throws {Error} On any structural problem: missing command, unknown
+ *                 command, unknown flag, missing flag value, duplicate
+ *                 flag, or flag-count violation.
+ */
 export function parse(argv) {
-  const raw_args = argv.slice(2).map((str) => str.trim()); // original casing, used for flag values
-  const args = raw_args.map((str) => str.toLowerCase()); // lowercased, used for parsing logic
+  const raw_args = argv.slice(2).map((str) => str.trim());
+  const args = raw_args.map((str) => str.toLowerCase());
 
   if (args.length === 0)
-    throw new Error(`No input provided. Commands look like: mt <cmd> [flags]`); // checks for empty input
+    throw new Error(`No input provided. Commands look like: mt <cmd> [flags]`);
 
-  // NOTE: no prefix check anymore. "mt" is provided by the environment in the final
-  // product, so it never reaches the parser. The command is now the first arg.
-
-  const cmd = args[0]; // extract command only
+  const cmd = args[0];
   if (!args[0])
-    throw new Error(`Missing command. Commands look like: mt <cmd> [flags]`); // check if command is missing
+    throw new Error(`Missing command. Commands look like: mt <cmd> [flags]`);
   if (!cmds.includes(cmd))
     throw new Error(
       `Unknown command '${cmd}': valid commands are ${cmds.join(', ')}`,
-    ); // check if command exists
+    );
 
-  // throw error if flag is provided for an empty-flag command
   if (empty_cmds.includes(cmd) && args.length > 1)
     throw new Error(
       `Unexpected argument(s) detected - 'mt ${cmd}' should be called with no arguments.`,
     );
 
-  // object to store all flag info
   const flags = {};
 
-  // grab everything in between the command and the first flag.
-  // for example if i have:
-  //      create Hello world --priority p2     -->     grabs "Hello world"
-  //      delete manta-h35p                    -->     grabs "manta-h35p"
+  // ---- Positional argument extraction ---------------------------------
+  // Grab everything between the command and the first flag.
+  // Any dash-prefixed token marks the start of flags.
 
-  // NOTE: treat ANY dash-prefixed token as a flag boundary (was "--").
-  // This way a malformed flag like "-d" becomes the start of a flag instead
-  // of being swallowed into the in-between text, so the regex check below can reject it.
   const first_flag = args.findIndex((el) => el.startsWith('-'));
   const in_between = raw_args
     .slice(1, first_flag === -1 ? args.length : first_flag)
-    .join(' '); // slice up to first flag, otherwise to the end
+    .join(' ');
 
-  // map args to the correct flag based on the command
   switch (cmd) {
     case 'create':
-      if (in_between) flags['title'] = in_between; // map to "title" if in_between is not ""
+      if (in_between) flags['title'] = in_between;
       break;
     case 'update':
     case 'close':
     case 'delete':
     case 'view':
-      if (in_between) flags['id'] = in_between; // map to "id" if in_between is not ""
+      if (in_between) flags['id'] = in_between;
       break;
   }
 
-  let i = first_flag === -1 ? args.length : first_flag; // start at the first flag if found. otherwise start at the end so the loop doesn't run
+  // ---- Flag parsing ---------------------------------------------------
+
+  let i = first_flag === -1 ? args.length : first_flag;
 
   while (i < args.length) {
     const current = args[i];
 
-    // flag found
     if (current.startsWith('-')) {
-      // reject anything that isn't exactly "--<name>", ex. -, -t, ---, ---title
       if (!/^--[a-z]/.test(current))
         throw new Error(`Invalid flag '${current}': flags must start with --`);
 
-      // grabs the flag. attempts to convert from shorthand first, or else just removes the "--"
       const flag = flag_aliases[current.slice(2)] ?? current.slice(2);
 
-      // if flag is invalid, throws error and shows list of valid flags
       if (!possible_flags.includes(flag))
         throw new Error(
           3`Unknown flag '${flag}': valid flags are\n${possible_flags.join(', ')}`,
         );
       if (flags[flag])
-        throw new Error(`Duplicate flag '${flag}': --${flag} was already set`); // flag dupe check
+        throw new Error(`Duplicate flag '${flag}': --${flag} was already set`);
 
       if (flag === 'createdBy' && cmd !== 'view')
         throw new Error(
           `Flag '--createdBy' can only be used with the 'view' command`,
         );
 
-      // take everything between this flag and next flag.
-      // NOTE: next boundary is ANY dash-prefixed token (was "--"), matching the
-      // detection above so a malformed flag like "-d" ends the current flag's value
-      // instead of being absorbed into it.
+      // Collect tokens between this flag and the next dash-prefixed token.
       const next_flag_offset = args
         .slice(i + 1)
         .findIndex((element) => element.startsWith('-'));
 
-      // slice to the end if none found, else slice to the next flag
       const next_flag_index =
         next_flag_offset === -1 ? args.length : i + 1 + next_flag_offset;
 
-      // join everything in between this and next flag into one string.
-      // use raw_args for title, desc, and assignee to preserve capitalization
       const flag_args = (preserve_case.includes(flag) ? raw_args : args)
         .slice(i + 1, next_flag_index)
         .join(' ');
 
       if (empty_flags.includes(flag)) {
-        // for flags that need to be called with no values.
         if (flag_args.trim() !== '')
           throw new Error(
             `--'${current}' flag cannot be called with a value. `,
           );
       } else {
-        // for flags that need values, verify a value is there. no blank values get through
         if (flag_args.trim() === '')
           throw new Error(`Missing value for flag '${flag}'`);
       }
 
-      // add flag and its info to the flag object.
       flags[flag] = flag_args;
-
-      // move the index to the next flag (or the end if no more exist)
       i = next_flag_index;
     } else {
-      // do nothing and keep going
       i++;
     }
   }
 
-  // final checks / fill-ins for default values
+  // ---- Defaults and required-field checks -----------------------------
+
   switch (cmd) {
     case 'create':
-      if (!flags['title']) throw new Error(`Missing required input: title`); // no empty titles
+      if (!flags['title']) throw new Error(`Missing required input: title`);
+      if (!flags['priority']) flags['priority'] = 'p5';
 
-      if (!flags['priority']) flags['priority'] = 'p5'; // default priority to p5 if not explicitly set
-
-      // can't create issues as "closed"
       if (flags['status']) {
         if (flags['status'] === 'closed')
           throw new Error(
@@ -208,15 +203,14 @@ export function parse(argv) {
     case 'update':
     case 'close':
     case 'delete':
-      // needs id
       if (!flags['id']) throw new Error(`Missing required input: id`);
       if (flags['id'] && flags['id'].slice(0, 6) !== 'manta-')
-        flags['id'] = `manta-${flags['id']}`; // auto add prefix to allow shorthand id searching
+        flags['id'] = `manta-${flags['id']}`;
 
       break;
     case 'view':
       if (flags['id'] && flags['id'].slice(0, 6) !== 'manta-')
-        flags['id'] = `manta-${flags['id']}`; // auto add prefix to allow shorthand id searching
+        flags['id'] = `manta-${flags['id']}`;
 
       if (flags['title'] || flags['desc'])
         throw new Error(
@@ -224,7 +218,8 @@ export function parse(argv) {
         );
   }
 
-  // for commands that expect an exact amount or range of flags
+  // ---- Flag-count constraints -----------------------------------------
+
   if (expected_flag_counts[cmd]) {
     const { min, max } = expected_flag_counts[cmd];
     const count = Object.keys(flags).length;
@@ -237,9 +232,6 @@ export function parse(argv) {
         `Too many flags for '${cmd}:' ${expected_flag_counts[cmd].msg}`,
       );
   }
-
-  //console.log(`cmd: ${cmd}`)
-  //console.log("flags:", flags)
 
   return {
     cmd: cmd,

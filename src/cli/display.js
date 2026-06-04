@@ -1,13 +1,16 @@
-import * as readline from 'readline';
+// src/cli/display.js
+//
+// Manta's terminal display layer for the view command (ADR-009).
+//
+// Takes the output of FETCH() and renders it to the terminal in one
+// of two modes:
+//   List:   FETCH returned an array  -> paginated table, PAGE_SIZE issues per page.
+//   Detail: FETCH returned an object -> full view of a single issue.
+//
+// Both modes use the alternate screen buffer when running in a TTY,
+// so the user's scrollback is preserved. Press ESC to exit.
 
-// Display layer for the mt view command.
-// Takes the output of FETCH() and renders it to the terminal.
-//
-// Two display modes:
-//      List behavior -> DISPLAY(parse_obj, issues) — paginated table, 5 issues at a time
-//      View behavior -> DISPLAY(parse_obj, issue)  — detailed view of a single issue
-//
-// Dispatches on whether FETCH returned an array (list) or a single object (view).
+import * as readline from 'readline';
 
 const PAGE_SIZE = 5;
 
@@ -86,12 +89,15 @@ function compute_layout(width) {
   return { cols, widths, total };
 }
 
+// ---- Public API -------------------------------------------------------
+
 /**
- * Main display function. Dispatches to list or individual issue display
- * based on the result returned by FETCH().
+ * Main display function. Dispatches to list or detail view based on
+ * the result returned by FETCH().
  *
  * @param {object}          parse_obj - The parsed command object from parser.js.
- * @param {object|object[]} result    - Output from FETCH(). Array = list, object = single issue.
+ * @param {object|Array.<object>} result - Output from FETCH(). Array = list, object = single issue.
+ * @throws {Error} If parse_obj.cmd is not a supported display command.
  */
 export async function DISPLAY(parse_obj, result) {
   switch (parse_obj.cmd) {
@@ -109,11 +115,16 @@ export async function DISPLAY(parse_obj, result) {
   }
 }
 
+// ---- Alternate screen driver ------------------------------------------
+
 /**
- * Run an interactive view in the alternate screen buffer (clear + redraw on resize).
+ * Run an interactive view in the alternate screen buffer.
  *
- * @param {function(): string[]} buildLines - Builds the lines to print.
- * @param {function(Object): boolean} [onKey] - Return true to redraw after arrow keys, etc.
+ * Clears and redraws on terminal resize. When stdin is not a TTY
+ * (e.g. piped output), falls back to a single non-interactive print.
+ *
+ * @param {Function} buildLines - Returns an array of strings to print.
+ * @param {Function} [onKey] - Optional key handler; return true to trigger a redraw.
  */
 async function run_alt_screen(buildLines, onKey) {
   if (!process.stdout.isTTY) {
@@ -169,13 +180,14 @@ async function run_alt_screen(buildLines, onKey) {
   });
 }
 
-// ---- List display --------------------------------------------------
+// ---- List display -----------------------------------------------------
 
 /**
  * Render a paginated table of issues.
+ *
  * Uses left/right arrow keys to navigate pages. Press ESC to exit.
  *
- * @param {object[]} issues - Array of issue objects from FETCH().
+ * @param {Array.<object>} issues - Array of issue objects from FETCH().
  */
 async function display_list(issues) {
   if (!issues || issues.length === 0) {
@@ -203,10 +215,12 @@ async function display_list(issues) {
 }
 
 /**
- * @param {object[]} issues
- * @param {number}   page
- * @param {number}   total_pages
- * @returns {string[]}
+ * Build the lines for a single page of the issue list table.
+ *
+ * @param {Array.<object>} issues - All issues to paginate.
+ * @param {number} page - Current page index (0-based).
+ * @param {number} total_pages - Total number of pages.
+ * @returns {Array.<string>} Lines ready to print.
  */
 function build_list_page_lines(issues, page, total_pages) {
   const layout = compute_layout(term_width());
@@ -262,9 +276,9 @@ function row_line(issue, layout) {
 }
 
 /**
- * Build the pagination bar with prev/next buttons in the center.
+ * Build the centered pagination bar with prev/next and page label.
  *
- * @param {number} page        - Current page index (0-based).
+ * @param {number} page - Current page index (0-based).
  * @param {number} total_pages - Total number of pages.
  * @param {{total: number}} layout - The active table layout.
  * @returns {string[]} The nav and page-label lines.
@@ -283,11 +297,12 @@ function pagination_lines(page, total_pages, layout) {
   ];
 }
 
-// ---- Individual issue display --------------------------------------
+// ---- Individual issue display -----------------------------------------
 
 /**
  * Render the detailed view of a single issue.
- * Called when mt view <id> is run with a specific issue ID.
+ *
+ * Called when mt view is run with a specific issue ID.
  *
  * @param {object} issue - Single issue object from FETCH().
  */
@@ -301,8 +316,14 @@ async function display_issue(issue) {
 }
 
 /**
- * @param {object} issue
- * @returns {string[]}
+ * Build all lines for the detailed single-issue view.
+ *
+ * Layout: title + ID header, separator, description, separator,
+ * two-column metadata (priority/status, assignee/type), dotted
+ * separator, and created/updated timestamps.
+ *
+ * @param {object} issue - The issue object from FETCH().
+ * @returns {Array.<string>} Lines ready to print.
  */
 function build_issue_detail_lines(issue) {
   const lines = [];
@@ -368,10 +389,10 @@ function build_issue_detail_lines(issue) {
   return lines;
 }
 
-// ---- Helpers -------------------------------------------------------
+// ---- Helpers ----------------------------------------------------------
 
 /**
- * Strip the "manta-" prefix from an issue ID for display.
+ * Strip the "manta-" prefix from an issue ID for compact display.
  *
  * @param {string} id - Full issue ID (e.g. "manta-h3kp").
  * @returns {string} Short ID (e.g. "h3kp").
@@ -392,8 +413,10 @@ function val(v) {
 
 /**
  * Format an ISO timestamp into a compact, readable form
- * (YYYY-MM-DD HH:MM ZONE) in the machine's local timezone. Falls back to "-"
- * when missing, or to the raw value if it can't be parsed as a date.
+ * (YYYY-MM-DD HH:MM ZONE) in the machine's local timezone.
+ *
+ * Falls back to "-" when missing, or to the raw value if it
+ * can't be parsed as a date.
  *
  * @param {*} v - The raw timestamp value (typically an ISO 8601 string).
  * @returns {string} The formatted date, or a sensible fallback.
@@ -427,7 +450,7 @@ function tz_abbrev(d) {
 /**
  * Pad or truncate a string to a fixed column width.
  *
- * @param {string} str   - The string to format.
+ * @param {string} str - The string to format.
  * @param {number} width - The desired column width.
  * @returns {string} The padded or truncated string.
  */
@@ -478,7 +501,7 @@ function wrap_text(text, width) {
  * Build a dotted separator line of the given width.
  *
  * @param {number} width - Total line width.
- * @returns {string}
+ * @returns {string} The dotted line.
  */
 function dotted_line(width) {
   let line = '';

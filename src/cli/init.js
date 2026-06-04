@@ -20,6 +20,14 @@ const GITATTRIBUTES_LINE = '.manta/manta.jsonl merge=union';
  * - Prints a reminder to run `git config pull.rebase false`.
  */
 export function init() {
+  // Detect if already initialized.
+  const alreadyInitialized = existsSync(MANTA_DIR);
+
+  if (alreadyInitialized) {
+    console.log('Manta is already initialized in this repository.');
+    return;
+  }
+
   // Create .manta/ directory.
   mkdirSync(MANTA_DIR, { recursive: true });
 

@@ -1,3 +1,27 @@
+# [1.6.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.3...v1.6.0) (2026-06-04)
+
+
+### Features
+
+* init.js detects if user already init ([aaa775e](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/aaa775efb0cda15bdcaddb04560c8418239531ff))
+* init.js detects if user already init ([2ffbeb3](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/2ffbeb3ff74b20c4067ba6f3d003b4ac6a57d5f0))
+
+## [1.5.3](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.2...v1.5.3) (2026-06-02)
+
+
+### Bug Fixes
+
+* exclude non-package files from npm release ([84a5df0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/84a5df06044f2315b60170b7623eaced4b711ef4))
+
+## [1.5.2](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.1...v1.5.2) (2026-06-02)
+
+
+### Bug Fixes
+
+* test release app token ([fd206f7](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/fd206f74ef9e10393bcda90aec0a2d8aa3104fa2))
+* test semantic release npm publish ([343c601](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/343c601a10e07d2240993c786eec14745a42ba01))
+* test semantic release npm publish ([2df97e2](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/2df97e2482022b740950103c20fba9d9274ce8a9))
+
 ## [1.5.1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.0...v1.5.1) (2026-06-01)
 
 

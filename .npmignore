@@ -1,0 +1,7 @@
+# Ignore everything, then whitelist what we need
+*
+
+# Core package files
+!src/**
+!package.json
+!README.md
