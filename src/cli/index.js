@@ -37,7 +37,15 @@ try {
 // see the freshest issue set.
 
 try {
-  syncFromLog();
+  let madeChanges = syncFromLog();
+  if (parsed_command.cmd == 'sync') {
+    if (!madeChanges) {
+      console.log('Already up to date; no new events to sync.');
+    } else {
+      console.log('Synced successfully.');
+    }
+    process.exit(0);
+  }
 } catch (err) {
   console.error(err.message);
   process.exit(1);
@@ -50,10 +58,7 @@ if (parsed_command.cmd === 'init') {
   process.exit(0);
 }
 
-if (parsed_command.cmd == 'sync') {
-  console.log('Synced successfully.');
-  process.exit(0);
-}
+
 
 if (parsed_command.cmd === 'version') {
   const pkgPath = join(
