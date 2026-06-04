@@ -174,7 +174,7 @@ function applyDelete(event) {
  * @param {object} event - The event to record.
  * @param {string} [logPath] - Log path override (mainly for testing).
  */
-function appendToLog(event, logPath = DEFAULT_LOG_PATH) {
+export function appendToLog(event, logPath = DEFAULT_LOG_PATH) {
   mkdirSync(dirname(logPath), { recursive: true });
   const line = JSON.stringify(event) + '\n';
   appendFileSync(logPath, line, 'utf8');
@@ -187,11 +187,14 @@ function appendToLog(event, logPath = DEFAULT_LOG_PATH) {
  * Check whether an issue with the given ID exists in SQLite.
  *
  * Used by update/delete to fail early if the target issue isn't there.
+ * Exported so the CLI can pre-check before prompting for a destructive
+ * delete (index.js), avoiding a confirmation prompt for an issue that
+ * doesn't exist.
  *
  * @param {string} issueId
  * @returns {boolean}
  */
-function issueExists(issueId) {
+export function issueExists(issueId) {
   const row = db.prepare(`SELECT 1 FROM issues WHERE ID = ?`).get(issueId);
   return row !== undefined && row !== null;
 }

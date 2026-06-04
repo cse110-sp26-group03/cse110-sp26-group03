@@ -24,13 +24,16 @@ Some important details that we considered is that:
 
 We want to adopt Option 1: Translating a Bead JSONL file to a Manta JSONL file appeals more to the user's needs as migration is easier and faster. 
 
-We agreed upon this roadmap upon the CLI command: `mt migrate beads`
+We agreed upon this roadmap upon the CLI command: `mt migrate <path_to_beads_jsonl>`
 1. Reads the Beads JSONL.
-2. Validates the file looks like Beads format (check for expected fields).
-3. Validate the Manta project is empty.
-4. Translates each Beads issue to create event with current state (fields not used by Manta are omitted).
-5. Appends events to Manta's JSONL updates SQLite
-6. Reports: "Migrated # issues from beads. # fields had no Manta equivalent and were dropped. Run `mt list` to see your issues."
+2. Translates each Beads issue to create event with current state (fields not used by Manta are omitted).
+3. Appends events to Manta's JSONL
+4. Calls our sync function to update the SQLite
+5. Reports: Migration complete:
+    Migrated: #
+    Skipped (already exist): #
+    Failed: #
+6. If at any point in parsing the jsonl, it parses an invalid json object, it will throw an error immediately. 
 
 **Notes**
 - The Manta project needs to be empty to ensure that there are no duplicate or conflicting issues.

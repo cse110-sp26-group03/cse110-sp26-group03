@@ -13,6 +13,7 @@
 
 // ---- Constants --------------------------------------------------------
 
+// all valid commands
 /** @type {Array.<string>} */
 const cmds = [
   'create',
@@ -23,10 +24,16 @@ const cmds = [
   'view',
   'sync',
   'init',
+  'migrate',
+  'clear',
 ];
 
+// for commands that are called with no args
 /** @type {Array.<string>} */
 const empty_cmds = ['version', 'sync', 'init'];
+
+// for commands that are called with no flags
+const no_flag_cmds = ['migrate', 'clear'];
 
 /** @type {Array.<string>} */
 const possible_flags = [
@@ -40,9 +47,11 @@ const possible_flags = [
   'createdBy',
 ];
 
+// for flags that expect no args
 /** @type {Array.<string>} */
 const empty_flags = ['all'];
 
+// flag shorthands
 /** @type {Object.<string, string>} */
 const flag_aliases = {
   t: 'title',
@@ -53,6 +62,7 @@ const flag_aliases = {
   cb: 'createdBy',
 };
 
+// for flags that need to preserve capitalization
 /** @type {Array.<string>} */
 const preserve_case = ['title', 'desc', 'assignee', 'createdBy'];
 
@@ -69,6 +79,8 @@ const expected_flag_counts = {
     msg: 'No updates to any field were provided',
   },
 };
+
+const DEFAULT_LOG_PATH = '.manta/manta.jsonl';
 
 // ---- Public API -------------------------------------------------------
 
@@ -127,6 +139,12 @@ export function parse(argv) {
     case 'view':
       if (in_between) flags['id'] = in_between;
       break;
+    case 'migrate':
+      if (in_between) flags['path'] = in_between;
+      break;
+    case 'clear':
+      flags['path'] = in_between || DEFAULT_LOG_PATH; // use default log path if none is provided
+      break;
   }
 
   // ---- Flag parsing ---------------------------------------------------
@@ -144,10 +162,14 @@ export function parse(argv) {
 
       if (!possible_flags.includes(flag))
         throw new Error(
-          3`Unknown flag '${flag}': valid flags are\n${possible_flags.join(', ')}`,
+          `Unknown flag '${flag}': valid flags are\n${possible_flags.join(', ')}`,
         );
       if (flags[flag])
         throw new Error(`Duplicate flag '${flag}': --${flag} was already set`);
+
+      if (no_flag_cmds.includes(cmd)) {
+        throw new Error(`'mt ${cmd}' does not take any flags.`);
+      }
 
       if (flag === 'createdBy' && cmd !== 'view')
         throw new Error(
@@ -216,6 +238,23 @@ export function parse(argv) {
         throw new Error(
           'Cannot filter by title or description.\n Can only filter by: status, priority, type, assignee',
         );
+      break;
+    case 'migrate':
+      if (!flags['path']) {
+        throw new Error(
+          `Missing required input: path to Beads JSONL file. \n` +
+            `Usage: mt migrate <path/to/beads.jsonl>`,
+        );
+      }
+      break;
+    case 'clear':
+      if (!flags['path']) {
+        throw new Error(
+          `Missing required input: path to Manta JSONL file. \n` +
+            `Usage: mt clear <path/to/manta.jsonl>`,
+        );
+      }
+      break;
   }
 
   // ---- Flag-count constraints -----------------------------------------
