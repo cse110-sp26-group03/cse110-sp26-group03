@@ -75,7 +75,6 @@ describe('id validation', () => {
       /'banana' is not a valid issue id/,
     );
   });
-
 });
 
 describe('title and description length limits', () => {
