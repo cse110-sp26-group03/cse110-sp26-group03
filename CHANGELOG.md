@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.7.0...v1.7.1) (2026-06-04)
+
+
+### Bug Fixes
+
+* collision final attempt should throw error format and not err var ([3fb98a0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/3fb98a077a9be6193ef90652a069e411633b207d))
+
 # [1.7.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.6.0...v1.7.0) (2026-06-04)
 
 
