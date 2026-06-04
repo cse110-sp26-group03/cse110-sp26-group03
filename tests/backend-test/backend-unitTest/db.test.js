@@ -90,7 +90,7 @@ describe('issues table schema', () => {
   });
 });
 
-// Check if constraints is only open, in_progress, closed for Status, and Priority is non-negative, and IssueType is from the fixed set.
+// Check if constraints is only open, in_progress, blocked, closed for Status, and Priority is non-negative, and IssueType is from the fixed set.
 describe('CHECK constraints', () => {
   // Status is constrained to open, in_progress, closed at the DB level.
   test('rejects an out-of-range Status', () => {
