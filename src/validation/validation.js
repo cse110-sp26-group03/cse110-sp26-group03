@@ -12,7 +12,7 @@
 
 // ---- Constants --------------------------------------------------------
 
-const ID_PATTERN = /^manta-[0-9a-hjkmnp-tvwxyz]{4}$/;
+const ID_PATTERN = /^manta-.+$/;
 const TITLE_MAX_LENGTH = 50;
 const DESC_MAX_LENGTH = 512;
 const PRIORITY_PATTERN = /^p([0-9])$/;
@@ -36,6 +36,7 @@ const possible_flags = {
   delete: ['id'],
   view: ['id', 'priority', 'status', 'type', 'assignee', 'createdBy'],
   migrate: ['path'],
+  clear: ['path']
 };
 
 /**
@@ -74,6 +75,8 @@ const validations = {
  */
 export function validate(parse_obj) {
   const { cmd, flags } = parse_obj;
+
+  if (!(cmd in possible_flags)) return true // only check commands that need to be validated.
 
   for (const flag of possible_flags[cmd]) {
     const error_msg = validations[flag](flags[flag], cmd);
