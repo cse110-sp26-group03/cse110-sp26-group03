@@ -12,11 +12,11 @@
 
 // ---- Constants --------------------------------------------------------
 
-const ID_PATTERN = /^manta-[0-9a-hjkmnp-tvwxyz]{4}$/;
+const ID_PATTERN = /^manta-.+$/;
 const TITLE_MAX_LENGTH = 50;
 const DESC_MAX_LENGTH = 512;
 const PRIORITY_PATTERN = /^p([0-9])$/;
-const VALID_STATUSES = ['open', 'in_progress', 'closed'];
+const VALID_STATUSES = ['open', 'in_progress', 'blocked', 'closed'];
 const VALID_TYPES = ['bug', 'feature', 'task', 'docs', 'store'];
 const ASSIGNEE_PATTERN = /^[a-zA-Z]+$/;
 const USERNAME_PATTERN = /^[a-zA-Z0-9_]+$/;
@@ -35,6 +35,8 @@ const possible_flags = {
   close: ['id'],
   delete: ['id'],
   view: ['id', 'priority', 'status', 'type', 'assignee', 'createdBy'],
+  migrate: ['path'],
+  clear: ['path'],
 };
 
 /**
@@ -54,6 +56,7 @@ const validations = {
   type: check_type,
   assignee: check_assignee,
   createdBy: check_createdBy,
+  path: check_path,
 };
 
 // ---- Public API -------------------------------------------------------
@@ -72,6 +75,8 @@ const validations = {
  */
 export function validate(parse_obj) {
   const { cmd, flags } = parse_obj;
+
+  if (!(cmd in possible_flags)) return true; // only check commands that need to be validated.
 
   for (const flag of possible_flags[cmd]) {
     const error_msg = validations[flag](flags[flag], cmd);
@@ -198,4 +203,19 @@ function check_createdBy(creator, cmd) {
   if (creator === undefined) return null;
   if (USERNAME_PATTERN.test(creator)) return null;
   return `validate error: '${creator}' is not a valid username`;
+}
+
+/**
+ * Validate a file path for the migrate command.
+ *
+ * The path must be a non-empty string. Further existence checks
+ * happen in migrate.js.
+ *
+ * @param {string|undefined} path - The file path to check.
+ * @returns {string|null} Error message, or null if valid.
+ */
+function check_path(path) {
+  if (path === undefined) return null;
+  if (typeof path === 'string' && path.trim().length > 0) return null;
+  return 'validate error: path must be a valid file path';
 }

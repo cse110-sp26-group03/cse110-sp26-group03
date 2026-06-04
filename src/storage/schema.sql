@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS issues (
   Title TEXT NOT NULL,
   Description TEXT DEFAULT '',
   -- CHECK constraints enforce allowed values for Status, Priority, and IssueType
-  Status TEXT DEFAULT 'open' CHECK (Status IN ('open', 'in_progress', 'closed')),
+  Status TEXT DEFAULT 'open' CHECK (Status IN ('open', 'in_progress', 'blocked', 'closed')),
   -- Smaller number = higher priority (P0 is the most urgent).
   -- Any non-negative integer is allowed; the user picks the scale.
   -- The "p" prefix shown to users (e.g. "p5") should be added by the CLI display

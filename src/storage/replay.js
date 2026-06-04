@@ -89,6 +89,11 @@ export function syncFromLog(logPath = DEFAULT_LOG_PATH) {
 
   const contents = readFileSync(logPath, 'utf8');
 
+  // An empty log file will clear the databse.
+  if (Object.keys(contents).length === 0) {
+    db.prepare(`DELETE FROM issues`).run(); // no log = no events = empty cache
+  }
+
   // Rebuild the running hasher from the full file. After this line, the
   // hasher reflects exactly what's on disk, which is what makes future
   // single-line appends correct.
