@@ -85,10 +85,18 @@ function applyCreate(event) {
     try {
       insertIssue(event);
     } catch (err) {
-      if (isUniqueConstraintError(err) && attempt < ID_MAX_RETRIES) {
-        continue; // Collision — try again with a fresh ID.
+      if (!isUniqueConstraintError(err)) {
+        throw err; // Error thats not a collision error, should fail immediately.
       }
-      throw err;
+      if (attempt < ID_MAX_RETRIES) {
+        continue; // Collision, try again with a fresh ID.
+      }
+      // Collision on the final attempt is out of retires, throw the buildstore error.
+      throw buildStoreError(
+        'create',
+        null,
+        'failed to generate unique issue ID after multiple attempts. Check if there is space for more IDs or if the database is corrupted.',
+      );
     }
 
     // SQLite accepted the ID. JSONL is the durable record.
@@ -96,12 +104,6 @@ function applyCreate(event) {
     recordAppend(line);
     return event;
   }
-
-  throw buildStoreError(
-    'create',
-    null,
-    'failed to generate unique issue ID after multiple attempts. Check if there is space for more IDs or if the database is corrupted.',
-  );
 }
 
 /**
