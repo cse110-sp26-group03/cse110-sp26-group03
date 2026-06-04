@@ -1,3 +1,11 @@
+# [1.6.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.3...v1.6.0) (2026-06-04)
+
+
+### Features
+
+* init.js detects if user already init ([aaa775e](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/aaa775efb0cda15bdcaddb04560c8418239531ff))
+* init.js detects if user already init ([2ffbeb3](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/2ffbeb3ff74b20c4067ba6f3d003b4ac6a57d5f0))
+
 ## [1.5.3](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.5.2...v1.5.3) (2026-06-02)
 
 

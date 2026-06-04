@@ -7,12 +7,12 @@
  * without seeding or tearing down the database.
  *
  * Tests for a successful create/update/delete that mutates JSONL and
- * SQLite are not covered here but is tracked seperately
+ * SQLite are not covered here but should be tracked in db.test.js and replay.test.js
  *
  */
 
 import { test, expect } from 'bun:test';
-import { applyEvent } from '../src/storage/store.js';
+import { applyEvent } from '../../../src/storage/store.js';
 
 /**
  * applyEvent should reject any event whose type is not one of the
@@ -36,10 +36,10 @@ test('applyEvent throws when event has no type', () => {
 });
 
 /**
- * The thrown error message should echo the offending type back to the caller
- * so it shows up in logs and surfaced error text.
+ * The thrown error message should have the type back to the caller
+ * so it shows up in logs and error text.
  */
-test('applyEvent error message includes the offending type', () => {
+test('applyEvent error message includes the type', () => {
   expect(() => applyEvent({ type: 'bogus.type' })).toThrow(/bogus\.type/);
 });
 
@@ -47,7 +47,7 @@ test('applyEvent error message includes the offending type', () => {
  * applyEvent uses the structured store error format,
  * so the thrown error should have a reason and issueId field
  */
-test('applyEvent throws a real Error (not a plain throw)', () => {
+test('applyEvent throws a real Error', () => {
   try {
     applyEvent({ type: 'bogus.type' });
     throw new Error('expected applyEvent to throw');
@@ -61,8 +61,8 @@ test('applyEvent throws a real Error (not a plain throw)', () => {
 // ---- issue.updated -------------------------------------------------
 
 /**
- * Sentinel issue ID used by the update/delete tests. Chosen so it will not
- * collide with any real row in the local `.manta` SQLite cache
+ * Sentinel issue ID used by the tests. Chosen so it will not
+ * collide with any real row
  *
  * @type {string}
  */
