@@ -10,7 +10,7 @@ const DEFAULT_LOG_PATH = '.manta/manta.jsonl';
  * preserved — only its contents are erased.
  *
  * @param {string} [logPath='.manta/manta.jsonl'] - Path to the jsonl log file to clear.
- * @param {?(() => boolean | Promise<boolean>)} [confirm=null] - Optional
+ * @param {?function(): (boolean|Promise<boolean>)} [confirm=null] - Optional
  *   confirmation callback. Invoked only once the file is known to exist and
  *   have content, so the caller never prompts for a no-op or a missing file.
  *   If it resolves falsy, the clear is aborted and `null` is returned.
