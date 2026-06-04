@@ -23,6 +23,7 @@ const cmds = [
   'view',
   'sync',
   'init',
+  'migrate',
 ];
 
 /** @type {Array.<string>} */
@@ -127,6 +128,9 @@ export function parse(argv) {
     case 'view':
       if (in_between) flags['id'] = in_between;
       break;
+    case 'migrate':
+      if (in_between) flags['path'] = in_between;
+      break;
   }
 
   // ---- Flag parsing ---------------------------------------------------
@@ -144,7 +148,7 @@ export function parse(argv) {
 
       if (!possible_flags.includes(flag))
         throw new Error(
-          3`Unknown flag '${flag}': valid flags are\n${possible_flags.join(', ')}`,
+          `Unknown flag '${flag}': valid flags are\n${possible_flags.join(', ')}`,
         );
       if (flags[flag])
         throw new Error(`Duplicate flag '${flag}': --${flag} was already set`);
@@ -216,6 +220,15 @@ export function parse(argv) {
         throw new Error(
           'Cannot filter by title or description.\n Can only filter by: status, priority, type, assignee',
         );
+      break;
+    case 'migrate':
+      if (!flags['path']) {
+        throw new Error(
+          `Missing required input: path to Beads JSONL file. ` +
+          `Usage: mt migrate <path/to/beads.jsonl>`
+        );
+      }
+      break;
   }
 
   // ---- Flag-count constraints -----------------------------------------
