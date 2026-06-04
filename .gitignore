@@ -12,8 +12,3 @@ out/
 .manta/*.db-journal
 .manta/*.db-wal
 .manta/*.db-shm
-
-# Jekyll / Ruby (not used — static HTML site in website/)
-website/vendor/
-website/.bundle/
-website/Gemfile.lock
