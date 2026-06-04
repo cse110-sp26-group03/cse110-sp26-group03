@@ -61,7 +61,6 @@ describe('validate() paths', () => {
   });
 });
 
-
 describe('id validation', () => {
   /** Comment out for now as migration might include non-4 char IDs
   // The ID format is manta- followed by exactly 4 Crockford chars
