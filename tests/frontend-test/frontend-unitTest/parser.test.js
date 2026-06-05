@@ -101,16 +101,22 @@ describe('parse() — create', () => {
     );
   });
 
-  test('rejects --all on create', () => {
-    expect(() => parse(argv('create', 'T', '--all'))).toThrow(
-      /can only be used with the 'view' command/,
-    );
-  });
-
   test('rejects --cb on create', () => {
     expect(() => parse(argv('create', 'X', '--cb', 'bob'))).toThrow(
       /can only be used with the 'view' command/,
     );
+  });
+
+  test('accepts --all on create', () => {
+    expect(parse(argv('create', 'T', '--all'))).toEqual({
+      cmd: 'create',
+      flags: {
+        title: 'T',
+        all: '',
+        priority: 'p5',
+        status: 'open',
+      },
+    });
   });
 });
 
@@ -194,10 +200,17 @@ describe('parse() — update, close, delete', () => {
     );
   });
 
-  test('rejects update with view-only flags', () => {
-    expect(() => parse(argv('update', 'ab12', '--all'))).toThrow(
-      /can only be used with the 'view' command/,
-    );
+  test('accepts update with --all flag', () => {
+    expect(parse(argv('update', 'ab12', '--all'))).toEqual({
+      cmd: 'update',
+      flags: {
+        id: 'manta-ab12',
+        all: '',
+      },
+    });
+  });
+
+  test('rejects update with --cb flag', () => {
     expect(() => parse(argv('update', 'ab12', '--cb', 'alice'))).toThrow(
       /can only be used with the 'view' command/,
     );
@@ -234,10 +247,13 @@ describe('parse() — update, close, delete', () => {
     );
   });
 
-  test('rejects close with view-only flags', () => {
+  test('rejects close with --all flag', () => {
     expect(() => parse(argv('close', 'hk3p', '--all'))).toThrow(
-      /can only be used with the 'view' command/,
+      /Too many flags for 'close:'/,
     );
+  });
+
+  test('rejects close with --cb flag', () => {
     expect(() => parse(argv('close', 'hk3p', '--cb', 'alice'))).toThrow(
       /can only be used with the 'view' command/,
     );
@@ -266,10 +282,13 @@ describe('parse() — update, close, delete', () => {
     );
   });
 
-  test('rejects delete with view-only flags', () => {
+  test('rejects delete with --all flag', () => {
     expect(() => parse(argv('delete', 'tzdb', '--all'))).toThrow(
-      /can only be used with the 'view' command/,
+      /Too many flags for 'delete:'/,
     );
+  });
+
+  test('rejects delete with --cb flag', () => {
     expect(() => parse(argv('delete', 'tzdb', '--cb', 'alice'))).toThrow(
       /can only be used with the 'view' command/,
     );
