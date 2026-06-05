@@ -55,6 +55,9 @@ bun link
 # -> Print version
 mt version
 
+# -> Set up Manta in the current repo (creates .manta/ + git merge rule)
+mt init
+
 # -> Create issues
 mt create "Issue name" --priority p1 --assignee bob
 
@@ -75,6 +78,18 @@ mt view manta-xxxx
 
 # -> Sync the local cache from the event log (e.g. after a git pull)
 mt sync
+
+# -> Import issues from a Beads JSONL export
+mt migrate path/to/beads.jsonl
+
+# -> Erase every issue from the log (asks to confirm)
+mt clear
+
+# -> Show all commands and their flags
+mt help
+
+# -> Open the wiki page for a specific command in your browser
+mt help create
 
 ```
 

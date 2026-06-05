@@ -165,6 +165,7 @@ Maintained alongside implementation (see also backend/frontend ADRs).
 | [`src/storage/replay.js`](../src/storage/replay.js) | JSONL → SQLite sync (`syncFromLog`) |
 | [`src/cli/`](../src/cli/) | CLI entry, parser, display, events |
 | [`src/cli/display.js`](../src/cli/display.js) | `mt view` terminal formatting |
+| [`src/help/help.js`](../src/help/help.js) | `mt help` text and wiki-page launcher |
 | [`src/validation/validation.js`](../src/validation/validation.js) | Validation helpers |
 
 ---
