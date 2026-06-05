@@ -131,12 +131,16 @@ Issue data is stored in a local SQLite cache for fast queries. A JSONL file is k
 | command | description | usage | 
 | --- | --- | --- |
 | version | Prints the currently installed version of Manta | mt version |
+| init | Sets up Manta in the current repo (creates `.manta/` + git merge rule) | mt init |
 | create | Creates an issue | mt create [issue name] --[optional field <field value>]... |
 | update  | Updates an existing issue | mt update manta-xxxx --[optional field <field value>]... |
 | close | Closes an existing issue| mt close manta-xxxx |
 | delete | Deletes an existing issue | mt delete manta-xxxx |
 | view | List or show one issue (interactive; ESC to exit) | `mt view`, `mt view manta-xxxx`, `mt view --priority p1 --all` |
 | sync | Refreshes the local SQLite cache from the JSONL event log (e.g. after a `git pull`) | mt sync |
+| migrate | Imports issues from a Beads JSONL export | mt migrate path/to/beads.jsonl |
+| clear | Erases every issue from the log (asks to confirm) | mt clear |
+| help | Shows all commands and their flags, or opens a command's wiki page in the browser | `mt help`, `mt help create` |
 
 ### Supported flags/fields 
 
