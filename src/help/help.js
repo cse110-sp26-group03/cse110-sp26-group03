@@ -7,8 +7,8 @@ const WIKI_BASE = 'https://github.com/cse110-sp26-group03/cse110-sp26-group03/wi
  * elsewhere).
  *
  * The browser is launched as a detached background process that `mt` does not
- * wait on, so the command can exit immediately. Any failure (no browser,
- * unsupported platform) is swallowed — the caller prints the URL as a fallback.
+ * wait on, so the command exits immediately. Any failure (no browser,
+ * unsupported platform) is skipped over — the caller prints the URL as a fallback.
  *
  * @param {string} url - The URL to open.
  * @returns {void}
