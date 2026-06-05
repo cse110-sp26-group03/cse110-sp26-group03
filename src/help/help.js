@@ -50,8 +50,8 @@ Issue commands:
 Repo commands:
   init             Set up Manta in the current repo (.manta/ + git merge rule)
   sync             Rebuild the local cache from the shared log (run after a git pull)
-  migrate <path>   Import issues from a Beads JSONL export
-  clear  [path]    Erase every issue from the log (asks to confirm)
+  migrate <path_to_jsonl>   Import issues from a Beads JSONL export
+  clear  [path_to_jsonl]    Erase every issue from the log (asks to confirm)
 
 Other:
   version          Print the installed Manta version
