@@ -45,23 +45,23 @@ Usage:
   mt <command> [arguments] [flags]
 
 Issue commands:
-  create <title>   Create a new issue
-                   flags: --title/--t, --desc/--d, --priority/--p, --status/--s, --type, --assignee/--a
-  update <id>      Change one or more fields (same flags as create)
-  close  <id>      Mark an issue as closed
-  delete <id>      Permanently delete an issue (asks to confirm)
-  view   [id]      List issues, or show one in detail
-                   filters: --status/--s, --priority/--p, --type, --assignee/--a, --createdBy/--cb, --all
+  create <title>           Create a new issue
+                           flags: --title/--t, --desc/--d, --priority/--p, --status/--s, --type, --assignee/--a
+  update <id>              Change one or more fields (same flags as create)
+  close  <id>              Mark an issue as closed
+  delete <id>              Permanently delete an issue (asks to confirm)
+  view   [id]              List issues, or show one in detail
+                           filters: --status/--s, --priority/--p, --type, --assignee/--a, --createdBy/--cb, --all
 
 Repo commands:
-  init             Set up Manta in the current repo (.manta/ + git merge rule)
-  sync             Rebuild the local cache from the shared log (run after a git pull)
-  migrate <path_to_jsonl>   Import issues from a Beads JSONL export
-  clear  [path_to_jsonl]    Erase every issue from the log (asks to confirm)
+  init                     Set up Manta in the current repo (.manta/ + git merge rule)
+  sync                     Rebuild the local cache from the shared log (run after a git pull)
+  migrate <path_to_jsonl>  Import issues from a Beads JSONL export
+  clear  [path_to_jsonl]   Erase every issue from the log (asks to confirm)
 
 Other:
-  version          Print the installed Manta version
-  help [command]   Show this help, or open the wiki page for a command
+  version                  Print the installed Manta version
+  help [command]           Show this help, or open the wiki page for a command
 
 Flags have a long form and most have a short alias — e.g. --priority and --p
 are the same flag. Both use --. --type and --all have no short form.
