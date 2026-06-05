@@ -75,7 +75,14 @@ describe('parse() — create', () => {
 
   test('preserves case on positional title, description, and assignee', () => {
     const result = parse(
-      argv('create', 'ExactCase Title', '--desc', 'Fix OAuth Bug!!!', '--assignee', 'Alice'),
+      argv(
+        'create',
+        'ExactCase Title',
+        '--desc',
+        'Fix OAuth Bug!!!',
+        '--assignee',
+        'Alice',
+      ),
     );
     expect(result.flags.title).toBe('ExactCase Title');
     expect(result.flags.desc).toBe('Fix OAuth Bug!!!');
@@ -83,9 +90,9 @@ describe('parse() — create', () => {
   });
 
   test('rejects create with closed status', () => {
-    expect(() =>
-      parse(argv('create', 'Bad', '--status', 'closed')),
-    ).toThrow(/cannot be created with a closed status/);
+    expect(() => parse(argv('create', 'Bad', '--status', 'closed'))).toThrow(
+      /cannot be created with a closed status/,
+    );
   });
 
   test('requires a title', () => {
@@ -245,9 +252,7 @@ describe('parse() — update, close, delete', () => {
   });
 
   test('accepts delete with id longer than 4 characters', () => {
-    const result = parse(
-      argv('delete', 'manta-verylong123'),
-    );
+    const result = parse(argv('delete', 'manta-verylong123'));
     expect(result.flags.id).toBe('manta-verylong123');
   });
 
@@ -306,9 +311,7 @@ describe('parse() — view', () => {
   });
 
   test('parses view with --type and --assignee filters', () => {
-    const result = parse(
-      argv('view', '--type', 'bug', '--assignee', 'Alice'),
-    );
+    const result = parse(argv('view', '--type', 'bug', '--assignee', 'Alice'));
     expect(result).toEqual({
       cmd: 'view',
       flags: {
@@ -319,7 +322,9 @@ describe('parse() — view', () => {
   });
 
   test('parses view with shorthand filters (--p, --s, --a)', () => {
-    const result = parse(argv('view', '--p', 'p1', '--s', 'open', '--a', 'Bob'));
+    const result = parse(
+      argv('view', '--p', 'p1', '--s', 'open', '--a', 'Bob'),
+    );
     expect(result).toEqual({
       cmd: 'view',
       flags: {
@@ -442,9 +447,9 @@ describe('parse() — no-arg and path commands', () => {
     });
 
     test('rejects flags', () => {
-      expect(() => parse(argv('migrate', 'a.jsonl', '--priority', 'p1'))).toThrow(
-        /does not take any flags/,
-      );
+      expect(() =>
+        parse(argv('migrate', 'a.jsonl', '--priority', 'p1')),
+      ).toThrow(/does not take any flags/);
     });
   });
 
@@ -489,9 +494,9 @@ describe('parse() — structural errors', () => {
   });
 
   test('rejects unknown flag', () => {
-    expect(() =>
-      parse(argv('create', 'T', '--notreal', 'x')),
-    ).toThrow(/Unknown flag 'notreal'/);
+    expect(() => parse(argv('create', 'T', '--notreal', 'x'))).toThrow(
+      /Unknown flag 'notreal'/,
+    );
   });
 
   test('rejects duplicate flags', () => {
