@@ -20,7 +20,7 @@ import { DISPLAY } from './display.js';
 import { syncFromLog } from '../storage/replay.js';
 import { init } from './init.js';
 import { clear } from './clear.js';
-import { help } from '../help/help.js'
+import { help } from '../help/help.js';
 
 // ---- Step 1: Parse argv -----------------------------------------------
 
@@ -44,13 +44,13 @@ try {
 
 // early exit command: help
 
-if (parsed_command.cmd === 'help'){
+if (parsed_command.cmd === 'help') {
   try {
-    help(parsed_command['flags']['help_cmd'])
-    process.exit(0)
+    help(parsed_command['flags']['help_cmd']);
+    process.exit(0);
   } catch (err) {
-    console.error(err.message)
-    process.exit(1)
+    console.error(err.message);
+    process.exit(1);
   }
 }
 

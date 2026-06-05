@@ -26,7 +26,7 @@ const cmds = [
   'init',
   'migrate',
   'clear',
-  'help'
+  'help',
 ];
 
 // for commands that are called with no args
@@ -79,7 +79,7 @@ const expected_flag_counts = {
     min: 2,
     msg: 'No updates to any field were provided',
   },
-  help: {max: 1, msg: "You can only view details for one command at a time."}
+  help: { max: 1, msg: 'You can only view details for one command at a time.' },
 };
 
 const DEFAULT_LOG_PATH = '.manta/manta.jsonl';
