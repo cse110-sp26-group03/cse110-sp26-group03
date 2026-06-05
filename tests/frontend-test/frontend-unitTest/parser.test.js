@@ -448,7 +448,7 @@ describe('parse() — no-arg and path commands', () => {
     });
   });
 
-  describe('clear', () => {
+  describe('clear', ()) => {
     test('accepts with no arguments', () => {
       expect(parse(argv('clear'))).toEqual({
         cmd: 'clear',
