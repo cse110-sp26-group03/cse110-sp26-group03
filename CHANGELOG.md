@@ -1,3 +1,13 @@
+# [1.8.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.7.1...v1.8.0) (2026-06-05)
+
+
+### Features
+
+* add help command to display usage information ([e85bd1c](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/e85bd1c6b095898061e6ce5144ef5c985ad6d6c6))
+* add mt help ([a8e60c3](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/a8e60c35173fe235e2597e54f54aa89843572cc3))
+* handle the help command in the CLI entrypoint ([d3218a3](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/d3218a3aac68f7a22e262553e4c438cc152724b4))
+* support parsing of the help command and its argument ([562ef00](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/562ef00be9de2d7f622b1494e9f4ed9b74b86690))
+
 ## [1.7.1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.7.0...v1.7.1) (2026-06-04)
 
 
