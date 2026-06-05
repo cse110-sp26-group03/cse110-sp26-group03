@@ -1,6 +1,18 @@
 import { spawn } from 'child_process'
 const WIKI_BASE = 'https://github.com/cse110-sp26-group03/cse110-sp26-group03/wiki'
 
+/**
+ * Opens a URL in the user's default browser, choosing the right launcher for
+ * the current platform (`start` on Windows, `open` on macOS, `xdg-open`
+ * elsewhere).
+ *
+ * The browser is launched as a detached background process that `mt` does not
+ * wait on, so the command can exit immediately. Any failure (no browser,
+ * unsupported platform) is swallowed — the caller prints the URL as a fallback.
+ *
+ * @param {string} url - The URL to open.
+ * @returns {void}
+ */
 function openInBrowser(url) {
     const cmd =
       process.platform === 'win32'  ? 'start'    :
@@ -14,6 +26,12 @@ function openInBrowser(url) {
     }
 }
 
+/**
+ * Builds the general help text shown by `mt help` (with no command argument):
+ * usage, the full command list grouped by purpose, and a note on flag aliases.
+ *
+ * @returns {string} The formatted help text, ready to print.
+ */
 function generalHelpText(){
     return `Manta (mt) — a git-native issue tracker that lives in your repo.
 
@@ -45,6 +63,17 @@ are the same flag. Both use --. --type and --all have no short form.
 Run 'mt help <command>' to open its documentation in the wiki.`
 }
 
+/**
+ * Handles the `mt help` command.
+ *
+ * With no argument, prints the general help overview. With a command name,
+ * prints the wiki URL for that command and tries to open it in the browser
+ * (the printed URL is the fallback if the browser cannot be launched).
+ *
+ * @param {string} [cmd] - Optional command name to open the wiki page for.
+ *   Validated against the known command list by the parser before this runs.
+ * @returns {void}
+ */
 export function help(cmd){
 
     if (!cmd){
