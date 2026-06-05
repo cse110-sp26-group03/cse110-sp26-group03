@@ -66,6 +66,19 @@ const flag_aliases = {
 /** @type {Array.<string>} */
 const preserve_case = ['title', 'desc', 'assignee', 'createdBy'];
 
+/** @type {Array.<string>} */
+const view_only_flags = ['all', 'createdBy'];
+
+/** @type {Array.<string>} */
+const update_fields = [
+  'title',
+  'desc',
+  'priority',
+  'status',
+  'type',
+  'assignee',
+];
+
 /**
  * Expected flag counts for commands with strict arity.
  *
@@ -74,10 +87,6 @@ const preserve_case = ['title', 'desc', 'assignee', 'createdBy'];
 const expected_flag_counts = {
   delete: { min: 1, max: 1, msg: 'Only an ID is expected' },
   close: { min: 1, max: 1, msg: 'Only an ID is expected' },
-  update: {
-    min: 2,
-    msg: 'No updates to any field were provided',
-  },
 };
 
 const DEFAULT_LOG_PATH = '.manta/manta.jsonl';
@@ -171,9 +180,9 @@ export function parse(argv) {
         throw new Error(`'mt ${cmd}' does not take any flags.`);
       }
 
-      if (flag === 'createdBy' && cmd !== 'view')
+      if (view_only_flags.includes(flag) && cmd !== 'view')
         throw new Error(
-          `Flag '--createdBy' can only be used with the 'view' command`,
+          `Flag '--${flag}' can only be used with the 'view' command`,
         );
 
       // Collect tokens between this flag and the next dash-prefixed token.
@@ -223,6 +232,14 @@ export function parse(argv) {
       break;
 
     case 'update':
+      if (!flags['id']) throw new Error(`Missing required input: id`);
+      if (flags['id'] && flags['id'].slice(0, 6) !== 'manta-')
+        flags['id'] = `manta-${flags['id']}`;
+      if (!update_fields.some((field) => flags[field] !== undefined))
+        throw new Error(
+          `Too few flags for 'update:' No updates to any field were provided`,
+        );
+      break;
     case 'close':
     case 'delete':
       if (!flags['id']) throw new Error(`Missing required input: id`);
