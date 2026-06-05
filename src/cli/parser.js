@@ -26,6 +26,7 @@ const cmds = [
   'init',
   'migrate',
   'clear',
+  'help'
 ];
 
 // for commands that are called with no args
@@ -33,7 +34,7 @@ const cmds = [
 const empty_cmds = ['version', 'sync', 'init'];
 
 // for commands that are called with no flags
-const no_flag_cmds = ['migrate', 'clear'];
+const no_flag_cmds = ['migrate', 'clear', 'help'];
 
 /** @type {Array.<string>} */
 const possible_flags = [
@@ -78,6 +79,7 @@ const expected_flag_counts = {
     min: 2,
     msg: 'No updates to any field were provided',
   },
+  help: {max: 1, msg: "You can only view details for one command at a time."}
 };
 
 const DEFAULT_LOG_PATH = '.manta/manta.jsonl';
@@ -145,6 +147,15 @@ export function parse(argv) {
     case 'clear':
       flags['path'] = in_between || DEFAULT_LOG_PATH; // use default log path if none is provided
       break;
+    case 'help':
+      if (in_between) {
+        if (!cmds.includes(in_between))
+          throw new Error(
+            `Unknown command '${in_between}'. \n\nRun 'mt help' for general help, ` +
+              `or 'mt help <cmd>' where <cmd> is one of the following: \n${cmds.join(', ')}`,
+          );
+        flags['help_cmd'] = in_between;
+      }
   }
 
   // ---- Flag parsing ---------------------------------------------------
