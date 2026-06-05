@@ -1,5 +1,6 @@
-import { spawn } from 'child_process'
-const WIKI_BASE = 'https://github.com/cse110-sp26-group03/cse110-sp26-group03/wiki'
+import { spawn } from 'child_process';
+const WIKI_BASE =
+  'https://github.com/cse110-sp26-group03/cse110-sp26-group03/wiki';
 
 /**
  * Opens a URL in the user's default browser, choosing the right launcher for
@@ -14,16 +15,21 @@ const WIKI_BASE = 'https://github.com/cse110-sp26-group03/cse110-sp26-group03/wi
  * @returns {void}
  */
 function openInBrowser(url) {
-    const cmd =
-      process.platform === 'win32'  ? 'start'    :
-      process.platform === 'darwin' ? 'open'     :
-                                      'xdg-open';
-    try {
-      spawn(cmd, [url], { shell: process.platform === 'win32',
-                          stdio: 'ignore', detached: true }).unref();
-    } catch {
-      /* no browser / unsupported platform — printed URL is the fallback */
-    }
+  const cmd =
+    process.platform === 'win32'
+      ? 'start'
+      : process.platform === 'darwin'
+        ? 'open'
+        : 'xdg-open';
+  try {
+    spawn(cmd, [url], {
+      shell: process.platform === 'win32',
+      stdio: 'ignore',
+      detached: true,
+    }).unref();
+  } catch {
+    /* no browser / unsupported platform — printed URL is the fallback */
+  }
 }
 
 /**
@@ -32,8 +38,8 @@ function openInBrowser(url) {
  *
  * @returns {string} The formatted help text, ready to print.
  */
-function generalHelpText(){
-    return `Manta (mt) — a git-native issue tracker that lives in your repo.
+function generalHelpText() {
+  return `Manta (mt) — a git-native issue tracker that lives in your repo.
 
 Usage:
   mt <command> [arguments] [flags]
@@ -60,7 +66,7 @@ Other:
 Flags have a long form and most have a short alias — e.g. --priority and --p
 are the same flag. Both use --. --type and --all have no short form.
 
-Run 'mt help <command>' to open its documentation in the wiki.`
+Run 'mt help <command>' to open its documentation in the wiki.`;
 }
 
 /**
@@ -74,16 +80,14 @@ Run 'mt help <command>' to open its documentation in the wiki.`
  *   Validated against the known command list by the parser before this runs.
  * @returns {void}
  */
-export function help(cmd){
+export function help(cmd) {
+  if (!cmd) {
+    console.log(generalHelpText());
+    return;
+  }
 
-    if (!cmd){
-        console.log(generalHelpText())
-        return
-    }
-
-    const url = `${WIKI_BASE}/mt-${cmd}`
-    console.log(`Opening the wiki page for 'mt ${cmd}' in your browser.`)
-    console.log(`If it doesn't open, visit: ${url}`)
-    openInBrowser(url)
-
+  const url = `${WIKI_BASE}/mt-${cmd}`;
+  console.log(`Opening the wiki page for 'mt ${cmd}' in your browser.`);
+  console.log(`If it doesn't open, visit: ${url}`);
+  openInBrowser(url);
 }
