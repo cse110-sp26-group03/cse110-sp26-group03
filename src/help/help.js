@@ -7,7 +7,6 @@ function openInBrowser(url) {
       process.platform === 'darwin' ? 'open'     :
                                       'xdg-open';
     try {
-      // detached + unref so `mt` exits immediately; ignore failures entirely
       spawn(cmd, [url], { shell: process.platform === 'win32',
                           stdio: 'ignore', detached: true }).unref();
     } catch {
