@@ -3,6 +3,7 @@
 The fetch.test.js file unit tests the functionality of the Public API FETCH() function. Because FETCH has two types of modes, detail and list, we divide the tests into two individual test suites as denoted by the Describe() function, which wraps the tests and houses them in a test suite.
 
 ## Variables
+
 ```
 const FETCH_ASSIGNEE = 'fetch-test-suite';
 ```
@@ -16,6 +17,7 @@ const FIXTURES = [...]
 The `FIXTURES` variable houses the test issues with predetermined fields for ID, Status, Priority, Type, and CreatedBy.
 
 ## Helper Functions
+
 ```
 BeforeAll()
 ```

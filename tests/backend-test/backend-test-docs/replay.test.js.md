@@ -3,6 +3,7 @@
 The replay.test.js file unit tests the functionality of the Public API syncFromLog() function, which, holistically, brings the local SQLite in sync with the local JSONL log by comparing hashes. Because replay.js is a larger function with significant responsibilities and is important in the event of data loss, we divide all of the tests into four individual test suites as denoted by the Describe() function, which wraps the tests and houses them in a test suite and allows for better organization of several tests into certain test categories.
 
 ## Variables
+
 ```
 const CHECKPOINT_KEY = 'jsonl_checkpoint';
 ```
@@ -15,8 +16,8 @@ const tempLogs = []
 
 The `tempLogs` array keeps track of the logs that were created during the test suites to remember what to delete in `AfterAll()`.
 
-
 ## Helper Functions
+
 ```
 function tempLogPath() {
   const path = join(
@@ -44,7 +45,7 @@ function updatedLine(id, changes) {
 }
 ```
 
-`updatedLine()`, very similarly to `createdLine()`, builds a JSONL line with its fields filled out but for the `issue.updated` event. 
+`updatedLine()`, very similarly to `createdLine()`, builds a JSONL line with its fields filled out but for the `issue.updated` event.
 
 ```
 function deletedLine(id) {
@@ -101,7 +102,7 @@ This test suite has five tests in this order:
 1. Checks that replay is skipped when there it creates a path that has not been created before
 2. Checks that a log with no checkpoint is replayed in full
 3. Checks that replay is skipped when the log is unchanged
-4. 
+4.
 
 ## List Mode Tests
 
