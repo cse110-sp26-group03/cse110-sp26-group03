@@ -119,3 +119,18 @@ This test suite has eleven tests in this order:
 9. Checks if the fetched issues are sorted by their priorities in ascending order
 10. Checks if closed issues are put at the bottom of the list regardless of their priority
 11. Checks if nothing is returned when nothing matches the filter
+
+## syncFromLog: External Rewrites (ADR-007 rebuild semantics)
+
+This test suite has two tests in this order:
+
+1. Checks that a line removed from the log disappears from the cache, since replay rebuilds the whole table rather than only appending new events.
+2. Checks that a log written with Windows CRLF (`\r\n`) line endings is parsed correctly.
+
+## syncFromLog: Orphan and No-op Events
+
+This test suite has three tests in this order:
+
+1. Checks that an update for an issue that does not exist is tolerated without throwing.
+2. Checks that a delete for an issue that does not exist is tolerated without throwing.
+3. Checks that an update with an empty changes object leaves the existing row untouched.

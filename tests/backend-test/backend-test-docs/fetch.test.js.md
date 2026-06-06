@@ -65,3 +65,19 @@ This test suite has eleven tests in this order:
 9. Checks if the fetched issues are sorted by their priorities in ascending order
 10. Checks if closed issues are put at the bottom of the list regardless of their priority
 11. Checks if nothing is returned when nothing matches the filter
+
+## List Mode Tests: Additional Filters
+
+This test suite has five tests in this order:
+
+1. Checks if combining two different columns (issue type and createdBy) narrows the results with AND logic.
+2. Checks if filtering by a non-closed status (open) returns only the open issues and excludes the others.
+3. Checks if filtering by the in_progress status returns the single in_progress issue.
+4. Checks if the --all flag combines with a type filter, returning both the open and closed issues of that type.
+5. Checks if filtering by assignee alone returns every non-closed issue in the suite.
+
+## Detail Mode Tests: Error Chaining
+
+This test suite has one test in this order:
+
+1. Checks if FETCH() wraps the not-found error while preserving the original error as its `.cause`.
