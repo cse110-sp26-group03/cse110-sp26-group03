@@ -337,3 +337,81 @@ describe('recordAppend()', () => {
     expect(syncFromLog(path)).toBe(true);
   });
 });
+
+// ---- Additional coverage (augments the suite above) ---------------------
+
+describe('syncFromLog() external rewrites (ADR-007 rebuild semantics)', () => {
+  // Replay rebuilds the whole table from the log, so a line removed from the
+  // log (e.g. a teammate's rebase/history rewrite landing via git pull)
+  // disappears from the cache -- replay is not append-only.
+  test('reflects a line removed from the log', () => {
+    const path = tempLogPath();
+    writeFileSync(path, createdLine('manta-r1') + createdLine('manta-r2'));
+    syncFromLog(path);
+    expect(issueCount()).toBe(2);
+
+    // The log now contains only r2.
+    writeFileSync(path, createdLine('manta-r2'));
+    expect(syncFromLog(path)).toBe(true);
+
+    expect(issueCount()).toBe(1);
+    expect(
+      db
+        .prepare('SELECT COUNT(*) AS c FROM issues WHERE ID = ?')
+        .get('manta-r1').c,
+    ).toBe(0);
+    expect(
+      db
+        .prepare('SELECT COUNT(*) AS c FROM issues WHERE ID = ?')
+        .get('manta-r2').c,
+    ).toBe(1);
+  });
+
+  // The JSONL log may arrive with Windows CRLF line endings; parseLog trims
+  // each line, so replay must handle '\r\n' exactly like '\n'.
+  test('parses a log written with CRLF line endings', () => {
+    const path = tempLogPath();
+    const crlf = (line) => line.replace(/\n$/, '\r\n');
+    writeFileSync(
+      path,
+      crlf(createdLine('manta-r1')) + crlf(createdLine('manta-r2')),
+    );
+
+    syncFromLog(path);
+
+    expect(issueCount()).toBe(2);
+  });
+});
+
+describe('syncFromLog() orphan and no-op events', () => {
+  // Replay applies updates straight to SQLite with no existence check, so an
+  // update for an id that was never created simply affects no rows.
+  test('tolerates an update for an issue that does not exist', () => {
+    const path = tempLogPath();
+    writeFileSync(path, updatedLine('manta-ghost', { title: 'nope' }));
+
+    expect(() => syncFromLog(path)).not.toThrow();
+    expect(issueCount()).toBe(0);
+  });
+
+  // Likewise, a delete for a missing id is a harmless no-op during replay.
+  test('tolerates a delete for an issue that does not exist', () => {
+    const path = tempLogPath();
+    writeFileSync(path, deletedLine('manta-ghost'));
+
+    expect(() => syncFromLog(path)).not.toThrow();
+    expect(issueCount()).toBe(0);
+  });
+
+  // An update event with an empty changes object writes nothing and leaves
+  // the existing row untouched.
+  test('leaves a row untouched for an empty update', () => {
+    const path = tempLogPath();
+    writeFileSync(path, createdLine('manta-r1') + updatedLine('manta-r1', {}));
+
+    expect(() => syncFromLog(path)).not.toThrow();
+    expect(
+      db.prepare('SELECT Title FROM issues WHERE ID = ?').get('manta-r1').Title,
+    ).toBe('Title manta-r1');
+  });
+});

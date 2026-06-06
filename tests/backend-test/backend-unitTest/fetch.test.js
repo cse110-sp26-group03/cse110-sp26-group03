@@ -202,3 +202,78 @@ describe('FETCH list mode', () => {
     expect(rows).toEqual([]);
   });
 });
+
+// ---- Additional coverage (augments the suite above) ---------------------
+
+describe('FETCH list mode: additional filters', () => {
+  // Two different columns narrow with AND. open1 is the only non-closed bug
+  // created by alice (closed1 is also a bug by alice, but excluded by the
+  // default closed filter).
+  test('combines two different columns with AND', () => {
+    const rows = FETCH({
+      cmd: 'view',
+      flags: { assignee: FETCH_ASSIGNEE, type: 'bug', createdBy: 'ftest-alice' },
+    });
+    expect(rows.map((r) => r.ID)).toEqual(['manta-ftest-open1']);
+  });
+
+  // A status filter for a non-closed status returns only that status and
+  // leaves the others (here in_progress) out.
+  test('status filter for a non-closed status (open)', () => {
+    const rows = FETCH({
+      cmd: 'view',
+      flags: { assignee: FETCH_ASSIGNEE, status: 'open' },
+    });
+    expect(rows.map((r) => r.ID).sort()).toEqual(
+      ['manta-ftest-open1', 'manta-ftest-open2', 'manta-ftest-open3'].sort(),
+    );
+  });
+
+  test('status filter returns the single in_progress row', () => {
+    const rows = FETCH({
+      cmd: 'view',
+      flags: { assignee: FETCH_ASSIGNEE, status: 'in_progress' },
+    });
+    expect(rows.map((r) => r.ID)).toEqual(['manta-ftest-prog1']);
+  });
+
+  // --all opts closed rows back in and still respects an explicit filter:
+  // both bugs (open and closed) come back, nothing else.
+  test('the all flag combines with a type filter', () => {
+    const rows = FETCH({
+      cmd: 'view',
+      flags: { assignee: FETCH_ASSIGNEE, all: '', type: 'bug' },
+    });
+    expect(rows.map((r) => r.ID).sort()).toEqual(
+      ['manta-ftest-closed1', 'manta-ftest-open1'].sort(),
+    );
+  });
+
+  // Filtering by assignee alone returns every non-closed row in the suite.
+  test('filters by assignee', () => {
+    const rows = FETCH({ cmd: 'view', flags: { assignee: FETCH_ASSIGNEE } });
+    expect(rows.map((r) => r.ID).sort()).toEqual(
+      [
+        'manta-ftest-open1',
+        'manta-ftest-open2',
+        'manta-ftest-open3',
+        'manta-ftest-prog1',
+      ].sort(),
+    );
+  });
+});
+
+describe('FETCH detail mode: error chaining', () => {
+  // FETCH wraps the underlying "not found" error, preserving it as .cause so
+  // callers can inspect the original failure.
+  test('wraps the not-found error and preserves its cause', () => {
+    try {
+      FETCH({ cmd: 'view', flags: { id: 'manta-ftest-absent' } });
+      throw new Error('expected FETCH to throw');
+    } catch (err) {
+      expect(err.message).toMatch(/Query failed/);
+      expect(err.cause).toBeInstanceOf(Error);
+      expect(err.cause.message).toMatch(/manta-ftest-absent/);
+    }
+  });
+});
