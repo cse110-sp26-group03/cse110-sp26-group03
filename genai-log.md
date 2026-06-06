@@ -90,6 +90,29 @@ Specified formatting of the diagram and guided it based on context of our goals
 ### Related Files / Issues (Optional)
 - `frontend web design plan.pdf`
 
+## Date: unknown (early June)
+
+### Team Member(s)
+- Humza
+
+### Tool Used
+- Cursor
+
+### Purpose
+Create a landing website for information on how to setup and use manta.
+
+### Prompt Summary
+"
+
+### Output Used
+contents were put into a directory called website/. this was later removed after team discussion.
+
+### Human Modifications / Review
+edits were made, but directory was ultimately removed.
+
+### Related Files / Issues (Optional)
+- `website/` (now removed)
+
 ## Date: 2026-06-06
 
 ### Team Member(s)
