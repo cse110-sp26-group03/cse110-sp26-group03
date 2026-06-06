@@ -38,7 +38,7 @@ Every test uses `openDatabase(':memory:')` so each gets a fresh, throwaway DB.
 One `describe()` per exported function, three tests each:
 
 - **`applyEvent()`** — error paths, unrecognized type, and update/delete on a
-  missing issue 
+  missing issue
 - **`appendToLog()`** — writes one JSON line per event, returns the exact line,
   and appends + creates a missing parent directory.
 - **`issueExists()`** — false when absent, true after insert, false after delete.
@@ -74,4 +74,3 @@ clean, so cache is not affected
   accepts an omitted path
 
 ---
-

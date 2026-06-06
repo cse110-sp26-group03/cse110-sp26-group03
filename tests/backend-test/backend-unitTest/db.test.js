@@ -15,7 +15,6 @@
 import { test, expect, describe } from 'bun:test';
 import { openDatabase } from '../../../src/storage/db.js';
 
-
 /**
  * openDatabase(), check that the database opens and is queryable,
  * 1. First test just checks valid SQL can run on DB
@@ -50,7 +49,7 @@ describe('openDatabase()', () => {
   // make sure PRAGMA is turned on for every database
   test('enables the foreign_keys PRAGMA', () => {
     const db = openDatabase(':memory:');
-    // Destructure the foreign_keys field 
+    // Destructure the foreign_keys field
     const { foreign_keys } = db.query('PRAGMA foreign_keys').get();
     expect(foreign_keys).toBe(1);
     db.close();
@@ -119,8 +118,8 @@ describe('issues table schema', () => {
 });
 
 /**
- * Check constrints on Status, Priority, and IssueType. Status must be one of {open, in_progress, blocked, closed}, 
- * Priority must be non-negative, and IssueType must be from the fixed set. 
+ * Check constrints on Status, Priority, and IssueType. Status must be one of {open, in_progress, blocked, closed},
+ * Priority must be non-negative, and IssueType must be from the fixed set.
  * Each constraint is tested with a case that violates it (expecting an error) and a case that satisfies it (expecting success).
  * 1. First test checks that an out-of-range Status value is rejected
  * 2. Second test checks that a negative Priority value is rejected

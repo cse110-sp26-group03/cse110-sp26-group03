@@ -16,7 +16,14 @@
  * the developer's real `.manta` cache is clean. appendToLog takes a
  * path override, so it is tested against a throwaway temp file instead.
  */
-import { test, expect, describe, beforeEach, afterEach, afterAll } from 'bun:test';
+import {
+  test,
+  expect,
+  describe,
+  beforeEach,
+  afterEach,
+  afterAll,
+} from 'bun:test';
 import { mkdtempSync, readFileSync, rmSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
@@ -75,7 +82,7 @@ function makeCreateEvent(id, overrides = {}) {
 }
 
 // Start every test from a clean slate, and leave the cache clean at the end,
-// by removing any leftover sentinel rows 
+// by removing any leftover sentinel rows
 beforeEach(() => {
   db.prepare(`DELETE FROM issues WHERE ID LIKE '${TEST_PREFIX}%'`).run();
 });
@@ -118,7 +125,7 @@ describe('applyEvent()', () => {
         issueId: MISSING_ID,
         changes: { title: 'New title' },
       });
-      throw new Error('expected applyEvent to throw');  //fail the test if we get here
+      throw new Error('expected applyEvent to throw'); //fail the test if we get here
     } catch (err) {
       expect(err.message).toContain(MISSING_ID);
       expect(err.issueId).toBe(MISSING_ID);

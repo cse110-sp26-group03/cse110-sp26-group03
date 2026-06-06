@@ -1,7 +1,7 @@
 /**
  * Unit tests for the validation layer (`src/validation/validation.js`).
  *
- * validate() is the only exported function, but it delegates to other helper functions. 
+ * validate() is the only exported function, but it delegates to other helper functions.
  *
  * Each describe() block below targets one function, with three tests each:
  *   1.  validate()        — dispatch: passes valid commands, skips unknown
@@ -88,7 +88,6 @@ describe('validate()', () => {
  * 3. Third test checks that an omitted id is accepted (undefined skips the check)
  */
 
-
 describe('check_id()', () => {
   /** Will look back later on once clear id format for migrate 
   test('accepts a well-formed manta id', () => {
@@ -133,7 +132,10 @@ describe('check_title()', () => {
 
   test('accepts an empty title', () => {
     expect(
-      validate({ ...VALID_CREATE, flags: { ...VALID_CREATE.flags, title: '' } }),
+      validate({
+        ...VALID_CREATE,
+        flags: { ...VALID_CREATE.flags, title: '' },
+      }),
     ).toBe(true);
   });
 });
@@ -309,7 +311,7 @@ describe('check_assignee()', () => {
  * alphanumerics and underscores.
  * 1. First test checks that an alphanumeric/underscore username is accepted on view
  * 2. Second test checks that a username with illegal characters is rejected on view
- * 3. Third test checks that createdBy is ignored for non-view commands 
+ * 3. Third test checks that createdBy is ignored for non-view commands
  */
 describe('check_createdBy()', () => {
   test('accepts an alphanumeric/underscore username on view', () => {
@@ -335,7 +337,7 @@ describe('check_createdBy()', () => {
 });
 
 /**
- * check_path() tests, reached through migrate 
+ * check_path() tests, reached through migrate
  * The path must be a non-empty, non-whitespace string; deeper existence checks
  * happen later in migrate.js. Both migrate and clear list `path` as their only
  * flag, so check_path runs for both — each test exercises both commands.
