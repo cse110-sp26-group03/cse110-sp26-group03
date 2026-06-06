@@ -89,3 +89,26 @@ Specified formatting of the diagram and guided it based on context of our goals
 
 ### Related Files / Issues (Optional)
 - `frontend web design plan.pdf`
+
+## Date: 2026-06-06
+
+### Team Member(s)
+- Angel
+
+### Tool Used
+- Claude
+
+### Purpose
+Format slack standups into tables for admin meeting docs
+
+### Prompt Summary
+separate this into a table that details what each team member is doing/did, and any blockers. keep wording as verbatim as possible.
+
+### Output Used
+md tables w/ text pre-formatted
+
+### Human Modifications / Review
+reviewed to make sure all team members had a role and information was correctly inputted.
+
+### Related Files / Issues (Optional)
+- `sprint2.md` through `sprint5.md` in admin/meetings/standups/
