@@ -212,7 +212,11 @@ describe('FETCH list mode: additional filters', () => {
   test('combines two different columns with AND', () => {
     const rows = FETCH({
       cmd: 'view',
-      flags: { assignee: FETCH_ASSIGNEE, type: 'bug', createdBy: 'ftest-alice' },
+      flags: {
+        assignee: FETCH_ASSIGNEE,
+        type: 'bug',
+        createdBy: 'ftest-alice',
+      },
     });
     expect(rows.map((r) => r.ID)).toEqual(['manta-ftest-open1']);
   });
