@@ -187,8 +187,7 @@ describe('init() — gitattributes', () => {
   });
 
   test('does not duplicate the merge rule when it appears among other lines', () => {
-    const existing =
-      '*.png binary\n' + GITATTRIBUTES_LINE + '\n*.md text\n';
+    const existing = '*.png binary\n' + GITATTRIBUTES_LINE + '\n*.md text\n';
     writeFileSync(GITATTRIBUTES_PATH, existing, 'utf8');
 
     init();
@@ -221,9 +220,7 @@ describe('init() — already init', () => {
   test('prints the already-initialized message and skips first-run output', () => {
     const lines = captureConsoleLog(() => init());
 
-    expect(lines).toEqual([
-      'Manta is already initialized in this repository.',
-    ]);
+    expect(lines).toEqual(['Manta is already initialized in this repository.']);
     expect(lines).not.toContain('Manta initialized.');
   });
 
@@ -258,9 +255,7 @@ describe('init() — idempotency & scope', () => {
 
     const lines = captureConsoleLog(() => init());
 
-    expect(lines).toEqual([
-      'Manta is already initialized in this repository.',
-    ]);
+    expect(lines).toEqual(['Manta is already initialized in this repository.']);
     expect(existsSync(MANTA_DIR)).toBe(true);
     expect(readFileSync(GITATTRIBUTES_PATH, 'utf8')).toBe(
       GITATTRIBUTES_LINE + '\n',
@@ -306,10 +301,7 @@ describe('init() — partial & edges', () => {
 
     const lines = captureConsoleLog(() => init());
 
-    expect(lines).toEqual([
-      'Manta is already initialized in this repository.',
-    ]);
+    expect(lines).toEqual(['Manta is already initialized in this repository.']);
     expect(existsSync(GITATTRIBUTES_PATH)).toBe(false);
   });
 });
-
