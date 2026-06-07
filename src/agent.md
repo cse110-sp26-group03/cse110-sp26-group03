@@ -268,7 +268,7 @@ $ mt version
 
 ### `mt init`
 
-Sets up Manta in the current repository. Creates the `.manta/` folder, adds a `merge=union` rule to `.gitattributes` so teammates' JSONL changes are appended rather than conflicted on `git pull`, and writes this `agent.md` file. Run once per repo.
+Sets up Manta in the current repository. Creates the `.manta/` folder, adds a `merge=union` rule to `.gitattributes` so teammates' JSONL changes are appended rather than conflicted on `git pull`, and writes this `AGENT.md` file. Run once per repo.
 
 ```bash
 $ mt init

@@ -12,7 +12,7 @@ import { mkdirSync, existsSync, readFileSync, writeFileSync } from 'fs';
 const MANTA_DIR = '.manta';
 const GITATTRIBUTES_PATH = '.gitattributes';
 const GITATTRIBUTES_LINE = '.manta/manta.jsonl merge=union';
-const AGENT_MD_PATH = 'agent.md';
+const AGENT_MD_PATH = 'AGENT.md';
 const AGENT_MD_TEMPLATE = new URL('../agent.md', import.meta.url);
 
 /**
