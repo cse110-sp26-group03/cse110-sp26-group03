@@ -63,14 +63,14 @@ Creates a new issue. Title is required, all other flags are optional.
 mt create "title" [--desc <text>] [--priority <p0-p9>] [--status <status>] [--type <type>] [--assignee <name>]
 ```
 
-| Flag | Short | Description | Default |
-| --- | --- | --- | --- |
-| `--title` | `-t` | Issue title (max 50 chars) | required |
-| `--desc` | `-d` | Longer description (max 512 chars) | empty |
-| `--priority` | `-p` | Priority level: `p0`–`p9` (p0 is highest) | `p5` |
-| `--status` | `-s` | Initial status: `open`, `in_progress`, `blocked` | `open` |
-| `--type` | — | Type: `bug`, `feature`, `task`, `docs`, `store` | `task` |
-| `--assignee` | `-a` | Who is working on this issue (letters only) | empty |
+| Flag         | Short | Description                                      | Default  |
+| ------------ | ----- | ------------------------------------------------ | -------- |
+| `--title`    | `-t`  | Issue title (max 50 chars)                       | required |
+| `--desc`     | `-d`  | Longer description (max 512 chars)               | empty    |
+| `--priority` | `-p`  | Priority level: `p0`–`p9` (p0 is highest)        | `p5`     |
+| `--status`   | `-s`  | Initial status: `open`, `in_progress`, `blocked` | `open`   |
+| `--type`     | —     | Type: `bug`, `feature`, `task`, `docs`, `store`  | `task`   |
+| `--assignee` | `-a`  | Who is working on this issue (letters only)      | empty    |
 
 > [!NOTE]
 > `closed` is not a valid status on create. Use `mt close` to close an issue.
@@ -84,6 +84,7 @@ $ mt create "Add documentation" --desc "Description of pros and cons" --assignee
 ```
 
 **Output:**
+
 ```
 Created issue manta-h3kp: Mobile friendly screens
 Created issue manta-ar10: Fix bug
@@ -98,14 +99,14 @@ Updates one or more fields on an existing issue. ID and at least one flag are re
 mt update manta-xxxx [--title <text>] [--desc <text>] [--priority <p>] [--status <s>] [--type <t>] [--assignee <name>]
 ```
 
-| Flag | Short | Description |
-| --- | --- | --- |
-| `--title` | `-t` | New title |
-| `--desc` | `-d` | New description |
-| `--priority` | `-p` | New priority: `p0`–`p9` |
-| `--status` | `-s` | New status: `open`, `in_progress`, `blocked`, `closed` |
-| `--type` | — | New type: `bug`, `feature`, `task`, `docs`, `store` |
-| `--assignee` | `-a` | New assignee |
+| Flag         | Short | Description                                            |
+| ------------ | ----- | ------------------------------------------------------ |
+| `--title`    | `-t`  | New title                                              |
+| `--desc`     | `-d`  | New description                                        |
+| `--priority` | `-p`  | New priority: `p0`–`p9`                                |
+| `--status`   | `-s`  | New status: `open`, `in_progress`, `blocked`, `closed` |
+| `--type`     | —     | New type: `bug`, `feature`, `task`, `docs`, `store`    |
+| `--assignee` | `-a`  | New assignee                                           |
 
 #### Examples
 
@@ -115,6 +116,7 @@ $ mt update manta-h3kp --status in_progress --priority p0
 ```
 
 **Output:**
+
 ```
 Updated issue manta-h3kp with priority=p0, status=in_progress, updatedAt=..., updatedBy=...
 ```
@@ -138,6 +140,7 @@ $ mt close h3kp
 ```
 
 **Output:**
+
 ```
 Closed issue manta-h3kp
 ```
@@ -158,12 +161,14 @@ $ mt delete h3kp
 ```
 
 **Output (confirmed):**
+
 ```
 Delete issue manta-h3kp? [y/N] y
 Deleted issue manta-h3kp
 ```
 
 **Output (cancelled):**
+
 ```
 Delete issue manta-h3kp? [y/N] N
 Deletion cancelled.
@@ -185,6 +190,7 @@ $ mt view
 Shows a paginated table. Use left/right arrow keys to navigate pages. Press ESC to exit.
 
 **Output:**
+
 ```
 ID      TITLE                                    STATUS      PRIORITY  TYPE    ASSIGNEE    CREATED BY
 ------------------------------------------------------------------------------------------------------
@@ -208,6 +214,7 @@ $ mt view t4pd
 Shows the full detail of a single issue. Press ESC to exit.
 
 **Output:**
+
 ```
 issue 6                                                                manta-t4pd
 ----------------------------------------------------------------------------------
@@ -229,14 +236,14 @@ Press ESC to exit
 mt view [--status <s>] [--priority <p>] [--type <t>] [--assignee <name>] [--createdBy <user>] [--all]
 ```
 
-| Flag | Short | Filters by |
-| --- | --- | --- |
-| `--status <value>` | `-s` | `open`, `in_progress`, `blocked`, `closed` |
-| `--priority <value>` | `-p` | `p0`–`p9` |
-| `--type <value>` | — | `bug`, `feature`, `task`, `docs`, `store` |
-| `--assignee <value>` | `-a` | assignee name |
-| `--createdBy <value>` | `--cb` | OS username of creator |
-| `--all` | — | includes closed issues (no value needed) |
+| Flag                  | Short  | Filters by                                 |
+| --------------------- | ------ | ------------------------------------------ |
+| `--status <value>`    | `-s`   | `open`, `in_progress`, `blocked`, `closed` |
+| `--priority <value>`  | `-p`   | `p0`–`p9`                                  |
+| `--type <value>`      | —      | `bug`, `feature`, `task`, `docs`, `store`  |
+| `--assignee <value>`  | `-a`   | assignee name                              |
+| `--createdBy <value>` | `--cb` | OS username of creator                     |
+| `--all`               | —      | includes closed issues (no value needed)   |
 
 By default, closed issues are excluded. Use `--all` or `--status closed` to include them.
 
@@ -262,6 +269,7 @@ $ mt version
 ```
 
 **Output:**
+
 ```
 1.7.1
 ```
@@ -275,6 +283,7 @@ $ mt init
 ```
 
 **Output:**
+
 ```
 Manta initialized.
 Run this once in your repo to enable merge support:
@@ -293,11 +302,13 @@ $ mt sync
 ```
 
 **Output (success):**
+
 ```
 Synced successfully.
 ```
 
 **Output (no changes):**
+
 ```
 Already up to date; no new events to sync.
 ```
@@ -318,12 +329,14 @@ $ mt clear .manta/manta.jsonl
 ```
 
 **Output (confirmed):**
+
 ```
 Clear the entire log? [y/N] y
 Log cleared.
 ```
 
 **Output (cancelled):**
+
 ```
 Clear the entire log? [y/N] N
 Clear cancelled.
@@ -347,6 +360,7 @@ $ mt migrate ./beads-export.jsonl
 ```
 
 **Output:**
+
 ```
 Migration complete:
   Migrated: 12
@@ -358,26 +372,26 @@ Migration complete:
 
 ### User-provided fields
 
-| Field | Required | Allowed values | Notes |
-| --- | --- | --- | --- |
-| title | Yes (create) | Any string, max 50 chars | Pass as positional arg or `--title` / `-t` |
-| description | No | Any string, max 512 chars | `--desc` or `-d` |
-| status | No | `open`, `in_progress`, `blocked`, `closed` | Defaults to `open` on create. Cannot be `closed` on create. |
-| priority | No | `p0`–`p9` | p0 is highest. Defaults to `p5` on create. |
-| type | No | `bug`, `feature`, `task`, `docs`, `store` | Defaults to `task`. `--type` (no shorthand) |
-| assignee | No | Letters only (a-z, A-Z) | `--assignee` or `-a` |
+| Field       | Required     | Allowed values                             | Notes                                                       |
+| ----------- | ------------ | ------------------------------------------ | ----------------------------------------------------------- |
+| title       | Yes (create) | Any string, max 50 chars                   | Pass as positional arg or `--title` / `-t`                  |
+| description | No           | Any string, max 512 chars                  | `--desc` or `-d`                                            |
+| status      | No           | `open`, `in_progress`, `blocked`, `closed` | Defaults to `open` on create. Cannot be `closed` on create. |
+| priority    | No           | `p0`–`p9`                                  | p0 is highest. Defaults to `p5` on create.                  |
+| type        | No           | `bug`, `feature`, `task`, `docs`, `store`  | Defaults to `task`. `--type` (no shorthand)                 |
+| assignee    | No           | Letters only (a-z, A-Z)                    | `--assignee` or `-a`                                        |
 
 ### Auto-assigned fields (read only)
 
 These fields are set automatically and cannot be modified by the user.
 
-| Field | Description |
-| --- | --- |
-| ID | Unique ID in `manta-xxxx` format, assigned on creation |
-| createdAt | ISO timestamp when the issue was created |
+| Field     | Description                                                                 |
+| --------- | --------------------------------------------------------------------------- |
+| ID        | Unique ID in `manta-xxxx` format, assigned on creation                      |
+| createdAt | ISO timestamp when the issue was created                                    |
 | createdBy | OS username of whoever created the issue, pulled from `$USER` / `$USERNAME` |
-| updatedAt | ISO timestamp of the most recent change |
-| updatedBy | OS username of whoever made the most recent change |
+| updatedAt | ISO timestamp of the most recent change                                     |
+| updatedBy | OS username of whoever made the most recent change                          |
 
 ## Errors
 
@@ -385,42 +399,42 @@ If a command fails, Manta prints an error message to stderr and exits with code 
 
 ### Common errors
 
-| Error | Cause |
-| --- | --- |
-| `No input provided` | `mt` run with no command |
-| `Missing required input: id` | update/close/delete called without an ID |
-| `Too few flags for 'update'` | update called with ID only, no fields to change |
-| `Too many flags for 'close'/'delete'` | extra flags passed to close or delete |
-| `Unexpected argument(s) detected` | arguments passed to version/sync/init |
-| `Invalid flag '...'` | flag doesn't start with `--` |
-| `Unknown flag '...'` | flag not recognized |
-| `Duplicate flag '...'` | same flag used twice |
-| `'mt migrate' does not take any flags` | flags passed to migrate or clear |
-| `Flag '--createdBy' can only be used with 'view'` | createdBy used on wrong command |
-| `Missing value for flag '...'` | flag present but no value given |
-| `Unknown command '...'` | unrecognized command |
-| `Missing required input: title` | create called without a title |
-| `Invalid status 'closed': issues cannot be created with a closed status` | status set to closed on create |
-| `Cannot filter by title or description` | view filtered by title or desc |
-| `Missing required input: path` | migrate/clear called without a path |
-| `validate error: '...' is not a valid issue id` | ID doesn't match `manta-<suffix>` |
-| `validate error: title must be under 50 characters` | title too long |
-| `validate error: description must be under 512 characters` | description too long |
-| `validate error: '...' is not a valid priority` | priority not in `p0`–`p9` |
-| `validate error: '...' is not a valid status` | status not in allowed set |
-| `validate error: '...' is not a valid type` | type not in allowed set |
-| `validate error: '...' is not a valid assignee` | assignee contains non-letter characters |
-| `validate error: '...' is not a valid username` | createdBy contains invalid characters |
+| Error                                                                    | Cause                                           |
+| ------------------------------------------------------------------------ | ----------------------------------------------- |
+| `No input provided`                                                      | `mt` run with no command                        |
+| `Missing required input: id`                                             | update/close/delete called without an ID        |
+| `Too few flags for 'update'`                                             | update called with ID only, no fields to change |
+| `Too many flags for 'close'/'delete'`                                    | extra flags passed to close or delete           |
+| `Unexpected argument(s) detected`                                        | arguments passed to version/sync/init           |
+| `Invalid flag '...'`                                                     | flag doesn't start with `--`                    |
+| `Unknown flag '...'`                                                     | flag not recognized                             |
+| `Duplicate flag '...'`                                                   | same flag used twice                            |
+| `'mt migrate' does not take any flags`                                   | flags passed to migrate or clear                |
+| `Flag '--createdBy' can only be used with 'view'`                        | createdBy used on wrong command                 |
+| `Missing value for flag '...'`                                           | flag present but no value given                 |
+| `Unknown command '...'`                                                  | unrecognized command                            |
+| `Missing required input: title`                                          | create called without a title                   |
+| `Invalid status 'closed': issues cannot be created with a closed status` | status set to closed on create                  |
+| `Cannot filter by title or description`                                  | view filtered by title or desc                  |
+| `Missing required input: path`                                           | migrate/clear called without a path             |
+| `validate error: '...' is not a valid issue id`                          | ID doesn't match `manta-<suffix>`               |
+| `validate error: title must be under 50 characters`                      | title too long                                  |
+| `validate error: description must be under 512 characters`               | description too long                            |
+| `validate error: '...' is not a valid priority`                          | priority not in `p0`–`p9`                       |
+| `validate error: '...' is not a valid status`                            | status not in allowed set                       |
+| `validate error: '...' is not a valid type`                              | type not in allowed set                         |
+| `validate error: '...' is not a valid assignee`                          | assignee contains non-letter characters         |
+| `validate error: '...' is not a valid username`                          | createdBy contains invalid characters           |
 
 ### Flag aliases
 
-| Alias | Expands to |
-| --- | --- |
-| `-t` | `--title` |
-| `-d` | `--desc` |
-| `-p` | `--priority` |
-| `-s` | `--status` |
-| `-a` | `--assignee` |
+| Alias  | Expands to    |
+| ------ | ------------- |
+| `-t`   | `--title`     |
+| `-d`   | `--desc`      |
+| `-p`   | `--priority`  |
+| `-s`   | `--status`    |
+| `-a`   | `--assignee`  |
 | `--cb` | `--createdBy` |
 
 Aliases are resolved before validation, so `-t` and `--title` collide as duplicates.
@@ -448,16 +462,51 @@ All Manta data is stored in the `.manta/` folder in this repo:
 You can read `.manta/manta.jsonl` directly to inspect raw event history. Each line is a JSON object with one of three shapes:
 
 **issue.created:**
+
 ```json
-{"type":"issue.created","timestamp":"...","actor":"username","issueId":"manta-xxxx","issue":{"title":"...","description":"...","status":"open","priority":"p5","issueType":"task","assignee":null,"createdAt":"...","createdBy":"username","updatedAt":"...","updatedBy":"username"}}
+{
+  "type": "issue.created",
+  "timestamp": "...",
+  "actor": "username",
+  "issueId": "manta-xxxx",
+  "issue": {
+    "title": "...",
+    "description": "...",
+    "status": "open",
+    "priority": "p5",
+    "issueType": "task",
+    "assignee": null,
+    "createdAt": "...",
+    "createdBy": "username",
+    "updatedAt": "...",
+    "updatedBy": "username"
+  }
+}
 ```
 
 **issue.updated:**
+
 ```json
-{"type":"issue.updated","timestamp":"...","actor":"username","issueId":"manta-xxxx","changes":{"status":"in_progress","updatedAt":"...","updatedBy":"username"}}
+{
+  "type": "issue.updated",
+  "timestamp": "...",
+  "actor": "username",
+  "issueId": "manta-xxxx",
+  "changes": {
+    "status": "in_progress",
+    "updatedAt": "...",
+    "updatedBy": "username"
+  }
+}
 ```
 
 **issue.deleted:**
+
 ```json
-{"type":"issue.deleted","timestamp":"...","actor":"username","issueId":"manta-xxxx"}
+{
+  "type": "issue.deleted",
+  "timestamp": "...",
+  "actor": "username",
+  "issueId": "manta-xxxx"
+}
 ```
