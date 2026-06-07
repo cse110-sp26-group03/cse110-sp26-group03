@@ -127,7 +127,6 @@ test('create_event correctly handles all fields for create command', () => {
   });
 });
 
-
 // ---- issue.updated -------------------------------------------------
 //Goal: verify that create_event can construct an issue update event with the expected shape and fields, based on the input command and flags.
 
