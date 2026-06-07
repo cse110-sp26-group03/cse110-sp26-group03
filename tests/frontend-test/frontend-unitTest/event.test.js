@@ -1,15 +1,15 @@
 /**
  * Unit tests for the handling events
- * 
- * Covers the create_event function, which is the main entry point for building events from CLI commands. 
+ *
+ * Covers the create_event function, which is the main entry point for building events from CLI commands.
  * Tests for the individual event builder functions are not directly tested
  * but they are called indirectly through create_event, so their behavior is covered by the tests for create_event.
- * 
- * event.js gets parsed input from parser.js that has already been validated for required flags and types, 
+ *
+ * event.js gets parsed input from parser.js that has already been validated for required flags and types,
  * so these tests focus on the expected output shape of the events and the handling of different command types, rather than input validation.
- * Tests for the application of events to the store are covered in store.test.js and replay.test.js, so these tests do not cover the effects of the events on storage, 
+ * Tests for the application of events to the store are covered in store.test.js and replay.test.js, so these tests do not cover the effects of the events on storage,
  * just their construction.
- * 
+ *
  */
 import { test, expect } from 'bun:test';
 import { create_event } from '../../../src/cli/event.js';
@@ -18,7 +18,9 @@ import { create_event } from '../../../src/cli/event.js';
 //Goal: verify that create_event is able to construct an issue create event with the expected shape and fields, based on the input command and flags.
 /** An invalid command should throw an error */
 test('create_event throws on unrecognized command', () => {
-  expect(() => create_event({ cmd: 'notacommand', flags: {} })).toThrow(/event creation error: 'notacommand' is not a recognized command/);
+  expect(() => create_event({ cmd: 'notacommand', flags: {} })).toThrow(
+    /event creation error: 'notacommand' is not a recognized command/,
+  );
 });
 
 /** A create command only requires a title, and the rest of the fields should contain default values */
