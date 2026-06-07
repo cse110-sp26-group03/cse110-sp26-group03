@@ -1,24 +1,48 @@
 /**
  * Unit tests for the CLI parser (`src/cli/parser.js`).
  *
- * Stage 1 only: argv shape, flags, aliases, and structural errors.
- * Semantic value checks live in validation.test.js.
+ * parse() is the only exported function. It turns process.argv into a
+ * { cmd, flags } object. These tests cover argv shape, flags, aliases, and
+ * structural errors only — semantic value checks live in validation.test.js.
+ *
+ * Each describe() block below targets one command group:
+ *   1. parse() — create                  — title, defaults, aliases, normalization
+ *   2. parse() — update, close, delete   — id prefixing, change fields, rejections
+ *   3. parse() — view                      — detail/list filters, --all, --cb
+ *   4. parse() — no-arg and path commands  — version, sync, init, migrate, clear, help
+ *   5. parse() — structural errors         — unknown cmd/flag, duplicates, syntax
  */
 import { test, expect, describe } from 'bun:test';
 import { parse } from '../../../src/cli/parser.js';
 
 /**
- * Build a fake process.argv (runtime + script + tokens).
+ * Build a fake process.argv with a runtime, script path, and tokens. Lets
+ * individual tests pass just the command-line tokens they care about.
  *
  * @param {...string} tokens - Command and arguments after the script path.
- * @returns {string[]}
+ * @returns {string[]} A process.argv-shaped array ready for parse().
  */
 function argv(...tokens) {
   return ['bun', '/path/to/index.js', ...tokens];
 }
 
+/**
+ * parse() tests for the create command. Covers positional and flag-based
+ * titles, defaults, shorthand aliases, value normalization, and create-specific
+ * rejections.
+ * 1. First test checks positional title plus long-form flags
+ * 2. Second test checks default priority (p5) and status (open)
+ * 3. Third test checks shorthand aliases (--t, --d, --p, --s, --a)
+ * 4. Fourth test checks title from --title flag only
+ * 5. Fifth test checks multi-word positional title joining
+ * 6. Sixth test checks lowercasing of status, priority, and type values
+ * 7. Seventh test checks case preservation on title, desc, and assignee
+ * 8. Eighth test checks rejection of closed status on create
+ * 9. Ninth test checks that a title is required
+ * 10. Tenth test checks that --cb is view-only
+ * 11. Eleventh test checks valueless --all stored as an empty string
+ */
 describe('parse() — create', () => {
-  // A positional title plus long-form flags map into the expected cmd/flags shape.
   test('parses positional title and flags', () => {
     const result = parse(
       argv('create', 'Fix login bug', '--priority', 'p1', '--type', 'bug'),
@@ -34,14 +58,12 @@ describe('parse() — create', () => {
     });
   });
 
-  // Omitted priority and status get create defaults (p5, open).
   test('applies default priority and status', () => {
     const result = parse(argv('create', 'Only a title'));
     expect(result.flags.priority).toBe('p5');
     expect(result.flags.status).toBe('open');
   });
 
-  // Shorthand aliases (--t, --d, --p, --s, --a) resolve to the same flag keys.
   test('creates with shorthand flags (--t, --d, --p, --s, --a)', () => {
     const result = parse(
       argv(
@@ -65,7 +87,6 @@ describe('parse() — create', () => {
     expect(result.flags.assignee).toBe('Bob');
   });
 
-  // Title may come from --title instead of a positional arg.
   test('parses title from --title flag only', () => {
     expect(parse(argv('create', '--title', 'Flag title'))).toEqual({
       cmd: 'create',
@@ -77,7 +98,6 @@ describe('parse() — create', () => {
     });
   });
 
-  // Tokens before the first flag are joined into a single positional title.
   test('joins multi-word positional title', () => {
     const result = parse(
       argv('create', 'Fix', 'login', 'bug', '--priority', 'p1'),
@@ -86,7 +106,6 @@ describe('parse() — create', () => {
     expect(result.flags.priority).toBe('p1');
   });
 
-  // status, priority, and type values are lowercased; preserve_case flags are not.
   test('lowercases status, priority, and type flag values', () => {
     const result = parse(
       argv(
@@ -105,7 +124,6 @@ describe('parse() — create', () => {
     expect(result.flags.type).toBe('bug');
   });
 
-  // Parser does not normalize casing on title, desc, or assignee.
   test('preserves case on positional title, description, and assignee', () => {
     const result = parse(
       argv(
@@ -122,28 +140,24 @@ describe('parse() — create', () => {
     expect(result.flags.assignee).toBe('Alice');
   });
 
-  // create forbids --status closed at parse time.
   test('rejects create with closed status', () => {
     expect(() => parse(argv('create', 'Bad', '--status', 'closed'))).toThrow(
       /cannot be created with a closed status/,
     );
   });
 
-  // create without a title throws Missing required input.
   test('requires a title', () => {
     expect(() => parse(argv('create', '--p', 'p1'))).toThrow(
       /Missing required input: title/,
     );
   });
 
-  // createdBy alias (--cb) is view-only.
   test('rejects --cb on create', () => {
     expect(() => parse(argv('create', 'X', '--cb', 'bob'))).toThrow(
       /can only be used with the 'view' command/,
     );
   });
 
-  // --all is a valueless flag stored as an empty string.
   test('accepts --all on create', () => {
     expect(parse(argv('create', 'T', '--all'))).toEqual({
       cmd: 'create',
@@ -157,14 +171,19 @@ describe('parse() — create', () => {
   });
 });
 
+/**
+ * parse() tests for update, close, and delete. Covers manta- id prefixing,
+ * change-field requirements, shorthand aliases, and command-specific rejections.
+ * Update tests (1–10): id normalization, change fields, rejections, --all
+ * Close tests (11–16): id-only parsing, extra-flag rejections
+ * Delete tests (17–21): id-only parsing, extra-flag rejections
+ */
 describe('parse() — update, close, delete', () => {
-  // Short ids without the manta- prefix get normalized.
   test('prefixes short issue ids with manta-', () => {
     const result = parse(argv('update', 'ab12', '--status', 'open'));
     expect(result.flags.id).toBe('manta-ab12');
   });
 
-  // update needs an id plus at least one changed field.
   test('accepts update with id and one changed field', () => {
     const result = parse(argv('update', 'manta-xy99', '--priority', 'p0'));
     expect(result.cmd).toBe('update');
@@ -172,7 +191,6 @@ describe('parse() — update, close, delete', () => {
     expect(result.flags.priority).toBe('p0');
   });
 
-  // Shorthand aliases work on update the same way as create.
   test('updates with shorthand flags (--t, --d, --p, --s, --a)', () => {
     const result = parse(
       argv(
@@ -198,14 +216,12 @@ describe('parse() — update, close, delete', () => {
     expect(result.flags.assignee).toBe('Carol');
   });
 
-  // --type is a valid change field on update.
   test('accepts update with --type as a change field', () => {
     const result = parse(argv('update', 'xy99', '--type', 'bug'));
     expect(result.flags.id).toBe('manta-xy99');
     expect(result.flags.type).toBe('bug');
   });
 
-  // Parser preserves casing on update title and assignee.
   test('preserves case on update title and assignee', () => {
     const result = parse(
       argv(
@@ -221,13 +237,11 @@ describe('parse() — update, close, delete', () => {
     expect(result.flags.assignee).toBe('Alice');
   });
 
-  // Ids longer than 4 chars are still prefixed when needed.
   test('accepts update with id longer than 4 characters', () => {
     const result = parse(argv('update', 'abc12345', '--status', 'open'));
     expect(result.flags.id).toBe('manta-abc12345');
   });
 
-  // update with only an id and no change fields is too few flags.
   test('rejects update with only an id', () => {
     expect(() => parse(argv('update', 'manta-ab12'))).toThrow(
       /Too few flags for 'update:' No updates to any field were provided/,
@@ -237,7 +251,6 @@ describe('parse() — update, close, delete', () => {
     );
   });
 
-  // update always requires an id, whether positional or via flag.
   test('rejects update without an id', () => {
     expect(() => parse(argv('update'))).toThrow(/Missing required input: id/);
     expect(() => parse(argv('update', '--status', 'open'))).toThrow(
@@ -245,7 +258,6 @@ describe('parse() — update, close, delete', () => {
     );
   });
 
-  // --all alone counts as the required change field on update.
   test('accepts update with --all flag', () => {
     expect(parse(argv('update', 'ab12', '--all'))).toEqual({
       cmd: 'update',
@@ -256,14 +268,12 @@ describe('parse() — update, close, delete', () => {
     });
   });
 
-  // createdBy alias (--cb) is view-only.
   test('rejects update with --cb flag', () => {
     expect(() => parse(argv('update', 'ab12', '--cb', 'alice'))).toThrow(
       /can only be used with the 'view' command/,
     );
   });
 
-  // close takes a single positional id and normalizes the prefix.
   test('parses close with only an id', () => {
     const result = parse(argv('close', 'hk3p'));
     expect(result).toEqual({
@@ -272,7 +282,6 @@ describe('parse() — update, close, delete', () => {
     });
   });
 
-  // close accepts ids that already include the manta- prefix.
   test('parses close with full manta- id', () => {
     const result = parse(argv('close', 'manta-hk3p'));
     expect(result).toEqual({
@@ -281,39 +290,33 @@ describe('parse() — update, close, delete', () => {
     });
   });
 
-  // close allows ids longer than 4 characters.
   test('accepts close with id longer than 4 characters', () => {
     const result = parse(argv('close', 'longid99'));
     expect(result.flags.id).toBe('manta-longid99');
   });
 
-  // close without an id throws Missing required input.
   test('requires an id for close', () => {
     expect(() => parse(argv('close'))).toThrow(/Missing required input: id/);
   });
 
-  // close accepts only the id — extra flags are rejected.
   test('rejects close with extra flags', () => {
     expect(() => parse(argv('close', 'hk3p', '--status', 'open'))).toThrow(
       /Too many flags for 'close:' Only an ID is expected/,
     );
   });
 
-  // --all is not allowed on close.
   test('rejects close with --all flag', () => {
     expect(() => parse(argv('close', 'hk3p', '--all'))).toThrow(
       /Too many flags for 'close:' Only an ID is expected/,
     );
   });
 
-  // createdBy alias (--cb) is view-only.
   test('rejects close with --cb flag', () => {
     expect(() => parse(argv('close', 'hk3p', '--cb', 'alice'))).toThrow(
       /can only be used with the 'view' command/,
     );
   });
 
-  // delete takes a single positional id and normalizes the prefix.
   test('parses delete with a full id', () => {
     const result = parse(argv('delete', 'tzdb'));
     expect(result).toEqual({
@@ -322,32 +325,27 @@ describe('parse() — update, close, delete', () => {
     });
   });
 
-  // delete accepts ids longer than 4 characters.
   test('accepts delete with id longer than 4 characters', () => {
     const result = parse(argv('delete', 'manta-verylong123'));
     expect(result.flags.id).toBe('manta-verylong123');
   });
 
-  // delete without an id throws Missing required input.
   test('requires an id for delete', () => {
     expect(() => parse(argv('delete'))).toThrow(/Missing required input: id/);
   });
 
-  // delete accepts only the id — extra flags are rejected.
   test('rejects delete with extra flags', () => {
     expect(() => parse(argv('delete', 'tzdb', '--priority', 'p1'))).toThrow(
       /Too many flags for 'delete:' Only an ID is expected/,
     );
   });
 
-  // --all is not allowed on delete.
   test('rejects delete with --all flag', () => {
     expect(() => parse(argv('delete', 'tzdb', '--all'))).toThrow(
       /Too many flags for 'delete:' Only an ID is expected/,
     );
   });
 
-  // createdBy alias (--cb) is view-only.
   test('rejects delete with --cb flag', () => {
     expect(() => parse(argv('delete', 'tzdb', '--cb', 'alice'))).toThrow(
       /can only be used with the 'view' command/,
@@ -355,19 +353,33 @@ describe('parse() — update, close, delete', () => {
   });
 });
 
+/**
+ * parse() tests for the view command. Covers bare view, detail view by id,
+ * list filters, --all, --cb (createdBy alias), and invalid filters.
+ * 1. First test checks bare view with no args
+ * 2. Second test checks short id prefixing on detail view
+ * 3. Third test checks detail view with full manta- id
+ * 4. Fourth test checks ids longer than 4 characters
+ * 5. Fifth test checks detail view with id plus a filter
+ * 6. Sixth test checks --type and --assignee list filters
+ * 7. Seventh test checks shorthand filter aliases (--p, --s, --a)
+ * 8. Eighth test checks --all alone on list view
+ * 9. Ninth test checks list filters combined with --all
+ * 10. Tenth test checks --cb (createdBy alias) on view
+ * 11. Eleventh test checks case preservation on assignee and createdBy
+ * 12. Twelfth test checks rejection of title filter
+ * 13. Thirteenth test checks rejection of desc filter
+ */
 describe('parse() — view', () => {
-  // Bare view with no args returns an empty flags object.
   test('parses bare view with no args', () => {
     expect(parse(argv('view'))).toEqual({ cmd: 'view', flags: {} });
   });
 
-  // Detail view normalizes a short positional id.
   test('prefixes short id on detail view', () => {
     const result = parse(argv('view', 'tzdb'));
     expect(result.flags.id).toBe('manta-tzdb');
   });
 
-  // Detail view accepts ids that already include the manta- prefix.
   test('parses detail view with full manta- id', () => {
     const result = parse(argv('view', 'manta-tzdb'));
     expect(result).toEqual({
@@ -376,13 +388,11 @@ describe('parse() — view', () => {
     });
   });
 
-  // view allows ids longer than 4 characters.
   test('accepts view with id longer than 4 characters', () => {
     const result = parse(argv('view', 'abc12345'));
     expect(result.flags.id).toBe('manta-abc12345');
   });
 
-  // Detail view can combine a positional id with filter flags.
   test('parses detail view with id and a filter', () => {
     const result = parse(argv('view', 'tzdb', '--status', 'open'));
     expect(result).toEqual({
@@ -394,7 +404,6 @@ describe('parse() — view', () => {
     });
   });
 
-  // List view accepts --type and --assignee as filters.
   test('parses view with --type and --assignee filters', () => {
     const result = parse(argv('view', '--type', 'bug', '--assignee', 'Alice'));
     expect(result).toEqual({
@@ -406,7 +415,6 @@ describe('parse() — view', () => {
     });
   });
 
-  // Shorthand filter aliases (--p, --s, --a) work on view.
   test('parses view with shorthand filters (--p, --s, --a)', () => {
     const result = parse(
       argv('view', '--p', 'p1', '--s', 'open', '--a', 'Bob'),
@@ -421,7 +429,6 @@ describe('parse() — view', () => {
     });
   });
 
-  // --all alone is valid on list view.
   test('parses view with --all alone', () => {
     expect(parse(argv('view', '--all'))).toEqual({
       cmd: 'view',
@@ -429,7 +436,6 @@ describe('parse() — view', () => {
     });
   });
 
-  // List filters can be combined with --all.
   test('parses list filters and --all', () => {
     const result = parse(
       argv('view', '--priority', 'p1', '--status', 'open', '--all'),
@@ -444,13 +450,11 @@ describe('parse() — view', () => {
     });
   });
 
-  // --cb is the createdBy alias and is only valid on view.
   test('allows --cb (createdBy alias) only on view', () => {
     const result = parse(argv('view', '--cb', 'alice'));
     expect(result.flags.createdBy).toBe('alice');
   });
 
-  // Parser preserves casing on view assignee and createdBy.
   test('preserves case on view assignee and createdBy', () => {
     const result = parse(
       argv('view', '--assignee', 'Alice', '--cb', 'BobSmith'),
@@ -459,14 +463,12 @@ describe('parse() — view', () => {
     expect(result.flags.createdBy).toBe('BobSmith');
   });
 
-  // title and desc are not valid view filters.
   test('rejects title filter on view', () => {
     expect(() => parse(argv('view', '--title', 'foo'))).toThrow(
       /Cannot filter by title or description/,
     );
   });
 
-  // title and desc are not valid view filters.
   test('rejects desc filter on view', () => {
     expect(() => parse(argv('view', '--desc', 'foo'))).toThrow(
       /Cannot filter by title or description/,
@@ -474,14 +476,21 @@ describe('parse() — view', () => {
   });
 });
 
+/**
+ * parse() tests for commands that take no args, a path, or an optional
+ * subcommand. Nested describe() blocks group one command each.
+ */
 describe('parse() — no-arg and path commands', () => {
+  /**
+   * version command tests.
+   * 1. First test checks version with no arguments
+   * 2. Second test checks rejection of extra arguments
+   */
   describe('version', () => {
-    // version takes no arguments.
     test('accepts with no arguments', () => {
       expect(parse(argv('version'))).toEqual({ cmd: 'version', flags: {} });
     });
 
-    // Extra tokens after version are rejected.
     test('rejects with extra arguments', () => {
       expect(() => parse(argv('version', 'extra'))).toThrow(
         /should be called with no arguments/,
@@ -489,13 +498,16 @@ describe('parse() — no-arg and path commands', () => {
     });
   });
 
+  /**
+   * sync command tests.
+   * 1. First test checks sync with no arguments
+   * 2. Second test checks rejection of extra arguments
+   */
   describe('sync', () => {
-    // sync takes no arguments.
     test('accepts with no arguments', () => {
       expect(parse(argv('sync'))).toEqual({ cmd: 'sync', flags: {} });
     });
 
-    // Extra tokens after sync are rejected.
     test('rejects with extra arguments', () => {
       expect(() => parse(argv('sync', 'extra'))).toThrow(
         /should be called with no arguments/,
@@ -503,13 +515,16 @@ describe('parse() — no-arg and path commands', () => {
     });
   });
 
+  /**
+   * init command tests.
+   * 1. First test checks init with no arguments
+   * 2. Second test checks rejection of extra arguments
+   */
   describe('init', () => {
-    // init takes no arguments.
     test('accepts with no arguments', () => {
       expect(parse(argv('init'))).toEqual({ cmd: 'init', flags: {} });
     });
 
-    // Extra tokens after init are rejected.
     test('rejects with extra arguments', () => {
       expect(() => parse(argv('init', 'extra'))).toThrow(
         /should be called with no arguments/,
@@ -517,15 +532,22 @@ describe('parse() — no-arg and path commands', () => {
     });
   });
 
+  /**
+   * migrate command tests. migrate requires a positional path to the Beads
+   * JSONL file and does not accept flags.
+   * 1. First test checks that path is required
+   * 2. Second test checks absolute positional path
+   * 3. Third test checks relative positional path
+   * 4. Fourth test checks paths containing spaces
+   * 5. Fifth test checks rejection of flags
+   */
   describe('migrate', () => {
-    // migrate requires a positional path to the Beads JSONL file.
     test('requires path', () => {
       expect(() => parse(argv('migrate'))).toThrow(
         /Missing required input: path to Beads JSONL/,
       );
     });
 
-    // Absolute paths are accepted as the positional arg.
     test('parses positional path', () => {
       expect(parse(argv('migrate', '/tmp/beads.jsonl'))).toEqual({
         cmd: 'migrate',
@@ -533,7 +555,6 @@ describe('parse() — no-arg and path commands', () => {
       });
     });
 
-    // Relative paths are accepted as the positional arg.
     test('parses with relative path', () => {
       expect(parse(argv('migrate', './beads.jsonl'))).toEqual({
         cmd: 'migrate',
@@ -541,14 +562,12 @@ describe('parse() — no-arg and path commands', () => {
       });
     });
 
-    // Paths containing spaces are preserved as a single token.
     test('preserves paths with spaces', () => {
       expect(parse(argv('migrate', '/tmp/my beads.jsonl')).flags.path).toBe(
         '/tmp/my beads.jsonl',
       );
     });
 
-    // migrate does not accept any flags.
     test('rejects flags', () => {
       expect(() =>
         parse(argv('migrate', 'a.jsonl', '--priority', 'p1')),
@@ -556,8 +575,15 @@ describe('parse() — no-arg and path commands', () => {
     });
   });
 
+  /**
+   * clear command tests. clear defaults to .manta/manta.jsonl when no path is
+   * given and does not accept flags.
+   * 1. First test checks default path when no arguments are given
+   * 2. Second test checks explicit positional path
+   * 3. Third test checks paths containing spaces
+   * 4. Fourth test checks rejection of flags
+   */
   describe('clear', () => {
-    // clear defaults to .manta/manta.jsonl when no path is given.
     test('accepts with no arguments', () => {
       expect(parse(argv('clear'))).toEqual({
         cmd: 'clear',
@@ -565,7 +591,6 @@ describe('parse() — no-arg and path commands', () => {
       });
     });
 
-    // An explicit positional path overrides the default.
     test('parses with explicit path', () => {
       expect(parse(argv('clear', '/tmp/custom.jsonl'))).toEqual({
         cmd: 'clear',
@@ -573,14 +598,12 @@ describe('parse() — no-arg and path commands', () => {
       });
     });
 
-    // Paths containing spaces are preserved as a single token.
     test('preserves paths with spaces', () => {
       expect(parse(argv('clear', '/tmp/my log.jsonl')).flags.path).toBe(
         '/tmp/my log.jsonl',
       );
     });
 
-    // clear does not accept any flags.
     test('rejects flags', () => {
       expect(() => parse(argv('clear', '--priority', 'p1'))).toThrow(
         /does not take any flags/,
@@ -588,13 +611,21 @@ describe('parse() — no-arg and path commands', () => {
     });
   });
 
+  /**
+   * help command tests. help accepts an optional subcommand positional and
+   * does not accept flags.
+   * 1. First test checks bare help with no arguments
+   * 2. Second test checks optional help subcommand
+   * 3. Third test checks rejection of wrong-casing subcommand
+   * 4. Fourth test checks multiple positional args joined as one subcommand
+   * 5. Fifth test checks unknown subcommand error message
+   * 6. Sixth test checks rejection of flags
+   */
   describe('help', () => {
-    // Bare help returns an empty flags object.
     test('accepts with no arguments', () => {
       expect(parse(argv('help'))).toEqual({ cmd: 'help', flags: {} });
     });
 
-    // A single positional arg selects which command to show help for.
     test('parses optional help subcommand', () => {
       expect(parse(argv('help', 'create'))).toEqual({
         cmd: 'help',
@@ -602,7 +633,6 @@ describe('parse() — no-arg and path commands', () => {
       });
     });
 
-    // help_cmd must match a known command name exactly (case-sensitive).
     test('rejects help subcommand with wrong casing', () => {
       expect(() => parse(argv('help', 'CREATE'))).toThrow(
         /Unknown command 'CREATE'/,
@@ -616,13 +646,11 @@ describe('parse() — no-arg and path commands', () => {
       );
     });
 
-    // Unknown subcommands get a help-specific error message.
     test('rejects unknown help subcommand', () => {
       expect(() => parse(argv('help', 'fly'))).toThrow(/Unknown command 'fly'/);
       expect(() => parse(argv('help', 'fly'))).toThrow(/Run 'mt help'/);
     });
 
-    // help does not accept any flags.
     test('rejects flags', () => {
       expect(() => parse(argv('help', '--priority', 'p1'))).toThrow(
         /'mt help' does not take any flags/,
@@ -631,8 +659,21 @@ describe('parse() — no-arg and path commands', () => {
   });
 });
 
+/**
+ * parse() structural error tests. Cross-cutting argv rules: command lookup,
+ * flag syntax, duplicates, and missing values.
+ * 1. First test checks uppercase command names are lowercased
+ * 2. Second test checks empty argv (no command token)
+ * 3. Third test checks unknown command
+ * 4. Fourth test checks unknown flag
+ * 5. Fifth test checks duplicate title from positional and --title
+ * 6. Sixth test checks duplicate flags on create
+ * 7. Seventh test checks duplicate flags on update
+ * 8. Eighth test checks invalid single-dash flag syntax
+ * 9. Ninth test checks flag with missing value
+ * 10. Tenth test checks --all given a trailing value
+ */
 describe('parse() — structural errors', () => {
-  // Command names are lowercased before lookup.
   test('accepts uppercase command name', () => {
     expect(parse(argv('CREATE', 'My Title'))).toEqual({
       cmd: 'create',
@@ -644,61 +685,52 @@ describe('parse() — structural errors', () => {
     });
   });
 
-  // argv with only runtime and script paths and no command throws.
   test('rejects empty argv', () => {
     expect(() => parse(['bun', '/path/to/index.js'])).toThrow(
       /No input provided/,
     );
   });
 
-  // Unrecognized command names throw Unknown command.
   test('rejects unknown command', () => {
     expect(() => parse(argv('fly'))).toThrow(/Unknown command 'fly'/);
   });
 
-  // Flags not in the command's allowed set throw Unknown flag.
   test('rejects unknown flag', () => {
     expect(() => parse(argv('create', 'T', '--notreal', 'x'))).toThrow(
       /Unknown flag 'notreal'/,
     );
   });
 
-  // A positional title plus --title sets title twice and is rejected.
   test('rejects duplicate title from positional and flag', () => {
     expect(() => parse(argv('create', 'Pos', '--title', 'Flag'))).toThrow(
       /Duplicate flag 'title'/,
     );
   });
 
-  // The same flag cannot appear twice on create.
   test('rejects duplicate flags', () => {
     expect(() =>
       parse(argv('create', 'T', '--priority', 'p1', '--priority', 'p2')),
     ).toThrow(/Duplicate flag 'priority'/);
   });
 
-  // The same flag cannot appear twice on update.
   test('rejects duplicate flags on update', () => {
     expect(() =>
       parse(argv('update', 'ab12', '--status', 'open', '--status', 'closed')),
     ).toThrow(/Duplicate flag 'status'/);
   });
 
-  // Flags must use double-dash syntax; single-dash is invalid.
   test('rejects invalid flag syntax', () => {
     expect(() => parse(argv('create', 'T', '-priority', 'p1'))).toThrow(
       /Invalid flag '-priority'/,
     );
   });
 
-  // A flag that expects a value must be followed by one.
   test('rejects flag with missing value', () => {
     expect(() => parse(argv('create', 'T', '--priority'))).toThrow(
       /Missing value for flag 'priority'/,
     );
   });
 
-  // --all is valueless and cannot be given a trailing value.
   test('rejects --all with a value', () => {
     expect(() => parse(argv('view', '--all', 'yes'))).toThrow(
       /cannot be called with a value/,

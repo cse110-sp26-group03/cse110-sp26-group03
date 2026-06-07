@@ -1,27 +1,45 @@
 /**
  * Unit tests for the CLI event builder (`src/cli/event.js`).
  *
- * Stage 1: event shape, defaults, partial updates, close semantics, and actor.
+ * create_event() is the only exported function. It turns a validated parse
+ * object into a storage event (issue.created, issue.updated, or issue.deleted).
+ * Semantic value checks live in validation.test.js; argv shape lives in
+ * parser.test.js.
+ *
+ * Each describe() block below targets one command path:
+ *   1. create_event() — create  — issue.created shape, defaults, optional fields, actor
+ *   2. create_event() — update  — partial changes, field mapping, updatedAt/updatedBy
+ *   3. create_event() — close   — issue.updated with status closed
+ *   4. create_event() — delete   — issue.deleted envelope
+ *   5. create_event() — actor    — $USER / $USERNAME on write commands
+ *   6. create_event() — errors   — unrecognized commands
  */
 import { test, expect, describe, beforeEach, afterEach } from 'bun:test';
 import { create_event } from '../../../src/cli/event.js';
 
 /**
- * Build a parse object for create_event().
+ * Build a parse object with the given command and flags. Lets individual
+ * tests pass just the pieces they care about instead of the full shape.
  *
  * @param {string} cmd - The command name (create, update, close, delete).
  * @param {object} [flags] - Flag values to merge in.
- * @returns {{cmd: string, flags: object}}
+ * @returns {{cmd: string, flags: object}} A parse object ready for create_event().
  */
 function makeParse(cmd, flags = {}) {
   return { cmd, flags };
 }
 
-/** Saved env keys so actor tests can restore process.env afterward. */
+/**
+ * Env keys touched by actor tests. Saved in beforeEach and restored in
+ * afterEach so the developer's shell environment is unchanged.
+ *
+ * @type {string[]}
+ */
 const ENV_KEYS = ['USER', 'USERNAME'];
 
 let savedEnv;
 
+// Start every actor test from a clean slate with neither USER nor USERNAME set.
 beforeEach(() => {
   savedEnv = Object.fromEntries(ENV_KEYS.map((k) => [k, process.env[k]]));
   delete process.env.USER;
@@ -48,8 +66,18 @@ function expectIsoTimestamp(value) {
   expect(Number.isNaN(new Date(value).getTime())).toBe(false);
 }
 
+/**
+ * create_event() tests for the create command. Builds issue.created events
+ * with defaults, optional fields, timestamps, and actor resolution.
+ * 1. First test checks the full issue.created envelope with parser defaults
+ * 2. Second test checks create with only a title when status/priority are omitted
+ * 3. Third test checks that desc, type, and assignee map into the issue payload
+ * 4. Fourth test checks that createdAt/updatedAt match the event timestamp
+ * 5. Fifth test checks that $USER is used as actor when set
+ * 6. Sixth test checks fallback to $USERNAME when $USER is unset
+ * 7. Seventh test checks that $USER wins when both env vars are present
+ */
 describe('create_event() — create', () => {
-  // Parser supplies priority/status defaults; event.js fills desc, type, assignee.
   test('builds issue.created with defaults', () => {
     const event = create_event(
       makeParse('create', {
@@ -77,7 +105,6 @@ describe('create_event() — create', () => {
     expect(event.actor).toBe('local-user');
   });
 
-  // event.js passes through status/priority when the parser omits them.
   test('accepts create with only title when status and priority are omitted', () => {
     const event = create_event(makeParse('create', { title: 'Only Title' }));
 
@@ -99,7 +126,6 @@ describe('create_event() — create', () => {
     expect(event.issue).toHaveProperty('updatedBy');
   });
 
-  // All optional create flags map correctly into the issue payload.
   test('includes optional desc, type, and assignee', () => {
     const event = create_event(
       makeParse('create', {
@@ -117,7 +143,6 @@ describe('create_event() — create', () => {
     expect(event.issue.assignee).toBe('Alice');
   });
 
-  // createdAt/updatedAt share the same timestamp as the event envelope.
   test('stamps createdAt and updatedAt with event timestamp', () => {
     const event = create_event(
       makeParse('create', { title: 'T', priority: 'p5', status: 'open' }),
@@ -126,7 +151,6 @@ describe('create_event() — create', () => {
     expect(event.issue.updatedAt).toBe(event.timestamp);
   });
 
-  // Make sure $USER is preferred as the actor.
   test('uses $USER as actor when set', () => {
     process.env.USER = 'alice';
     const event = create_event(
@@ -137,7 +161,6 @@ describe('create_event() — create', () => {
     expect(event.issue.updatedBy).toBe('alice');
   });
 
-  // $USERNAME is used when $USER is absent.
   test('falls back to $USERNAME when $USER is unset', () => {
     process.env.USERNAME = 'bob';
     const event = create_event(
@@ -146,7 +169,6 @@ describe('create_event() — create', () => {
     expect(event.actor).toBe('bob');
   });
 
-  // $USER wins when both Unix and Windows env vars are present.
   test('prefers $USER over $USERNAME when both are set', () => {
     process.env.USER = 'alice';
     process.env.USERNAME = 'bob';
@@ -157,8 +179,20 @@ describe('create_event() — create', () => {
   });
 });
 
+/**
+ * create_event() tests for the update command. Builds issue.updated events
+ * with only the changed fields, maps parser flag names to storage names, and
+ * always stamps updatedAt/updatedBy.
+ * 1. First test checks that only provided flags appear in changes
+ * 2. Second test checks desc→description and type→issueType mapping
+ * 3. Third test checks multiple change fields in one event
+ * 4. Fourth test checks updatedAt/updatedBy even for a single-field update
+ * 5. Fifth test checks that omitted fields are absent from changes
+ * 6. Sixth test checks a status-only update
+ * 7. Seventh test checks an assignee-only update
+ * 8. Eighth test checks all changeable fields combined
+ */
 describe('create_event() — update', () => {
-  // Only fields present in flags appear in changes payload.
   test('includes only provided change fields', () => {
     const event = create_event(
       makeParse('update', { id: 'manta-ab12', priority: 'p0' }),
@@ -178,7 +212,6 @@ describe('create_event() — update', () => {
     expectIsoTimestamp(event.timestamp);
   });
 
-  // Parser flag names map to storage field names correctly.
   test('maps desc to description and type to issueType', () => {
     const event = create_event(
       makeParse('update', {
@@ -194,7 +227,6 @@ describe('create_event() — update', () => {
     expect(event.changes).not.toHaveProperty('type');
   });
 
-  // Multiple change fields can be combined in one event.
   test('accepts multiple change fields at once', () => {
     const event = create_event(
       makeParse('update', {
@@ -214,7 +246,6 @@ describe('create_event() — update', () => {
     expect(event.changes.updatedBy).toBe('local-user');
   });
 
-  // updatedAt/updatedBy are always stamped even with a single change.
   test('always stamps updatedAt and updatedBy', () => {
     const event = create_event(
       makeParse('update', { id: 'manta-tzdb', title: 'Only title' }),
@@ -223,7 +254,6 @@ describe('create_event() — update', () => {
     expect(event.changes.updatedBy).toBe(event.actor);
   });
 
-  // Unchanged fields are omitted from changes, not set to undefined.
   test('omits fields that were not provided', () => {
     const event = create_event(
       makeParse('update', { id: 'manta-ab12', status: 'blocked' }),
@@ -237,7 +267,6 @@ describe('create_event() — update', () => {
     expect(event.changes).not.toHaveProperty('assignee');
   });
 
-  // Single-field updates for status and assignee.
   test('updates status only', () => {
     const event = create_event(
       makeParse('update', { id: 'manta-xy99', status: 'in_progress' }),
@@ -258,7 +287,6 @@ describe('create_event() — update', () => {
     );
   });
 
-  // Every updatable flag can be combined in a single issue.updated event.
   test('updates all changeable fields in one event', () => {
     const event = create_event(
       makeParse('update', {
@@ -289,8 +317,12 @@ describe('create_event() — update', () => {
   });
 });
 
+/**
+ * create_event() tests for the close command. Close is implemented as an
+ * issue.updated event that sets status to closed.
+ * 1. First test checks the issue.updated envelope with status closed
+ */
 describe('create_event() — close', () => {
-  // Close correctly builds with issue.updated with status closed.
   test('builds issue.updated with status closed', () => {
     const event = create_event(makeParse('close', { id: 'manta-hk3p' }));
 
@@ -306,8 +338,11 @@ describe('create_event() — close', () => {
   });
 });
 
+/**
+ * create_event() tests for the delete command.
+ * 1. First test checks the issue.deleted envelope with no changes/issue payload
+ */
 describe('create_event() — delete', () => {
-  // Delete correctly builds issue.deleted with issueId.
   test('builds issue.deleted with issueId', () => {
     const event = create_event(makeParse('delete', { id: 'manta-tzdb' }));
 
@@ -323,8 +358,12 @@ describe('create_event() — delete', () => {
   });
 });
 
+/**
+ * create_event() actor tests. All write commands resolve the actor from
+ * process.env before stamping createdBy/updatedBy.
+ * 1. First test checks that $USER is used on update, close, and delete
+ */
 describe('create_event() — actor', () => {
-  // Write commands other than create also stamp $USER as actor.
   test('uses $USER on update, close, and delete', () => {
     process.env.USER = 'carol';
 
@@ -343,8 +382,12 @@ describe('create_event() — actor', () => {
   });
 });
 
+/**
+ * create_event() error tests. Commands that never reach create_event in the
+ * CLI pipeline should still throw a clear error.
+ * 1. First test checks that unrecognized commands throw with a descriptive message
+ */
 describe('create_event() — errors', () => {
-  // Commands that never reach create_event in the CLI pipeline still error clearly.
   test('rejects unrecognized commands', () => {
     expect(() => create_event(makeParse('notacommand'))).toThrow(
       /event creation error: 'notacommand' is not a recognized command/,
