@@ -74,3 +74,51 @@ clean, so cache is not affected
   accepts an omitted path
 
 ---
+
+#### `fetch.test.js` — read layer (`src/storage/fetch.js`)
+
+Tests the public `FETCH()` function, which has two modes driven by the parse
+object's flags. Grouped into four `describe()` blocks:
+
+- **`FETCH detail mode`** — a known `flags.id` returns a single issue, a missing
+  ID throws a wrapped `Query failed` error, and `flags.id` wins over any list
+  filters on the same parse object.
+- **`FETCH list mode`** — always returns an array; excludes closed issues by
+  default, honors the `--all` override, filters by status/type/priority/
+  createdBy/assignee with AND, sorts non-closed rows by ascending priority,
+  pushes closed rows to the bottom, and returns `[]` when nothing matches.
+- **`FETCH list mode: additional filters`** — extra coverage combining multiple
+  columns, non-closed status filters, and `--all` with a type filter.
+- **`FETCH detail mode: error chaining`** — the not-found error is wrapped and
+  preserves the original as `.cause`.
+
+Every test row uses `fetch-test-suite` and `manta-ftest-` IDs so the suite only ever
+touches testing and not any real data.
+
+---
+
+#### `replay.test.js` — replay layer (`src/storage/replay.js`)
+
+Tests `syncFromLog()` rebuilds the cache from the JSONL log when the hash
+differs from the checkpoint)and `recordAppend()` rolls the checkpoint hash
+forward by one appended line. Grouped into six `describe()` blocks:
+
+- **`syncFromLog()`** — the basic replay decision, empties the cache for a
+  missing log, replays a new log in full, skips when unchanged, re-replays
+  after content changes, and clears the cache for an empty log.
+- **`syncFromLog() event application`** — applies create/update/delete in order
+  and ignores blank lines.
+- **`syncFromLog() error handling`** — throws on invalid JSON and unknown event
+  types, and rolls the whole replay back when an event fails.
+- **`recordAppend()`** — sets a checkpoint with no prior sync, rolls the hash
+  forward so the next sync is skipped, and
+  force a replay when the recorded line is wrong.
+- **`syncFromLog() external rewrites (ADR-007)`** — reflects a line removed from
+  the log and parses CRLF line endings.
+- **`syncFromLog() orphan and no-op events`** — tolerates updates/deletes for
+  missing issues and leaves a row untouched on an empty update.
+
+Both functions accept a `logPath` override, so tests use throwaway files under
+the OS temp directory and never touch the real `.manta/manta.jsonl`. 
+
+---
