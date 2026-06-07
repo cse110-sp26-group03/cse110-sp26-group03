@@ -63,6 +63,7 @@ Creates a new issue. Title is required, all other flags are optional.
 ```
 mt create “title [--desc <text>] [--priority <p0-p9>] [--type <type>] [--assignee <name>]
 ```
+
 | Flag | Short | Description | Default |
 | — | — | — | — |
 | `--title` | `-t` | Issue title (max 50 chars) | required |
@@ -84,8 +85,9 @@ $ mt create “Add documentation” –d “Description of pros and cons” –a
 ```
 
 **Output:**
+
 ```
-Created issue manta-h3kp: Mobile friendly screens 
+Created issue manta-h3kp: Mobile friendly screens
 Created issue manta-ar10: Fix bug
 Created issue manta-nmec: Add documentation
 ```
@@ -97,6 +99,7 @@ Updates one or more fields on an existing issue. ID and at least one flag are re
 ```
 mt update manta-xxxx [--title <text>] [--desc <text>] [--priority <p>] [--status <s>] [--type <t>] [--assignee <name>]
 ```
+
 | Flag | Short | Description |
 | — | — | — |
 | `--title` | `-t` | New title |
@@ -192,16 +195,18 @@ Lists all open issues in a paginated table. Use left/right arrow keys to navigat
 ```bash
 $ mt view
 ```
+
 **Output:**
+
 ```
 ID      TITLE                                    STATUS    PRIORITY    TYPE    ASSIGNEE    CREATED BY
 -------------------------------------------------------------------------------------------------------------------------------
-g1xy    issue 1                                 open     	   p0        	task    	  -           	 katie     
-z1t9	issue 3                                 open	   p1        	bug    	  kngo           	 katie        
-n1vm	issue 2                                 open      	   p1        	task    	  -           	 katie     
-qx1z	issue 4                                 open      	   p1       	task    	  -           	 katie     
-44dv	issue 5                                 open      	   p1        	bug    	  kngo            	 katie     
-  
+g1xy    issue 1                                 open     	   p0        	task    	  -           	 katie
+z1t9	issue 3                                 open	   p1        	bug    	  kngo           	 katie
+n1vm	issue 2                                 open      	   p1        	task    	  -           	 katie
+qx1z	issue 4                                 open      	   p1       	task    	  -           	 katie
+44dv	issue 5                                 open      	   p1        	bug    	  kngo            	 katie
+
 < prev.    next >
 Page 1 of 2
 
@@ -218,17 +223,18 @@ $ mt view t4pd
 ```
 
 **Output:**
+
 ```
 issue 6                                                                                     manta-t4pd
 ------------------------------------------------------------------------------------------------------
 <no description>
 
 ------------------------------------------------------------------------------------------------------
-Priority: p5                                        Status: open                                       
-Assignee: -                                       Type: task                                         
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-Created by: katie @ 2026-06-05 18:51 PDT                                                              
-Updated by: katie @ 2026-06-05 18:51 PDT                                                              
+Priority: p5                                        Status: open
+Assignee: -                                       Type: task
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Created by: katie @ 2026-06-05 18:51 PDT
+Updated by: katie @ 2026-06-05 18:51 PDT
 
 Press ESC to exit
 ```
@@ -261,6 +267,7 @@ $ mt view –all
 ```
 
 **Combine multiple filters:**
+
 ```
 $ mt view --status open --priority p1
 $ mt view --type bug --assignee kngo
@@ -272,15 +279,17 @@ $ mt view --all --status closed
 ```
 ID      TITLE                                    STATUS    PRIORITY    TYPE    ASSIGNEE    CREATED BY
 -------------------------------------------------------------------------------------------------------------------------------
-z1t9	issue 3                                 open	   p1        	bug    	  kngo           	 katie        
-44dv	issue 5                                 open      	   p1        	bug    	  kngo            	 katie     
+z1t9	issue 3                                 open	   p1        	bug    	  kngo           	 katie
+44dv	issue 5                                 open      	   p1        	bug    	  kngo            	 katie
 
 < prev.    next >
 Page 1 of 1
 
 Press ESC to exit
 ```
+
 **Output (no issues found):**
+
 ```
 No issues found.
 ```
@@ -297,6 +306,7 @@ $ mt version
 ```
 
 **Output:**
+
 ```bash
 0.1.0
 ```
@@ -414,27 +424,27 @@ $ mt help create
 ## Issue Fields
 
 ### User-provided fields
-| Field | Required | Allowed values | Notes |
-| --- | --- | --- | --- |
-| title | Yes (create) | Any string, max 50 chars | Pass as positional arg or `--title` / `-t` |
-| description | No | Any string, max 512 chars | `--desc` or `-d` |
-| status | No | `open`, `in_progress`, `blocked`, `closed` | Defaults to `open` on create. Cannot be `closed` on create. |
-| priority | No | `p0`–`p9` | p0 is highest. Defaults to `p5` on create. |
-| type | No | `bug`, `feature`, `task`, `docs`, `store` | Defaults to `task`. `--type` (no shorthand) |
-| assignee | No | Letters only (a-z, A-Z) | `--assignee` or `-a` |
+
+| Field       | Required     | Allowed values                             | Notes                                                       |
+| ----------- | ------------ | ------------------------------------------ | ----------------------------------------------------------- |
+| title       | Yes (create) | Any string, max 50 chars                   | Pass as positional arg or `--title` / `-t`                  |
+| description | No           | Any string, max 512 chars                  | `--desc` or `-d`                                            |
+| status      | No           | `open`, `in_progress`, `blocked`, `closed` | Defaults to `open` on create. Cannot be `closed` on create. |
+| priority    | No           | `p0`–`p9`                                  | p0 is highest. Defaults to `p5` on create.                  |
+| type        | No           | `bug`, `feature`, `task`, `docs`, `store`  | Defaults to `task`. `--type` (no shorthand)                 |
+| assignee    | No           | Letters only (a-z, A-Z)                    | `--assignee` or `-a`                                        |
 
 ### Auto-assigned fields (read only)
 
 These fields are set automatically and cannot be modified by the user.
- 
-| Field | Description |
-|---|---|
-| ID | Unique ID in `manta-xxxx` format, assigned on creation |
-| createdAt | ISO timestamp when the issue was created |
-| createdBy | OS username of whoever created the issue, pulled from `process.env.USER` |
-| updatedAt | ISO timestamp of the most recent change |
-| updatedBy | OS username of whoever made the most recent change |
 
+| Field     | Description                                                              |
+| --------- | ------------------------------------------------------------------------ |
+| ID        | Unique ID in `manta-xxxx` format, assigned on creation                   |
+| createdAt | ISO timestamp when the issue was created                                 |
+| createdBy | OS username of whoever created the issue, pulled from `process.env.USER` |
+| updatedAt | ISO timestamp of the most recent change                                  |
+| updatedBy | OS username of whoever made the most recent change                       |
 
 ## Errors
 
@@ -444,37 +454,36 @@ If a command fails, Manta prints an error message and exits with code 1.
 
 See the sections below for full details and examples:
 
-| Error | Cause | Section |
-| --- | --- | --- |
-| `No input provided` | `mt` run with no command | [Running with no commands](#running-with-no-commands) |
-| `Missing required input: id` | update/close/delete called without an ID | [No ID when ID is required](#no-id-when-id-is-required) |
-| `Too few flags for 'update'` | update called with ID only, no fields to change | [Attempting to update with ID only](#attempting-to-update-with-id-only-no-fields) |
-| `Too many flags for 'close'/'delete'` | extra flags passed to close or delete | [Passing more than an ID to close/delete](#passing-more-than-an-id-to-closedelete) |
-| `Unexpected argument(s) detected` | arguments passed to version/sync/init | [Passing arguments to a no-argument command](#passing-arguments-to-a-no-argument-command) |
-| `Invalid flag` | flag doesn't start with `--` | [Incorrect flag format](#incorrect-flag-format) |
-| `Unknown flag` | flag not recognized | [Invalid flag](#invalid-flag) |
-| `Duplicate flag` | same flag used twice | [Duplicate flag](#duplicate-flag) |
-| `'mt migrate' does not take any flags` | flags passed to migrate or clear | [Command takes no flags](#command-takes-no-flags) |
-| `Flag '--createdBy' can only be used with 'view'` | createdBy used on wrong command | [createdBy used outside view](#createdby-used-outside-view) |
-| `Missing value for flag` | flag present but no value given | [Missing value for a flag](#missing-value-for-a-flag) |
-| `Unknown command` | unrecognized command | [Unknown command](#unknown-command) |
-| `Missing required input: title` | create called without a title | [create without a title](#create-without-a-title) |
-| `Invalid status 'closed' on create` | status set to closed on create | [create with a closed status](#create-with-a-closed-status) |
-| `Cannot filter by title or description` | view filtered by title or desc | [view filtered by title or description](#view-filtered-by-title-or-description) |
-| `Missing required input: path` | migrate/clear called without a path | [migrate without a path](#migrate-without-a-path) |
-| `validate error: not a valid issue id` | ID doesn't match `manta-<suffix>` | [Invalid issue ID](#invalid-issue-id) |
-| `validate error: title must be under 50 characters` | title too long | [Title too long](#title-too-long) |
-| `validate error: not a valid priority` | priority not in `p0`–`p9` | [Invalid priority](#invalid-priority) |
-| `validate error: not a valid status` | status not in allowed set | [Invalid status](#invalid-status) |
-| `validate error: not a valid type` | type not in allowed set | [Invalid type](#invalid-type) |
-| `validate error: not a valid assignee` | assignee contains non-letter characters | [Invalid assignee](#invalid-assignee) |
-
+| Error                                               | Cause                                           | Section                                                                                   |
+| --------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `No input provided`                                 | `mt` run with no command                        | [Running with no commands](#running-with-no-commands)                                     |
+| `Missing required input: id`                        | update/close/delete called without an ID        | [No ID when ID is required](#no-id-when-id-is-required)                                   |
+| `Too few flags for 'update'`                        | update called with ID only, no fields to change | [Attempting to update with ID only](#attempting-to-update-with-id-only-no-fields)         |
+| `Too many flags for 'close'/'delete'`               | extra flags passed to close or delete           | [Passing more than an ID to close/delete](#passing-more-than-an-id-to-closedelete)        |
+| `Unexpected argument(s) detected`                   | arguments passed to version/sync/init           | [Passing arguments to a no-argument command](#passing-arguments-to-a-no-argument-command) |
+| `Invalid flag`                                      | flag doesn't start with `--`                    | [Incorrect flag format](#incorrect-flag-format)                                           |
+| `Unknown flag`                                      | flag not recognized                             | [Invalid flag](#invalid-flag)                                                             |
+| `Duplicate flag`                                    | same flag used twice                            | [Duplicate flag](#duplicate-flag)                                                         |
+| `'mt migrate' does not take any flags`              | flags passed to migrate or clear                | [Command takes no flags](#command-takes-no-flags)                                         |
+| `Flag '--createdBy' can only be used with 'view'`   | createdBy used on wrong command                 | [createdBy used outside view](#createdby-used-outside-view)                               |
+| `Missing value for flag`                            | flag present but no value given                 | [Missing value for a flag](#missing-value-for-a-flag)                                     |
+| `Unknown command`                                   | unrecognized command                            | [Unknown command](#unknown-command)                                                       |
+| `Missing required input: title`                     | create called without a title                   | [create without a title](#create-without-a-title)                                         |
+| `Invalid status 'closed' on create`                 | status set to closed on create                  | [create with a closed status](#create-with-a-closed-status)                               |
+| `Cannot filter by title or description`             | view filtered by title or desc                  | [view filtered by title or description](#view-filtered-by-title-or-description)           |
+| `Missing required input: path`                      | migrate/clear called without a path             | [migrate without a path](#migrate-without-a-path)                                         |
+| `validate error: not a valid issue id`              | ID doesn't match `manta-<suffix>`               | [Invalid issue ID](#invalid-issue-id)                                                     |
+| `validate error: title must be under 50 characters` | title too long                                  | [Title too long](#title-too-long)                                                         |
+| `validate error: not a valid priority`              | priority not in `p0`–`p9`                       | [Invalid priority](#invalid-priority)                                                     |
+| `validate error: not a valid status`                | status not in allowed set                       | [Invalid status](#invalid-status)                                                         |
+| `validate error: not a valid type`                  | type not in allowed set                         | [Invalid type](#invalid-type)                                                             |
+| `validate error: not a valid assignee`              | assignee contains non-letter characters         | [Invalid assignee](#invalid-assignee)                                                     |
 
 ### Argument Count Errors
 
-####  Running with no commands
+#### Running with no commands
 
-Running `mt` without any commands will result in the following error. 
+Running `mt` without any commands will result in the following error.
 
 ```bash
 $ mt
@@ -489,7 +498,7 @@ No input provided. Commands look like: mt <cmd> [flags]
 For commands requiring an ID (update, close, delete), attempting to use the command without an ID will result in the following error.
 
 ```bash
-$ mt update 
+$ mt update
 $ mt update --type 'bug'
 $ mt close
 $ mt delete
@@ -511,7 +520,6 @@ $ mt update xxxx
 Too few flags for 'update:' No updates to any field were provided undefined
 ```
 
-
 #### Passing more than an ID to close/delete
 
 `close` and `delete` accept exactly one input (the ID). Any extra flag triggers the max-count error.
@@ -520,9 +528,11 @@ Too few flags for 'update:' No updates to any field were provided undefined
 $ mt close xxxx --priority p1
 $ mt delete xxxx --status open
 ```
+
 ```bash
 Too many flags for 'close:' Only an ID is expected
 ```
+
 ```bash
 Too many flags for 'delete:' Only an ID is expected
 ```
@@ -536,14 +546,14 @@ $ mt version 1.2.3
 $ mt sync now
 $ mt init extra
 ```
+
 ```bash
 Unexpected argument(s) detected - 'mt version' should be called with no arguments.
 ```
+
 (`version` is replaced by whichever of `version`/`sync`/`init` was run.)
 
 ### Parsing Errors
-
-
 
 #### Parser Check Order
 
@@ -565,12 +575,15 @@ Flags must begin with `--` followed by a letter. A single dash, or a dash follow
 ```bash
 $ mt create xxxx -priority p1
 ```
+
 ```bash
 Invalid flag '-priority': flags must start with --
 ```
+
 ```bash
 $ mt create 'incorrect format' --assignee example priority p1
 ```
+
 ```bash
 Invalid flag '-priority': flags must start with --
 ```
@@ -583,10 +596,12 @@ A token that starts with `--` but does not resolve to a known flag (after alias 
 $ mt create xxxx --foo bar
 $ mt update xxxx --proirity p1
 ```
+
 ```bash
 Unknown flag 'foo': valid flags are
 title, desc, status, priority, type, assignee, all, createdBy
 ```
+
 > [!NOTE]
 > Aliases that expand to a valid flag (`t`→title, `d`→desc, `p`→priority, `s`→status, `a`→assignee, `cb`→createdBy) are accepted; anything else is reported by its expanded form.
 
@@ -598,9 +613,11 @@ A flag may be provided once per command. Providing the same flag 2+ times, direc
 $ mt create xxxx --priority p1 --priority p2
 $ mt create xxxx --p p1 --priority p2
 ```
+
 ```bash
 Duplicate flag 'priority': --priority was already set
 ```
+
 The error reports the resolved flag name, so `--p` and `--priority` collide because both resolve to `priority`.
 
 #### Command takes no flags
@@ -611,13 +628,14 @@ The error reports the resolved flag name, so `--p` and `--priority` collide beca
 $ mt migrate ./beads.jsonl --title x
 $ mt clear ./.manta/manta.jsonl --status open
 ```
+
 ```bash
 'mt migrate' does not take any flags.
 ```
 
 > [!NOTE]
 > `migrate` is replaced by whichever no-flag command was run.
-> An *unknown* flag is caught by the "Invalid flag" check first; this error fires only for an otherwise-valid flag name used on a no-flag command.
+> An _unknown_ flag is caught by the "Invalid flag" check first; this error fires only for an otherwise-valid flag name used on a no-flag command.
 
 #### `--createdBy` used outside `view`
 
@@ -627,6 +645,7 @@ $ mt clear ./.manta/manta.jsonl --status open
 $ mt create xxxx --createdBy user
 $ mt update xxxx --cb user
 ```
+
 ```bash
 Flag '--createdBy' can only be used with the 'view' command
 ```
@@ -639,11 +658,13 @@ Every flag except `--all` requires a value. A flag immediately followed by anoth
 $ mt create xxxx --desc --priority p1
 $ mt update xxxx --status
 ```
+
 ```bash
 Missing value for flag 'desc'
 ```
->[!Note]
-The error names the flag whose value is missing.
+
+> [!Note]
+> The error names the flag whose value is missing.
 
 #### Value passed to a valueless flag
 
@@ -652,6 +673,7 @@ The error names the flag whose value is missing.
 ```bash
 $ mt view --all everything
 ```
+
 ```bash
 --'--all' flag cannot be called with a value.
 ```
@@ -676,6 +698,7 @@ Unknown command 'creat': valid commands are create, update, close, delete, versi
 ```bash
 $ mt create --priority p1
 ```
+
 ```bash
 Missing required input: title
 ```
@@ -687,6 +710,7 @@ An issue cannot be created already closed.
 ```bash
 $ mt create xxxx --status closed
 ```
+
 ```bash
 Invalid status 'closed': issues cannot be created with a closed status
 ```
@@ -699,6 +723,7 @@ Invalid status 'closed': issues cannot be created with a closed status
 $ mt view --title something
 $ mt view --desc something
 ```
+
 ```bash
 Cannot filter by title or description.
 Can only filter by: status, priority, type, assignee
@@ -706,11 +731,12 @@ Can only filter by: status, priority, type, assignee
 
 #### `migrate` without a path
 
-`mt migrate` requires a path to a Beads JSONL file. 
+`mt migrate` requires a path to a Beads JSONL file.
 
 ```bash
 $ mt migrate
 ```
+
 ```bash
 Missing required input: path to Beads JSONL file.
 Usage: mt migrate <path/to/beads.jsonl>
@@ -723,6 +749,7 @@ If `mt clear` is ran with an empty string, an error is thrown. `clear` with no a
 ```bash
 $ mt clear ''
 ```
+
 ```bash
 Missing required input: path to Manta JSONL file.
 Usage: mt clear <path/to/manta.jsonl>
@@ -738,6 +765,7 @@ bare suffix with `manta-`, so this fires mainly on malformed IDs.
 ```bash
 $ mt update manta- --priority p1
 ```
+
 ```bash
 validate error: 'manta-' is not a valid issue id
 ```
@@ -749,6 +777,7 @@ Max 50 characters.
 ```bash
 $ mt create "<51+ character title>"
 ```
+
 ```bash
 validate error: title must be under 50 characters
 ```
@@ -760,6 +789,7 @@ Max 512 characters.
 ```bash
 $ mt create xxxx --desc "<513+ character description>"
 ```
+
 ```bash
 validate error: description must be under 512 characters
 ```
@@ -772,6 +802,7 @@ Must match `p<N>` where N is a single digit (`p0`–`p9`).
 $ mt create xxxx --priority high
 $ mt update xxxx --priority p10
 ```
+
 ```bash
 validate error: 'high' is not a valid priority
 ```
@@ -791,6 +822,7 @@ Must be one of: `open, in_progress, blocked, closed`.
 ```bash
 $ mt update xxxx --status done
 ```
+
 ```bash
 validate error: 'done' is not a valid status
 ```
@@ -810,6 +842,7 @@ Must be one of: `bug, feature, task, docs, store`.
 ```bash
 $ mt create xxxx --type epic
 ```
+
 ```bash
 validate error: 'epic' is not a valid type
 ```
@@ -821,6 +854,7 @@ Alphabetic characters only (`^[a-zA-Z]+$`) — no digits, spaces, or symbols.
 ```bash
 $ mt create xxxx --assignee user_1
 ```
+
 ```bash
 validate error: 'user_1' is not a valid assignee
 ```
@@ -840,6 +874,7 @@ On `view`, `createdBy` must be alphanumeric plus underscores (`^[a-zA-Z0-9_]+$`)
 ```bash
 $ mt view --createdBy "bad name"
 ```
+
 ```bash
 validate error: 'bad name' is not a valid username
 ```
@@ -917,6 +952,7 @@ Creates a new issue. Title is required, all other flags are optional.
 ```
 mt create “title [--desc <text>] [--priority <p0-p9>] [--type <type>] [--assignee <name>]
 ```
+
 | Flag | Short | Description | Default |
 | — | — | — | — |
 | `--title` | `-t` | Issue title (max 50 chars) | required |
@@ -938,8 +974,9 @@ $ mt create “Add documentation” –d “Description of pros and cons” –a
 ```
 
 **Output:**
+
 ```
-Created issue manta-h3kp: Mobile friendly screens 
+Created issue manta-h3kp: Mobile friendly screens
 Created issue manta-ar10: Fix bug
 Created issue manta-nmec: Add documentation
 ```
@@ -951,6 +988,7 @@ Updates one or more fields on an existing issue. ID and at least one flag are re
 ```
 mt update manta-xxxx [--title <text>] [--desc <text>] [--priority <p>] [--status <s>] [--type <t>] [--assignee <name>]
 ```
+
 | Flag | Short | Description |
 | — | — | — |
 | `--title` | `-t` | New title |
@@ -1046,16 +1084,18 @@ Lists all open issues in a paginated table. Use left/right arrow keys to navigat
 ```bash
 $ mt view
 ```
+
 **Output:**
+
 ```
 ID      TITLE                                    STATUS    PRIORITY    TYPE    ASSIGNEE    CREATED BY
 -------------------------------------------------------------------------------------------------------------------------------
-g1xy    issue 1                                 open     	   p0        	task    	  -           	 katie     
-z1t9	issue 3                                 open	   p1        	bug    	  kngo           	 katie        
-n1vm	issue 2                                 open      	   p1        	task    	  -           	 katie     
-qx1z	issue 4                                 open      	   p1       	task    	  -           	 katie     
-44dv	issue 5                                 open      	   p1        	bug    	  kngo            	 katie     
-  
+g1xy    issue 1                                 open     	   p0        	task    	  -           	 katie
+z1t9	issue 3                                 open	   p1        	bug    	  kngo           	 katie
+n1vm	issue 2                                 open      	   p1        	task    	  -           	 katie
+qx1z	issue 4                                 open      	   p1       	task    	  -           	 katie
+44dv	issue 5                                 open      	   p1        	bug    	  kngo            	 katie
+
 < prev.    next >
 Page 1 of 2
 
@@ -1072,17 +1112,18 @@ $ mt view t4pd
 ```
 
 **Output:**
+
 ```
 issue 6                                                                                     manta-t4pd
 ------------------------------------------------------------------------------------------------------
 <no description>
 
 ------------------------------------------------------------------------------------------------------
-Priority: p5                                        Status: open                                       
-Assignee: -                                       Type: task                                         
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-Created by: katie @ 2026-06-05 18:51 PDT                                                              
-Updated by: katie @ 2026-06-05 18:51 PDT                                                              
+Priority: p5                                        Status: open
+Assignee: -                                       Type: task
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Created by: katie @ 2026-06-05 18:51 PDT
+Updated by: katie @ 2026-06-05 18:51 PDT
 
 Press ESC to exit
 ```
@@ -1115,6 +1156,7 @@ $ mt view –all
 ```
 
 **Combine multiple filters:**
+
 ```
 $ mt view --status open --priority p1
 $ mt view --type bug --assignee kngo
@@ -1126,15 +1168,17 @@ $ mt view --all --status closed
 ```
 ID      TITLE                                    STATUS    PRIORITY    TYPE    ASSIGNEE    CREATED BY
 -------------------------------------------------------------------------------------------------------------------------------
-z1t9	issue 3                                 open	   p1        	bug    	  kngo           	 katie        
-44dv	issue 5                                 open      	   p1        	bug    	  kngo            	 katie     
+z1t9	issue 3                                 open	   p1        	bug    	  kngo           	 katie
+44dv	issue 5                                 open      	   p1        	bug    	  kngo            	 katie
 
 < prev.    next >
 Page 1 of 1
 
 Press ESC to exit
 ```
+
 **Output (no issues found):**
+
 ```
 No issues found.
 ```
@@ -1151,6 +1195,7 @@ $ mt version
 ```
 
 **Output:**
+
 ```bash
 0.1.0
 ```
@@ -1268,27 +1313,27 @@ $ mt help create
 ## Issue Fields
 
 ### User-provided fields
-| Field | Required | Allowed values | Notes |
-| --- | --- | --- | --- |
-| title | Yes (create) | Any string, max 50 chars | Pass as positional arg or `--title` / `-t` |
-| description | No | Any string, max 512 chars | `--desc` or `-d` |
-| status | No | `open`, `in_progress`, `blocked`, `closed` | Defaults to `open` on create. Cannot be `closed` on create. |
-| priority | No | `p0`–`p9` | p0 is highest. Defaults to `p5` on create. |
-| type | No | `bug`, `feature`, `task`, `docs`, `store` | Defaults to `task`. `--type` (no shorthand) |
-| assignee | No | Letters only (a-z, A-Z) | `--assignee` or `-a` |
+
+| Field       | Required     | Allowed values                             | Notes                                                       |
+| ----------- | ------------ | ------------------------------------------ | ----------------------------------------------------------- |
+| title       | Yes (create) | Any string, max 50 chars                   | Pass as positional arg or `--title` / `-t`                  |
+| description | No           | Any string, max 512 chars                  | `--desc` or `-d`                                            |
+| status      | No           | `open`, `in_progress`, `blocked`, `closed` | Defaults to `open` on create. Cannot be `closed` on create. |
+| priority    | No           | `p0`–`p9`                                  | p0 is highest. Defaults to `p5` on create.                  |
+| type        | No           | `bug`, `feature`, `task`, `docs`, `store`  | Defaults to `task`. `--type` (no shorthand)                 |
+| assignee    | No           | Letters only (a-z, A-Z)                    | `--assignee` or `-a`                                        |
 
 ### Auto-assigned fields (read only)
 
 These fields are set automatically and cannot be modified by the user.
- 
-| Field | Description |
-|---|---|
-| ID | Unique ID in `manta-xxxx` format, assigned on creation |
-| createdAt | ISO timestamp when the issue was created |
-| createdBy | OS username of whoever created the issue, pulled from `process.env.USER` |
-| updatedAt | ISO timestamp of the most recent change |
-| updatedBy | OS username of whoever made the most recent change |
 
+| Field     | Description                                                              |
+| --------- | ------------------------------------------------------------------------ |
+| ID        | Unique ID in `manta-xxxx` format, assigned on creation                   |
+| createdAt | ISO timestamp when the issue was created                                 |
+| createdBy | OS username of whoever created the issue, pulled from `process.env.USER` |
+| updatedAt | ISO timestamp of the most recent change                                  |
+| updatedBy | OS username of whoever made the most recent change                       |
 
 ## Errors
 
@@ -1298,37 +1343,36 @@ If a command fails, Manta prints an error message and exits with code 1.
 
 See the sections below for full details and examples:
 
-| Error | Cause | Section |
-| --- | --- | --- |
-| `No input provided` | `mt` run with no command | [Running with no commands](#running-with-no-commands) |
-| `Missing required input: id` | update/close/delete called without an ID | [No ID when ID is required](#no-id-when-id-is-required) |
-| `Too few flags for 'update'` | update called with ID only, no fields to change | [Attempting to update with ID only](#attempting-to-update-with-id-only-no-fields) |
-| `Too many flags for 'close'/'delete'` | extra flags passed to close or delete | [Passing more than an ID to close/delete](#passing-more-than-an-id-to-closedelete) |
-| `Unexpected argument(s) detected` | arguments passed to version/sync/init | [Passing arguments to a no-argument command](#passing-arguments-to-a-no-argument-command) |
-| `Invalid flag` | flag doesn't start with `--` | [Incorrect flag format](#incorrect-flag-format) |
-| `Unknown flag` | flag not recognized | [Invalid flag](#invalid-flag) |
-| `Duplicate flag` | same flag used twice | [Duplicate flag](#duplicate-flag) |
-| `'mt migrate' does not take any flags` | flags passed to migrate or clear | [Command takes no flags](#command-takes-no-flags) |
-| `Flag '--createdBy' can only be used with 'view'` | createdBy used on wrong command | [createdBy used outside view](#createdby-used-outside-view) |
-| `Missing value for flag` | flag present but no value given | [Missing value for a flag](#missing-value-for-a-flag) |
-| `Unknown command` | unrecognized command | [Unknown command](#unknown-command) |
-| `Missing required input: title` | create called without a title | [create without a title](#create-without-a-title) |
-| `Invalid status 'closed' on create` | status set to closed on create | [create with a closed status](#create-with-a-closed-status) |
-| `Cannot filter by title or description` | view filtered by title or desc | [view filtered by title or description](#view-filtered-by-title-or-description) |
-| `Missing required input: path` | migrate/clear called without a path | [migrate without a path](#migrate-without-a-path) |
-| `validate error: not a valid issue id` | ID doesn't match `manta-<suffix>` | [Invalid issue ID](#invalid-issue-id) |
-| `validate error: title must be under 50 characters` | title too long | [Title too long](#title-too-long) |
-| `validate error: not a valid priority` | priority not in `p0`–`p9` | [Invalid priority](#invalid-priority) |
-| `validate error: not a valid status` | status not in allowed set | [Invalid status](#invalid-status) |
-| `validate error: not a valid type` | type not in allowed set | [Invalid type](#invalid-type) |
-| `validate error: not a valid assignee` | assignee contains non-letter characters | [Invalid assignee](#invalid-assignee) |
-
+| Error                                               | Cause                                           | Section                                                                                   |
+| --------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `No input provided`                                 | `mt` run with no command                        | [Running with no commands](#running-with-no-commands)                                     |
+| `Missing required input: id`                        | update/close/delete called without an ID        | [No ID when ID is required](#no-id-when-id-is-required)                                   |
+| `Too few flags for 'update'`                        | update called with ID only, no fields to change | [Attempting to update with ID only](#attempting-to-update-with-id-only-no-fields)         |
+| `Too many flags for 'close'/'delete'`               | extra flags passed to close or delete           | [Passing more than an ID to close/delete](#passing-more-than-an-id-to-closedelete)        |
+| `Unexpected argument(s) detected`                   | arguments passed to version/sync/init           | [Passing arguments to a no-argument command](#passing-arguments-to-a-no-argument-command) |
+| `Invalid flag`                                      | flag doesn't start with `--`                    | [Incorrect flag format](#incorrect-flag-format)                                           |
+| `Unknown flag`                                      | flag not recognized                             | [Invalid flag](#invalid-flag)                                                             |
+| `Duplicate flag`                                    | same flag used twice                            | [Duplicate flag](#duplicate-flag)                                                         |
+| `'mt migrate' does not take any flags`              | flags passed to migrate or clear                | [Command takes no flags](#command-takes-no-flags)                                         |
+| `Flag '--createdBy' can only be used with 'view'`   | createdBy used on wrong command                 | [createdBy used outside view](#createdby-used-outside-view)                               |
+| `Missing value for flag`                            | flag present but no value given                 | [Missing value for a flag](#missing-value-for-a-flag)                                     |
+| `Unknown command`                                   | unrecognized command                            | [Unknown command](#unknown-command)                                                       |
+| `Missing required input: title`                     | create called without a title                   | [create without a title](#create-without-a-title)                                         |
+| `Invalid status 'closed' on create`                 | status set to closed on create                  | [create with a closed status](#create-with-a-closed-status)                               |
+| `Cannot filter by title or description`             | view filtered by title or desc                  | [view filtered by title or description](#view-filtered-by-title-or-description)           |
+| `Missing required input: path`                      | migrate/clear called without a path             | [migrate without a path](#migrate-without-a-path)                                         |
+| `validate error: not a valid issue id`              | ID doesn't match `manta-<suffix>`               | [Invalid issue ID](#invalid-issue-id)                                                     |
+| `validate error: title must be under 50 characters` | title too long                                  | [Title too long](#title-too-long)                                                         |
+| `validate error: not a valid priority`              | priority not in `p0`–`p9`                       | [Invalid priority](#invalid-priority)                                                     |
+| `validate error: not a valid status`                | status not in allowed set                       | [Invalid status](#invalid-status)                                                         |
+| `validate error: not a valid type`                  | type not in allowed set                         | [Invalid type](#invalid-type)                                                             |
+| `validate error: not a valid assignee`              | assignee contains non-letter characters         | [Invalid assignee](#invalid-assignee)                                                     |
 
 ### Argument Count Errors
 
-####  Running with no commands
+#### Running with no commands
 
-Running `mt` without any commands will result in the following error. 
+Running `mt` without any commands will result in the following error.
 
 ```bash
 $ mt
@@ -1343,7 +1387,7 @@ No input provided. Commands look like: mt <cmd> [flags]
 For commands requiring an ID (update, close, delete), attempting to use the command without an ID will result in the following error.
 
 ```bash
-$ mt update 
+$ mt update
 $ mt update --type 'bug'
 $ mt close
 $ mt delete
@@ -1365,7 +1409,6 @@ $ mt update xxxx
 Too few flags for 'update:' No updates to any field were provided undefined
 ```
 
-
 #### Passing more than an ID to close/delete
 
 `close` and `delete` accept exactly one input (the ID). Any extra flag triggers the max-count error.
@@ -1374,9 +1417,11 @@ Too few flags for 'update:' No updates to any field were provided undefined
 $ mt close xxxx --priority p1
 $ mt delete xxxx --status open
 ```
+
 ```bash
 Too many flags for 'close:' Only an ID is expected
 ```
+
 ```bash
 Too many flags for 'delete:' Only an ID is expected
 ```
@@ -1390,14 +1435,14 @@ $ mt version 1.2.3
 $ mt sync now
 $ mt init extra
 ```
+
 ```bash
 Unexpected argument(s) detected - 'mt version' should be called with no arguments.
 ```
+
 (`version` is replaced by whichever of `version`/`sync`/`init` was run.)
 
 ### Parsing Errors
-
-
 
 #### Parser Check Order
 
@@ -1419,12 +1464,15 @@ Flags must begin with `--` followed by a letter. A single dash, or a dash follow
 ```bash
 $ mt create xxxx -priority p1
 ```
+
 ```bash
 Invalid flag '-priority': flags must start with --
 ```
+
 ```bash
 $ mt create 'incorrect format' --assignee example priority p1
 ```
+
 ```bash
 Invalid flag '-priority': flags must start with --
 ```
@@ -1437,10 +1485,12 @@ A token that starts with `--` but does not resolve to a known flag (after alias 
 $ mt create xxxx --foo bar
 $ mt update xxxx --proirity p1
 ```
+
 ```bash
 Unknown flag 'foo': valid flags are
 title, desc, status, priority, type, assignee, all, createdBy
 ```
+
 > [!NOTE]
 > Aliases that expand to a valid flag (`t`→title, `d`→desc, `p`→priority, `s`→status, `a`→assignee, `cb`→createdBy) are accepted; anything else is reported by its expanded form.
 
@@ -1452,9 +1502,11 @@ A flag may be provided once per command. Providing the same flag 2+ times, direc
 $ mt create xxxx --priority p1 --priority p2
 $ mt create xxxx --p p1 --priority p2
 ```
+
 ```bash
 Duplicate flag 'priority': --priority was already set
 ```
+
 The error reports the resolved flag name, so `--p` and `--priority` collide because both resolve to `priority`.
 
 #### Command takes no flags
@@ -1465,13 +1517,14 @@ The error reports the resolved flag name, so `--p` and `--priority` collide beca
 $ mt migrate ./beads.jsonl --title x
 $ mt clear ./.manta/manta.jsonl --status open
 ```
+
 ```bash
 'mt migrate' does not take any flags.
 ```
 
 > [!NOTE]
 > `migrate` is replaced by whichever no-flag command was run.
-> An *unknown* flag is caught by the "Invalid flag" check first; this error fires only for an otherwise-valid flag name used on a no-flag command.
+> An _unknown_ flag is caught by the "Invalid flag" check first; this error fires only for an otherwise-valid flag name used on a no-flag command.
 
 #### `--createdBy` used outside `view`
 
@@ -1481,6 +1534,7 @@ $ mt clear ./.manta/manta.jsonl --status open
 $ mt create xxxx --createdBy user
 $ mt update xxxx --cb user
 ```
+
 ```bash
 Flag '--createdBy' can only be used with the 'view' command
 ```
@@ -1493,11 +1547,13 @@ Every flag except `--all` requires a value. A flag immediately followed by anoth
 $ mt create xxxx --desc --priority p1
 $ mt update xxxx --status
 ```
+
 ```bash
 Missing value for flag 'desc'
 ```
->[!Note]
-The error names the flag whose value is missing.
+
+> [!Note]
+> The error names the flag whose value is missing.
 
 #### Value passed to a valueless flag
 
@@ -1506,6 +1562,7 @@ The error names the flag whose value is missing.
 ```bash
 $ mt view --all everything
 ```
+
 ```bash
 --'--all' flag cannot be called with a value.
 ```
@@ -1530,6 +1587,7 @@ Unknown command 'creat': valid commands are create, update, close, delete, versi
 ```bash
 $ mt create --priority p1
 ```
+
 ```bash
 Missing required input: title
 ```
@@ -1541,6 +1599,7 @@ An issue cannot be created already closed.
 ```bash
 $ mt create xxxx --status closed
 ```
+
 ```bash
 Invalid status 'closed': issues cannot be created with a closed status
 ```
@@ -1553,6 +1612,7 @@ Invalid status 'closed': issues cannot be created with a closed status
 $ mt view --title something
 $ mt view --desc something
 ```
+
 ```bash
 Cannot filter by title or description.
 Can only filter by: status, priority, type, assignee
@@ -1560,11 +1620,12 @@ Can only filter by: status, priority, type, assignee
 
 #### `migrate` without a path
 
-`mt migrate` requires a path to a Beads JSONL file. 
+`mt migrate` requires a path to a Beads JSONL file.
 
 ```bash
 $ mt migrate
 ```
+
 ```bash
 Missing required input: path to Beads JSONL file.
 Usage: mt migrate <path/to/beads.jsonl>
@@ -1577,6 +1638,7 @@ If `mt clear` is ran with an empty string, an error is thrown. `clear` with no a
 ```bash
 $ mt clear ''
 ```
+
 ```bash
 Missing required input: path to Manta JSONL file.
 Usage: mt clear <path/to/manta.jsonl>
@@ -1592,6 +1654,7 @@ bare suffix with `manta-`, so this fires mainly on malformed IDs.
 ```bash
 $ mt update manta- --priority p1
 ```
+
 ```bash
 validate error: 'manta-' is not a valid issue id
 ```
@@ -1603,6 +1666,7 @@ Max 50 characters.
 ```bash
 $ mt create "<51+ character title>"
 ```
+
 ```bash
 validate error: title must be under 50 characters
 ```
@@ -1614,6 +1678,7 @@ Max 512 characters.
 ```bash
 $ mt create xxxx --desc "<513+ character description>"
 ```
+
 ```bash
 validate error: description must be under 512 characters
 ```
@@ -1626,6 +1691,7 @@ Must match `p<N>` where N is a single digit (`p0`–`p9`).
 $ mt create xxxx --priority high
 $ mt update xxxx --priority p10
 ```
+
 ```bash
 validate error: 'high' is not a valid priority
 ```
@@ -1645,6 +1711,7 @@ Must be one of: `open, in_progress, blocked, closed`.
 ```bash
 $ mt update xxxx --status done
 ```
+
 ```bash
 validate error: 'done' is not a valid status
 ```
@@ -1664,6 +1731,7 @@ Must be one of: `bug, feature, task, docs, store`.
 ```bash
 $ mt create xxxx --type epic
 ```
+
 ```bash
 validate error: 'epic' is not a valid type
 ```
@@ -1675,6 +1743,7 @@ Alphabetic characters only (`^[a-zA-Z]+$`) — no digits, spaces, or symbols.
 ```bash
 $ mt create xxxx --assignee user_1
 ```
+
 ```bash
 validate error: 'user_1' is not a valid assignee
 ```
@@ -1694,6 +1763,7 @@ On `view`, `createdBy` must be alphanumeric plus underscores (`^[a-zA-Z0-9_]+$`)
 ```bash
 $ mt view --createdBy "bad name"
 ```
+
 ```bash
 validate error: 'bad name' is not a valid username
 ```
@@ -1709,11 +1779,13 @@ validate error: path must be a valid file path
 ## Stored Data
 
 All Manta data is stored in the `.manta/` folder in this repo:
+
 - `.manta/manta.jsonl`: append-only event log committed to git (source of truth)
-- `.manta/manta.db`: local SQLite cache for fast queries 
+- `.manta/manta.db`: local SQLite cache for fast queries
 
 You can read `.manta/manta.jsonl` directly if you need to inspect the raw event history.
 Each line is a JSON object describing one event (create, update, close, delete).
+
 # Agent Guide for Manta
 
 This file tells you everything you need to use Manta from the terminal. Manta is an issue tracker. You can create, update, close, delete, and view issues using the `mt` command. All data is stored locally in this repo under `.manta/`.
@@ -1780,15 +1852,14 @@ Creates a new issue. Title is required, all other flags are optional.
 mt create “title [--desc <text>] [--priority <p0-p9>] [--type <type>] [--assignee <name>]
 ```
 
-| Flag | Short | Description | Default |
-| --- | --- | --- | --- |
-| `--title` | `-t` | Issue title (max 50 chars) | required |
-| `--desc` | `-d` | Longer description (max 512 chars) | empty |
-| `--priority` | `-p` | Priority level: `p0` - `p9` (p0 is highest) | `p5` |
-| `--status` | `-s` | Initial status: `open`, `in_progress`, `blocked` | `open` |
-| `--type` | `-` | Type: `bug`, `feature`, `task`, `docs` &#124; `store` | `task` |
-| `--assignee` | `-a` | Who is working on this issue (letters only) | empty |
-
+| Flag         | Short | Description                                           | Default  |
+| ------------ | ----- | ----------------------------------------------------- | -------- |
+| `--title`    | `-t`  | Issue title (max 50 chars)                            | required |
+| `--desc`     | `-d`  | Longer description (max 512 chars)                    | empty    |
+| `--priority` | `-p`  | Priority level: `p0` - `p9` (p0 is highest)           | `p5`     |
+| `--status`   | `-s`  | Initial status: `open`, `in_progress`, `blocked`      | `open`   |
+| `--type`     | `-`   | Type: `bug`, `feature`, `task`, `docs` &#124; `store` | `task`   |
+| `--assignee` | `-a`  | Who is working on this issue (letters only)           | empty    |
 
 > [!NOTE]
 > `closed` is not a valid status on create. Use `mt close` to close an issue.
@@ -1802,8 +1873,9 @@ $ mt create “Add documentation” –d “Description of pros and cons” –a
 ```
 
 **Output:**
+
 ```
-Created issue manta-h3kp: Mobile friendly screens 
+Created issue manta-h3kp: Mobile friendly screens
 Created issue manta-ar10: Fix bug
 Created issue manta-nmec: Add documentation
 ```
@@ -1911,16 +1983,18 @@ Lists all open issues in a paginated table. Use left/right arrow keys to navigat
 ```bash
 $ mt view
 ```
+
 **Output:**
+
 ```
 ID      TITLE                                    STATUS    PRIORITY    TYPE    ASSIGNEE    CREATED BY
 -------------------------------------------------------------------------------------------------------------------------------
-g1xy    issue 1                                 open     	   p0        	task    	  -           	 katie     
-z1t9	issue 3                                 open	   p1        	bug    	  kngo           	 katie        
-n1vm	issue 2                                 open      	   p1        	task    	  -           	 katie     
-qx1z	issue 4                                 open      	   p1       	task    	  -           	 katie     
-44dv	issue 5                                 open      	   p1        	bug    	  kngo            	 katie     
-  
+g1xy    issue 1                                 open     	   p0        	task    	  -           	 katie
+z1t9	issue 3                                 open	   p1        	bug    	  kngo           	 katie
+n1vm	issue 2                                 open      	   p1        	task    	  -           	 katie
+qx1z	issue 4                                 open      	   p1       	task    	  -           	 katie
+44dv	issue 5                                 open      	   p1        	bug    	  kngo            	 katie
+
 < prev.    next >
 Page 1 of 2
 
@@ -1937,17 +2011,18 @@ $ mt view t4pd
 ```
 
 **Output:**
+
 ```
 issue 6                                                                                     manta-t4pd
 ------------------------------------------------------------------------------------------------------
 <no description>
 
 ------------------------------------------------------------------------------------------------------
-Priority: p5                                        Status: open                                       
-Assignee: -                                       Type: task                                         
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-Created by: katie @ 2026-06-05 18:51 PDT                                                              
-Updated by: katie @ 2026-06-05 18:51 PDT                                                              
+Priority: p5                                        Status: open
+Assignee: -                                       Type: task
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Created by: katie @ 2026-06-05 18:51 PDT
+Updated by: katie @ 2026-06-05 18:51 PDT
 
 Press ESC to exit
 ```
@@ -1980,6 +2055,7 @@ $ mt view –all
 ```
 
 **Combine multiple filters:**
+
 ```
 $ mt view --status open --priority p1
 $ mt view --type bug --assignee kngo
@@ -1991,15 +2067,17 @@ $ mt view --all --status closed
 ```
 ID      TITLE                                    STATUS    PRIORITY    TYPE    ASSIGNEE    CREATED BY
 -------------------------------------------------------------------------------------------------------------------------------
-z1t9	issue 3                                 open	   p1        	bug    	  kngo           	 katie        
-44dv	issue 5                                 open      	   p1        	bug    	  kngo            	 katie     
+z1t9	issue 3                                 open	   p1        	bug    	  kngo           	 katie
+44dv	issue 5                                 open      	   p1        	bug    	  kngo            	 katie
 
 < prev.    next >
 Page 1 of 1
 
 Press ESC to exit
 ```
+
 **Output (no issues found):**
+
 ```
 No issues found.
 ```
@@ -2016,6 +2094,7 @@ $ mt version
 ```
 
 **Output:**
+
 ```bash
 0.1.0
 ```
@@ -2133,27 +2212,27 @@ $ mt help create
 ## Issue Fields
 
 ### User-provided fields
-| Field | Required | Allowed values | Notes |
-| --- | --- | --- | --- |
-| title | Yes (create) | Any string, max 50 chars | Pass as positional arg or `--title` / `-t` |
-| description | No | Any string, max 512 chars | `--desc` or `-d` |
-| status | No | `open`, `in_progress`, `blocked`, `closed` | Defaults to `open` on create. Cannot be `closed` on create. |
-| priority | No | `p0`–`p9` | p0 is highest. Defaults to `p5` on create. |
-| type | No | `bug`, `feature`, `task`, `docs`, `store` | Defaults to `task`. `--type` (no shorthand) |
-| assignee | No | Letters only (a-z, A-Z) | `--assignee` or `-a` |
+
+| Field       | Required     | Allowed values                             | Notes                                                       |
+| ----------- | ------------ | ------------------------------------------ | ----------------------------------------------------------- |
+| title       | Yes (create) | Any string, max 50 chars                   | Pass as positional arg or `--title` / `-t`                  |
+| description | No           | Any string, max 512 chars                  | `--desc` or `-d`                                            |
+| status      | No           | `open`, `in_progress`, `blocked`, `closed` | Defaults to `open` on create. Cannot be `closed` on create. |
+| priority    | No           | `p0`–`p9`                                  | p0 is highest. Defaults to `p5` on create.                  |
+| type        | No           | `bug`, `feature`, `task`, `docs`, `store`  | Defaults to `task`. `--type` (no shorthand)                 |
+| assignee    | No           | Letters only (a-z, A-Z)                    | `--assignee` or `-a`                                        |
 
 ### Auto-assigned fields (read only)
 
 These fields are set automatically and cannot be modified by the user.
- 
-| Field | Description |
-|---|---|
-| ID | Unique ID in `manta-xxxx` format, assigned on creation |
-| createdAt | ISO timestamp when the issue was created |
-| createdBy | OS username of whoever created the issue, pulled from `process.env.USER` |
-| updatedAt | ISO timestamp of the most recent change |
-| updatedBy | OS username of whoever made the most recent change |
 
+| Field     | Description                                                              |
+| --------- | ------------------------------------------------------------------------ |
+| ID        | Unique ID in `manta-xxxx` format, assigned on creation                   |
+| createdAt | ISO timestamp when the issue was created                                 |
+| createdBy | OS username of whoever created the issue, pulled from `process.env.USER` |
+| updatedAt | ISO timestamp of the most recent change                                  |
+| updatedBy | OS username of whoever made the most recent change                       |
 
 ## Errors
 
@@ -2163,37 +2242,36 @@ If a command fails, Manta prints an error message and exits with code 1.
 
 See the sections below for full details and examples:
 
-| Error | Cause | Section |
-| --- | --- | --- |
-| `No input provided` | `mt` run with no command | [Running with no commands](#running-with-no-commands) |
-| `Missing required input: id` | update/close/delete called without an ID | [No ID when ID is required](#no-id-when-id-is-required) |
-| `Too few flags for 'update'` | update called with ID only, no fields to change | [Attempting to update with ID only](#attempting-to-update-with-id-only-no-fields) |
-| `Too many flags for 'close'/'delete'` | extra flags passed to close or delete | [Passing more than an ID to close/delete](#passing-more-than-an-id-to-closedelete) |
-| `Unexpected argument(s) detected` | arguments passed to version/sync/init | [Passing arguments to a no-argument command](#passing-arguments-to-a-no-argument-command) |
-| `Invalid flag` | flag doesn't start with `--` | [Incorrect flag format](#incorrect-flag-format) |
-| `Unknown flag` | flag not recognized | [Invalid flag](#invalid-flag) |
-| `Duplicate flag` | same flag used twice | [Duplicate flag](#duplicate-flag) |
-| `'mt migrate' does not take any flags` | flags passed to migrate or clear | [Command takes no flags](#command-takes-no-flags) |
-| `Flag '--createdBy' can only be used with 'view'` | createdBy used on wrong command | [createdBy used outside view](#createdby-used-outside-view) |
-| `Missing value for flag` | flag present but no value given | [Missing value for a flag](#missing-value-for-a-flag) |
-| `Unknown command` | unrecognized command | [Unknown command](#unknown-command) |
-| `Missing required input: title` | create called without a title | [create without a title](#create-without-a-title) |
-| `Invalid status 'closed' on create` | status set to closed on create | [create with a closed status](#create-with-a-closed-status) |
-| `Cannot filter by title or description` | view filtered by title or desc | [view filtered by title or description](#view-filtered-by-title-or-description) |
-| `Missing required input: path` | migrate/clear called without a path | [migrate without a path](#migrate-without-a-path) |
-| `validate error: not a valid issue id` | ID doesn't match `manta-<suffix>` | [Invalid issue ID](#invalid-issue-id) |
-| `validate error: title must be under 50 characters` | title too long | [Title too long](#title-too-long) |
-| `validate error: not a valid priority` | priority not in `p0`–`p9` | [Invalid priority](#invalid-priority) |
-| `validate error: not a valid status` | status not in allowed set | [Invalid status](#invalid-status) |
-| `validate error: not a valid type` | type not in allowed set | [Invalid type](#invalid-type) |
-| `validate error: not a valid assignee` | assignee contains non-letter characters | [Invalid assignee](#invalid-assignee) |
-
+| Error                                               | Cause                                           | Section                                                                                   |
+| --------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `No input provided`                                 | `mt` run with no command                        | [Running with no commands](#running-with-no-commands)                                     |
+| `Missing required input: id`                        | update/close/delete called without an ID        | [No ID when ID is required](#no-id-when-id-is-required)                                   |
+| `Too few flags for 'update'`                        | update called with ID only, no fields to change | [Attempting to update with ID only](#attempting-to-update-with-id-only-no-fields)         |
+| `Too many flags for 'close'/'delete'`               | extra flags passed to close or delete           | [Passing more than an ID to close/delete](#passing-more-than-an-id-to-closedelete)        |
+| `Unexpected argument(s) detected`                   | arguments passed to version/sync/init           | [Passing arguments to a no-argument command](#passing-arguments-to-a-no-argument-command) |
+| `Invalid flag`                                      | flag doesn't start with `--`                    | [Incorrect flag format](#incorrect-flag-format)                                           |
+| `Unknown flag`                                      | flag not recognized                             | [Invalid flag](#invalid-flag)                                                             |
+| `Duplicate flag`                                    | same flag used twice                            | [Duplicate flag](#duplicate-flag)                                                         |
+| `'mt migrate' does not take any flags`              | flags passed to migrate or clear                | [Command takes no flags](#command-takes-no-flags)                                         |
+| `Flag '--createdBy' can only be used with 'view'`   | createdBy used on wrong command                 | [createdBy used outside view](#createdby-used-outside-view)                               |
+| `Missing value for flag`                            | flag present but no value given                 | [Missing value for a flag](#missing-value-for-a-flag)                                     |
+| `Unknown command`                                   | unrecognized command                            | [Unknown command](#unknown-command)                                                       |
+| `Missing required input: title`                     | create called without a title                   | [create without a title](#create-without-a-title)                                         |
+| `Invalid status 'closed' on create`                 | status set to closed on create                  | [create with a closed status](#create-with-a-closed-status)                               |
+| `Cannot filter by title or description`             | view filtered by title or desc                  | [view filtered by title or description](#view-filtered-by-title-or-description)           |
+| `Missing required input: path`                      | migrate/clear called without a path             | [migrate without a path](#migrate-without-a-path)                                         |
+| `validate error: not a valid issue id`              | ID doesn't match `manta-<suffix>`               | [Invalid issue ID](#invalid-issue-id)                                                     |
+| `validate error: title must be under 50 characters` | title too long                                  | [Title too long](#title-too-long)                                                         |
+| `validate error: not a valid priority`              | priority not in `p0`–`p9`                       | [Invalid priority](#invalid-priority)                                                     |
+| `validate error: not a valid status`                | status not in allowed set                       | [Invalid status](#invalid-status)                                                         |
+| `validate error: not a valid type`                  | type not in allowed set                         | [Invalid type](#invalid-type)                                                             |
+| `validate error: not a valid assignee`              | assignee contains non-letter characters         | [Invalid assignee](#invalid-assignee)                                                     |
 
 ### Argument Count Errors
 
-####  Running with no commands
+#### Running with no commands
 
-Running `mt` without any commands will result in the following error. 
+Running `mt` without any commands will result in the following error.
 
 ```bash
 $ mt
@@ -2208,7 +2286,7 @@ No input provided. Commands look like: mt <cmd> [flags]
 For commands requiring an ID (update, close, delete), attempting to use the command without an ID will result in the following error.
 
 ```bash
-$ mt update 
+$ mt update
 $ mt update --type 'bug'
 $ mt close
 $ mt delete
@@ -2230,7 +2308,6 @@ $ mt update xxxx
 Too few flags for 'update:' No updates to any field were provided undefined
 ```
 
-
 #### Passing more than an ID to close/delete
 
 `close` and `delete` accept exactly one input (the ID). Any extra flag triggers the max-count error.
@@ -2239,9 +2316,11 @@ Too few flags for 'update:' No updates to any field were provided undefined
 $ mt close xxxx --priority p1
 $ mt delete xxxx --status open
 ```
+
 ```bash
 Too many flags for 'close:' Only an ID is expected
 ```
+
 ```bash
 Too many flags for 'delete:' Only an ID is expected
 ```
@@ -2255,14 +2334,14 @@ $ mt version 1.2.3
 $ mt sync now
 $ mt init extra
 ```
+
 ```bash
 Unexpected argument(s) detected - 'mt version' should be called with no arguments.
 ```
+
 (`version` is replaced by whichever of `version`/`sync`/`init` was run.)
 
 ### Parsing Errors
-
-
 
 #### Parser Check Order
 
@@ -2284,12 +2363,15 @@ Flags must begin with `--` followed by a letter. A single dash, or a dash follow
 ```bash
 $ mt create xxxx -priority p1
 ```
+
 ```bash
 Invalid flag '-priority': flags must start with --
 ```
+
 ```bash
 $ mt create 'incorrect format' --assignee example priority p1
 ```
+
 ```bash
 Invalid flag '-priority': flags must start with --
 ```
@@ -2302,10 +2384,12 @@ A token that starts with `--` but does not resolve to a known flag (after alias 
 $ mt create xxxx --foo bar
 $ mt update xxxx --proirity p1
 ```
+
 ```bash
 Unknown flag 'foo': valid flags are
 title, desc, status, priority, type, assignee, all, createdBy
 ```
+
 > [!NOTE]
 > Aliases that expand to a valid flag (`t`→title, `d`→desc, `p`→priority, `s`→status, `a`→assignee, `cb`→createdBy) are accepted; anything else is reported by its expanded form.
 
@@ -2317,9 +2401,11 @@ A flag may be provided once per command. Providing the same flag 2+ times, direc
 $ mt create xxxx --priority p1 --priority p2
 $ mt create xxxx --p p1 --priority p2
 ```
+
 ```bash
 Duplicate flag 'priority': --priority was already set
 ```
+
 The error reports the resolved flag name, so `--p` and `--priority` collide because both resolve to `priority`.
 
 #### Command takes no flags
@@ -2330,13 +2416,14 @@ The error reports the resolved flag name, so `--p` and `--priority` collide beca
 $ mt migrate ./beads.jsonl --title x
 $ mt clear ./.manta/manta.jsonl --status open
 ```
+
 ```bash
 'mt migrate' does not take any flags.
 ```
 
 > [!NOTE]
 > `migrate` is replaced by whichever no-flag command was run.
-> An *unknown* flag is caught by the "Invalid flag" check first; this error fires only for an otherwise-valid flag name used on a no-flag command.
+> An _unknown_ flag is caught by the "Invalid flag" check first; this error fires only for an otherwise-valid flag name used on a no-flag command.
 
 #### `--createdBy` used outside `view`
 
@@ -2346,6 +2433,7 @@ $ mt clear ./.manta/manta.jsonl --status open
 $ mt create xxxx --createdBy user
 $ mt update xxxx --cb user
 ```
+
 ```bash
 Flag '--createdBy' can only be used with the 'view' command
 ```
@@ -2358,11 +2446,13 @@ Every flag except `--all` requires a value. A flag immediately followed by anoth
 $ mt create xxxx --desc --priority p1
 $ mt update xxxx --status
 ```
+
 ```bash
 Missing value for flag 'desc'
 ```
->[!Note]
-The error names the flag whose value is missing.
+
+> [!Note]
+> The error names the flag whose value is missing.
 
 #### Value passed to a valueless flag
 
@@ -2371,6 +2461,7 @@ The error names the flag whose value is missing.
 ```bash
 $ mt view --all everything
 ```
+
 ```bash
 --'--all' flag cannot be called with a value.
 ```
@@ -2395,6 +2486,7 @@ Unknown command 'creat': valid commands are create, update, close, delete, versi
 ```bash
 $ mt create --priority p1
 ```
+
 ```bash
 Missing required input: title
 ```
@@ -2406,6 +2498,7 @@ An issue cannot be created already closed.
 ```bash
 $ mt create xxxx --status closed
 ```
+
 ```bash
 Invalid status 'closed': issues cannot be created with a closed status
 ```
@@ -2418,6 +2511,7 @@ Invalid status 'closed': issues cannot be created with a closed status
 $ mt view --title something
 $ mt view --desc something
 ```
+
 ```bash
 Cannot filter by title or description.
 Can only filter by: status, priority, type, assignee
@@ -2425,11 +2519,12 @@ Can only filter by: status, priority, type, assignee
 
 #### `migrate` without a path
 
-`mt migrate` requires a path to a Beads JSONL file. 
+`mt migrate` requires a path to a Beads JSONL file.
 
 ```bash
 $ mt migrate
 ```
+
 ```bash
 Missing required input: path to Beads JSONL file.
 Usage: mt migrate <path/to/beads.jsonl>
@@ -2442,6 +2537,7 @@ If `mt clear` is ran with an empty string, an error is thrown. `clear` with no a
 ```bash
 $ mt clear ''
 ```
+
 ```bash
 Missing required input: path to Manta JSONL file.
 Usage: mt clear <path/to/manta.jsonl>
@@ -2457,6 +2553,7 @@ bare suffix with `manta-`, so this fires mainly on malformed IDs.
 ```bash
 $ mt update manta- --priority p1
 ```
+
 ```bash
 validate error: 'manta-' is not a valid issue id
 ```
@@ -2468,6 +2565,7 @@ Max 50 characters.
 ```bash
 $ mt create "<51+ character title>"
 ```
+
 ```bash
 validate error: title must be under 50 characters
 ```
@@ -2479,6 +2577,7 @@ Max 512 characters.
 ```bash
 $ mt create xxxx --desc "<513+ character description>"
 ```
+
 ```bash
 validate error: description must be under 512 characters
 ```
@@ -2491,6 +2590,7 @@ Must match `p<N>` where N is a single digit (`p0`–`p9`).
 $ mt create xxxx --priority high
 $ mt update xxxx --priority p10
 ```
+
 ```bash
 validate error: 'high' is not a valid priority
 ```
@@ -2510,6 +2610,7 @@ Must be one of: `open, in_progress, blocked, closed`.
 ```bash
 $ mt update xxxx --status done
 ```
+
 ```bash
 validate error: 'done' is not a valid status
 ```
@@ -2529,6 +2630,7 @@ Must be one of: `bug, feature, task, docs, store`.
 ```bash
 $ mt create xxxx --type epic
 ```
+
 ```bash
 validate error: 'epic' is not a valid type
 ```
@@ -2540,6 +2642,7 @@ Alphabetic characters only (`^[a-zA-Z]+$`) — no digits, spaces, or symbols.
 ```bash
 $ mt create xxxx --assignee user_1
 ```
+
 ```bash
 validate error: 'user_1' is not a valid assignee
 ```
@@ -2559,6 +2662,7 @@ On `view`, `createdBy` must be alphanumeric plus underscores (`^[a-zA-Z0-9_]+$`)
 ```bash
 $ mt view --createdBy "bad name"
 ```
+
 ```bash
 validate error: 'bad name' is not a valid username
 ```
@@ -2574,16 +2678,17 @@ validate error: path must be a valid file path
 ## Stored Data
 
 All Manta data is stored in the `.manta/` folder in this repo:
+
 - `.manta/manta.jsonl`: append-only event log committed to git (source of truth)
-- `.manta/manta.db`: local SQLite cache for fast queries 
+- `.manta/manta.db`: local SQLite cache for fast queries
 
 You can read `.manta/manta.jsonl` directly if you need to inspect the raw event history.
 Each line is a JSON object describing one event (create, update, close, delete).
 
-
 All Manta data is stored in the `.manta/` folder in this repo:
+
 - `.manta/manta.jsonl`: append-only event log committed to git (source of truth)
-- `.manta/manta.db`: local SQLite cache for fast queries 
+- `.manta/manta.db`: local SQLite cache for fast queries
 
 You can read `.manta/manta.jsonl` directly if you need to inspect the raw event history.
 Each line is a JSON object describing one event (create, update, close, delete).
