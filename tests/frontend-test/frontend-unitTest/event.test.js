@@ -146,7 +146,7 @@ describe('create_event() — create', () => {
     expect(event.actor).toBe('bob');
   });
 
-  // $USER wins when both $USER and $USERNAME are present.
+  // $USER wins when both Unix and Windows env vars are present.
   test('prefers $USER over $USERNAME when both are set', () => {
     process.env.USER = 'alice';
     process.env.USERNAME = 'bob';
@@ -237,7 +237,7 @@ describe('create_event() — update', () => {
     expect(event.changes).not.toHaveProperty('assignee');
   });
 
-  // Single-field updates for status.
+  // Single-field updates for status and assignee.
   test('updates status only', () => {
     const event = create_event(
       makeParse('update', { id: 'manta-xy99', status: 'in_progress' }),
@@ -247,7 +247,7 @@ describe('create_event() — update', () => {
       ['status', 'updatedAt', 'updatedBy'].sort(),
     );
   });
-  // Single-field updates for assignee.
+
   test('updates assignee only', () => {
     const event = create_event(
       makeParse('update', { id: 'manta-xy99', assignee: 'Dave' }),
@@ -296,6 +296,8 @@ describe('create_event() — close', () => {
 
     expect(event.type).toBe('issue.updated');
     expect(event.issueId).toBe('manta-hk3p');
+    expect(event.actor).toBe('local-user');
+    expect(event.timestamp).toBe(event.changes.updatedAt);
     expect(event.changes).toEqual({
       status: 'closed',
       updatedAt: event.timestamp,
@@ -315,6 +317,8 @@ describe('create_event() — delete', () => {
       actor: 'local-user',
       issueId: 'manta-tzdb',
     });
+    expect(event).not.toHaveProperty('changes');
+    expect(event).not.toHaveProperty('issue');
     expectIsoTimestamp(event.timestamp);
   });
 });
