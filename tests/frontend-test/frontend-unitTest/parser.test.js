@@ -89,7 +89,16 @@ describe('parse() — create', () => {
   // status, priority, and type values are lowercased; preserve_case flags are not.
   test('lowercases status, priority, and type flag values', () => {
     const result = parse(
-      argv('create', 'T', '--status', 'IN_PROGRESS', '--priority', 'P1', '--type', 'BUG'),
+      argv(
+        'create',
+        'T',
+        '--status',
+        'IN_PROGRESS',
+        '--priority',
+        'P1',
+        '--type',
+        'BUG',
+      ),
     );
     expect(result.flags.status).toBe('in_progress');
     expect(result.flags.priority).toBe('p1');
@@ -609,9 +618,7 @@ describe('parse() — no-arg and path commands', () => {
 
     // Unknown subcommands get a help-specific error message.
     test('rejects unknown help subcommand', () => {
-      expect(() => parse(argv('help', 'fly'))).toThrow(
-        /Unknown command 'fly'/,
-      );
+      expect(() => parse(argv('help', 'fly'))).toThrow(/Unknown command 'fly'/);
       expect(() => parse(argv('help', 'fly'))).toThrow(/Run 'mt help'/);
     });
 
