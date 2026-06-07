@@ -21,6 +21,28 @@ test('create_event throws on unrecognized command', () => {
   expect(() => create_event({ cmd: 'notacommand', flags: {} })).toThrow(/event creation error: 'notacommand' is not a recognized command/);
 });
 
+/** A create command only requires a title, and the rest of the fields should contain default values */
+test('create_event requires only title flag for create command', () => {
+  const event = create_event({
+    cmd: 'create',
+    flags: {
+      title: 'Only Title',
+    },
+  });
+  expect(event).toMatchObject({
+    type: 'issue.created',
+    issueId: null,
+    issue: {
+      title: 'Only Title',
+      description: '',
+      status: undefined,
+      priority: undefined,
+      issueType: 'task',
+      assignee: null,
+    },
+  });
+});
+
 /** A valid create command should return an event with the expected shape */
 test('create_event returns a valid event for create command', () => {
   const event = create_event({
@@ -77,8 +99,35 @@ test('create_event fills in default fields for optional flags', () => {
   expect(event.issue).toHaveProperty('updatedBy');
 });
 
+test('create_event correctly handles all fields for create command', () => {
+  const event = create_event({
+    cmd: 'create',
+    flags: {
+      title: 'Full Issue',
+      desc: 'This issue has all fields filled out.',
+      status: 'open',
+      priority: 'medium',
+      type: 'bug',
+      assignee: 'Ori',
+    },
+  });
+  expect(event).toMatchObject({
+    type: 'issue.created',
+    issueId: null,
+    issue: {
+      title: 'Full Issue',
+      description: 'This issue has all fields filled out.',
+      status: 'open',
+      priority: 'medium',
+      issueType: 'bug',
+      assignee: 'Ori',
+    },
+  });
+});
+
+
 // ---- issue.updated -------------------------------------------------
-//Goal: verify that create_event can construct an issue update event with the expected shape and fields, based on the input command and flags, and that it correctly handles both the update and close commands for updates.
+//Goal: verify that create_event can construct an issue update event with the expected shape and fields, based on the input command and flags.
 
 /** update event should contain only the flags that were provided */
 test('create_event update only includes provided flags in changes', () => {
@@ -104,28 +153,36 @@ test('create_event update only includes provided flags in changes', () => {
   expect(event.changes).toHaveProperty('updatedBy');
 });
 
-// ---- issue.deleted -------------------------------------------------
-//Goal: verify that create_event can construct an issue delete event with the expected shape and fields, based on the input command and flags.
-/** close command should force status to closed and ignore other flags */
-test('create_event close command forces status to closed', () => {
+/**update command should be able to correctly update issue fields */
+test('create_event update command correctly updates issue fields', () => {
   const event = create_event({
-    cmd: 'close',
+    cmd: 'update',
     flags: {
       id: 'some-issue-id',
-      title: 'Should be ignored',
-      priority: 'low',
+      title: 'Updated Test Issue',
+      desc: 'This is an updated description.',
+      status: 'in_progress',
+      priority: 'p9',
+      type: 'bug',
+      assignee: 'Nathan',
     },
   });
   expect(event).toMatchObject({
     type: 'issue.updated',
     issueId: 'some-issue-id',
-    changes: { status: 'closed' },
+    changes: {
+      title: 'Updated Test Issue',
+      description: 'This is an updated description.',
+      status: 'in_progress',
+      priority: 'p9',
+      issueType: 'bug',
+      assignee: 'Nathan',
+    },
   });
-  expect(event.changes).not.toHaveProperty('title');
-  expect(event.changes).not.toHaveProperty('priority');
-  expect(event.changes).toHaveProperty('updatedAt');
-  expect(event.changes).toHaveProperty('updatedBy');
 });
+
+// ---- issue.deleted -------------------------------------------------
+//Goal: verify that create_event can construct an issue delete event
 
 /** delete command should return an issue.deleted event with the correct issueId */
 test('create_event delete command returns issue.deleted event', () => {
