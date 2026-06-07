@@ -24,8 +24,12 @@ const AGENT_MD_TEMPLATE = new URL('../agent.md', import.meta.url);
  * - Prints a reminder to run `git config pull.rebase false`.
  */
 export function init() {
-  // Detect if already initialized.
-  const alreadyInitialized = existsSync(MANTA_DIR);
+  // Detect if already initialized. We check .gitattributes for the merge
+  // line rather than .manta/ because db.js creates .manta/ as a side effect
+  // of being imported, before init() ever runs.
+  const alreadyInitialized =
+    existsSync(GITATTRIBUTES_PATH) &&
+    readFileSync(GITATTRIBUTES_PATH, 'utf8').includes(GITATTRIBUTES_LINE);
 
   if (alreadyInitialized) {
     console.log('Manta is already initialized in this repository.');
