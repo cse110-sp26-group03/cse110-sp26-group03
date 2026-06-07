@@ -119,6 +119,6 @@ forward by one appended line. Grouped into six `describe()` blocks:
   missing issues and leaves a row untouched on an empty update.
 
 Both functions accept a `logPath` override, so tests use throwaway files under
-the OS temp directory and never touch the real `.manta/manta.jsonl`. 
+the OS temp directory and never touch the real `.manta/manta.jsonl`.
 
 ---

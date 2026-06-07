@@ -35,8 +35,7 @@ This test suite has three tests in this order:
 
 This test suite currently has one active test:
 
-Checks that an omitted id is accepted 
-
+Checks that an omitted id is accepted
 
 ## check_title() Tests
 
