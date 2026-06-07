@@ -23,13 +23,7 @@
  * Each test runs in its own mkdtemp dir, so the `.manta/manta.jsonl` log and
  * `.manta/manta.db` cache are fully isolated between cases.
  */
-import {
-  test,
-  expect,
-  describe,
-  beforeEach,
-  afterEach,
-} from 'bun:test';
+import { test, expect, describe, beforeEach, afterEach } from 'bun:test';
 import { spawnSync } from 'node:child_process';
 import {
   mkdtempSync,
@@ -47,7 +41,10 @@ const CLI = fileURLToPath(new URL('../../src/cli/index.js', import.meta.url));
 
 // The version the CLI should report, read from the same package.json it reads.
 const PKG_VERSION = JSON.parse(
-  readFileSync(fileURLToPath(new URL('../../package.json', import.meta.url)), 'utf8'),
+  readFileSync(
+    fileURLToPath(new URL('../../package.json', import.meta.url)),
+    'utf8',
+  ),
 ).version;
 
 /** Per-test isolated working directory; the CLI operates on its `.manta/`. */
@@ -246,9 +243,9 @@ describe('mt delete', () => {
       .trim()
       .split('\n')
       .map((l) => JSON.parse(l));
-    expect(events.some((e) => e.type === 'issue.deleted' && e.issueId === id)).toBe(
-      true,
-    );
+    expect(
+      events.some((e) => e.type === 'issue.deleted' && e.issueId === id),
+    ).toBe(true);
   });
 
   test('deleting a non-existent issue fails with a clear error', () => {
