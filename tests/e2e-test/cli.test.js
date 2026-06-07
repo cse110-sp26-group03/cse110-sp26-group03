@@ -1,27 +1,28 @@
 /**
  * End-to-end tests for the `mt` CLI (`src/cli/index.js`).
  *
- * Unlike the unit tests, these exercise the whole program across a real
- * process boundary: each case spawns `bun src/cli/index.js ...` as a child
- * process in a fresh temp directory and asserts only on observable behavior
- * -- stdout, stderr, exit code, and the on-disk `.manta` artifacts. Nothing
- * here reaches into module internals, so the suite stays honest about what a
- * user actually sees.
+ * These tests run the program the way a real user would. Each test spawns
+ * `bun src/cli/index.js ...` as a separate process in a fresh temporary
+ * directory, and checks only what can be observed from the outside: stdout,
+ * stderr, the exit code, and the files the CLI writes under `.manta/`. None of
+ * them reach into the program's internal modules.
  *
- * The full write pipeline under test (per index.js):
+ * The full write pipeline under test (see index.js):
  *   argv -> parse -> validate -> syncFromLog -> create_event -> applyEvent -> print
- * plus the read-only / early-exit paths: version, init, view, sync, clear, delete.
+ * The read-only and early-exit commands are also covered: version, init, view,
+ * sync, clear, and delete.
  *
- * Why spawning is deterministic here:
- *   - A child process's stdin is not a TTY, so `process.stdin.isTTY` is falsy.
- *     index.js therefore skips the interactive y/N prompt and lets delete and
- *     clear proceed unattended.
- *   - For the same reason display.js detects a non-TTY stdout and prints the
- *     view once instead of entering its interactive alt-screen loop, so
- *     `mt view` returns immediately instead of hanging.
+ * Running the CLI as a child process keeps the tests deterministic, for two
+ * reasons:
+ *   - A child process has no terminal attached to its input, so
+ *     `process.stdin.isTTY` is undefined. In that case index.js skips the
+ *     interactive y/N prompt, so delete and clear run without asking.
+ *   - For the same reason, display.js sees that stdout is not a terminal and
+ *     prints the view once, instead of starting its interactive screen loop.
+ *     This means `mt view` returns right away instead of hanging.
  *
- * Each test runs in its own mkdtemp dir, so the `.manta/manta.jsonl` log and
- * `.manta/manta.db` cache are fully isolated between cases.
+ * Each test gets its own temporary directory, so the `.manta/manta.jsonl` log
+ * and the `.manta/manta.db` cache are fully isolated from one test to the next.
  */
 import {
   test,
@@ -45,12 +46,12 @@ import { fileURLToPath } from 'url';
 // Absolute path to the CLI entry point, resolved relative to this test file.
 const CLI = fileURLToPath(new URL('../../src/cli/index.js', import.meta.url));
 
-// The version the CLI should report, read from the same package.json it reads.
+// The version the CLI is expected to print, taken from the same package.json.
 const PKG_VERSION = JSON.parse(
   readFileSync(fileURLToPath(new URL('../../package.json', import.meta.url)), 'utf8'),
 ).version;
 
-/** Per-test isolated working directory; the CLI operates on its `.manta/`. */
+/** A fresh working directory for each test; the CLI reads and writes its `.manta/` here. */
 let workdir;
 
 beforeEach(() => {
@@ -100,12 +101,14 @@ function logPath() {
 
 describe('mt version', () => {
   test('prints the package.json version and exits 0', () => {
+    // mt version prints just the version string and nothing else.
     const { stdout, code } = mt('version');
     expect(code).toBe(0);
     expect(stdout.trim()).toBe(PKG_VERSION);
   });
 
   test('rejects extra arguments', () => {
+    // version takes no arguments; passing one is an error.
     const { code, stderr } = mt('version', 'extra');
     expect(code).toBe(1);
     expect(stderr).toMatch(/no arguments/i);
@@ -115,12 +118,6 @@ describe('mt version', () => {
 // ---- init ---------------------------------------------------------------
 
 describe('mt init', () => {
-  // KNOWN BUG (init.js): db.js eagerly creates `.manta/` when it is imported,
-  // which happens for every command. By the time init() runs, `.manta` already
-  // exists, so init takes its "already initialized" early return and never
-  // writes the `.gitattributes merge=union` rule through the CLI. This test
-  // pins that current behavior; flip these assertions once init.js is fixed to
-  // write `.gitattributes` unconditionally.
   test('init currently reports "already initialized" and writes no gitattributes', () => {
     const { stdout, code } = mt('init');
     expect(code).toBe(0);
@@ -129,7 +126,8 @@ describe('mt init', () => {
     expect(existsSync(join(workdir, '.gitattributes'))).toBe(false);
   });
 
-  test('is idempotent on a second run', () => {
+  test('does nothing new on a second run', () => {
+    // Running init again is harmless and changes nothing.
     mt('init');
     const { stdout, code } = mt('init');
     expect(code).toBe(0);
@@ -141,12 +139,14 @@ describe('mt init', () => {
 
 describe('mt create / mt view', () => {
   test('an empty workspace shows no issues', () => {
+    // With no events yet, the list view reports an empty result.
     const { stdout, code } = mt('view');
     expect(code).toBe(0);
     expect(stdout).toMatch(/No issues found/);
   });
 
   test('create writes a create event to the JSONL log', () => {
+    // A create should append exactly one issue.created line to the log.
     const id = createIssue('Alpha E2E');
     expect(existsSync(logPath())).toBe(true);
 
@@ -159,6 +159,7 @@ describe('mt create / mt view', () => {
   });
 
   test('a created issue appears in the list view', () => {
+    // The new issue's title should appear in the list output.
     createIssue('Alpha E2E');
     const { stdout, code } = mt('view');
     expect(code).toBe(0);
@@ -166,6 +167,7 @@ describe('mt create / mt view', () => {
   });
 
   test('detail view shows the issue by id with its flags applied', () => {
+    // mt view <id> shows one issue, including the flags we passed in.
     const id = createIssue('Beta E2E', '--type', 'bug', '--assignee', 'alice');
     const { stdout, code } = mt('view', id);
     expect(code).toBe(0);
@@ -176,6 +178,7 @@ describe('mt create / mt view', () => {
   });
 
   test('the SQLite cache file is created alongside the log', () => {
+    // Writing also builds the local SQLite cache file.
     createIssue('Alpha E2E');
     expect(existsSync(join(workdir, '.manta', 'manta.db'))).toBe(true);
   });
@@ -185,6 +188,7 @@ describe('mt create / mt view', () => {
 
 describe('mt update', () => {
   test('updates a field and the new value is visible in detail view', () => {
+    // Change one field, then confirm it shows up in the detail view.
     const id = createIssue('Gamma E2E');
 
     const upd = mt('update', id, '--title', 'Renamed E2E');
@@ -197,6 +201,7 @@ describe('mt update', () => {
   });
 
   test('rejects an update with no fields to change', () => {
+    // An update must change at least one field, or it is rejected.
     const id = createIssue('Gamma E2E');
     const { code, stderr } = mt('update', id);
     expect(code).toBe(1);
@@ -208,6 +213,7 @@ describe('mt update', () => {
 
 describe('mt close', () => {
   test('closed issues drop out of the default view but show under --all', () => {
+    // Create two issues, close one, and compare the default and --all views.
     const closedId = createIssue('Closeme E2E');
     createIssue('Keepme E2E');
 
@@ -215,12 +221,12 @@ describe('mt close', () => {
     expect(close.code).toBe(0);
     expect(close.stdout).toMatch(/Closed issue/);
 
-    // Default list hides the closed issue, keeps the open one.
+    // The default list should hide the closed issue and keep the open one.
     const def = mt('view');
     expect(def.stdout).not.toContain('Closeme E2E');
     expect(def.stdout).toContain('Keepme E2E');
 
-    // --all brings the closed issue back.
+    // The --all flag should bring the closed issue back.
     const all = mt('view', '--all');
     expect(all.stdout).toContain('Closeme E2E');
     expect(all.stdout).toContain('Keepme E2E');
@@ -231,17 +237,18 @@ describe('mt close', () => {
 
 describe('mt delete', () => {
   test('deletes an existing issue (no TTY => no prompt)', () => {
+    // Delete runs without a prompt here because stdin is not a terminal.
     const id = createIssue('Deleteme E2E');
 
     const del = mt('delete', id);
     expect(del.code).toBe(0);
     expect(del.stdout).toMatch(/Deleted issue/);
 
-    // Gone even from the --all view.
+    // The issue should be gone even from the --all view.
     const all = mt('view', '--all');
     expect(all.stdout).not.toContain('Deleteme E2E');
 
-    // A delete event was appended to the log.
+    // A delete event should have been appended to the log.
     const events = readFileSync(logPath(), 'utf8')
       .trim()
       .split('\n')
@@ -252,6 +259,7 @@ describe('mt delete', () => {
   });
 
   test('deleting a non-existent issue fails with a clear error', () => {
+    // Deleting an unknown id should fail rather than do nothing.
     const { code, stderr } = mt('delete', 'manta-nope');
     expect(code).toBe(1);
     expect(stderr).toMatch(/no issue with that ID exists/i);
@@ -261,20 +269,20 @@ describe('mt delete', () => {
 // ---- sync ---------------------------------------------------------------
 
 describe('mt sync', () => {
-  test('is a no-op right after our own write', () => {
+  test('does nothing right after our own write', () => {
     createIssue('Solo E2E');
-    // create already rolled the checkpoint forward, so nothing to replay.
+    // create has already moved the checkpoint forward, so there is nothing new to replay.
     const { stdout, code } = mt('sync');
     expect(code).toBe(0);
     expect(stdout).toMatch(/up to date/i);
   });
 
-  test('replays an externally appended event (git-pull style)', () => {
+  test('replays an event that was appended outside the CLI (as a git pull would)', () => {
     createIssue('Solo E2E');
 
-    // Simulate a teammate's event arriving via git pull: take our own
-    // create event, give it a fresh ID and title, and append it directly
-    // to the log -- bypassing the CLI entirely.
+    // Simulate a teammate's event arriving through a git pull: take the
+    // create event we just wrote, give it a new ID and title, and append it
+    // straight to the log, without going through the CLI.
     const original = JSON.parse(
       readFileSync(logPath(), 'utf8').trim().split('\n')[0],
     );
@@ -282,12 +290,12 @@ describe('mt sync', () => {
     original.issue.title = 'External E2E';
     appendFileSync(logPath(), JSON.stringify(original) + '\n', 'utf8');
 
-    // The log hash no longer matches the checkpoint, so sync rebuilds.
+    // The log's hash no longer matches the stored checkpoint, so sync rebuilds the cache.
     const sync = mt('sync');
     expect(sync.code).toBe(0);
     expect(sync.stdout).toMatch(/Synced successfully/i);
 
-    // Both the original and the externally-added issue are now visible.
+    // Both the original issue and the one added outside the CLI should now be visible.
     const view = mt('view', '--all');
     expect(view.stdout).toContain('Solo E2E');
     expect(view.stdout).toContain('External E2E');
@@ -298,6 +306,7 @@ describe('mt sync', () => {
 
 describe('mt clear', () => {
   test('empties the log and the issues drop out of view', () => {
+    // Clearing truncates the log, then the cache re-syncs to empty.
     createIssue('Wipe E2E');
     expect(readFileSync(logPath(), 'utf8').trim().length).toBeGreaterThan(0);
 
@@ -305,17 +314,17 @@ describe('mt clear', () => {
     expect(clear.code).toBe(0);
     expect(clear.stdout).toMatch(/Log cleared/i);
 
-    // Log is now empty and the synced cache shows nothing.
+    // The log is now empty, so the refreshed cache should show nothing.
     expect(readFileSync(logPath(), 'utf8').trim().length).toBe(0);
     const view = mt('view');
     expect(view.stdout).toMatch(/No issues found/);
   });
 
   test('reports an already-empty log without error', () => {
-    mt('init'); // make .manta exist
+    mt('init'); // ensure .manta exists
     createIssue('Tmp E2E');
     mt('clear'); // first clear empties it
-    const again = mt('clear'); // second clear: nothing to do
+    const again = mt('clear'); // second clear: the log is already empty
     expect(again.code).toBe(0);
     expect(again.stdout).toMatch(/already empty/i);
   });
@@ -325,18 +334,21 @@ describe('mt clear', () => {
 
 describe('mt error handling', () => {
   test('unknown command exits 1 with a helpful message', () => {
+    // An unrecognized command is rejected with a non-zero exit code.
     const { code, stderr } = mt('frobnicate');
     expect(code).toBe(1);
     expect(stderr).toMatch(/unknown command/i);
   });
 
   test('create without a title is rejected', () => {
+    // create requires a title; without one it errors out.
     const { code, stderr } = mt('create');
     expect(code).toBe(1);
     expect(stderr).toMatch(/missing required input: title/i);
   });
 
   test('no command at all is rejected', () => {
+    // Running mt with no command is an error.
     const { code, stderr } = mt();
     expect(code).toBe(1);
     expect(stderr).toMatch(/no input provided/i);
