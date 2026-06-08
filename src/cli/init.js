@@ -24,35 +24,38 @@ const AGENT_MD_TEMPLATE = new URL('../agent.md', import.meta.url);
  * - Prints a reminder to run `git config pull.rebase false`.
  */
 export function init() {
-  // Detect if already initialized. We check .gitattributes for the merge
-  // line rather than .manta/ because db.js creates .manta/ as a side effect
-  // of being imported, before init() ever runs.
-  const alreadyInitialized =
-    existsSync(GITATTRIBUTES_PATH) &&
-    readFileSync(GITATTRIBUTES_PATH, 'utf8').includes(GITATTRIBUTES_LINE);
+  // Read the current .gitattributes, as a way for checking whether we've already initialized, not .manta/
+  const existing = existsSync(GITATTRIBUTES_PATH)
+    ? readFileSync(GITATTRIBUTES_PATH, 'utf8')
+    : '';
+
+  // The .manta/ directory is created as a side effect of opening the SQLite
+  // database. storage/db.js runs `mkdirSync('.manta', ...)` the moment it is
+  // imported. Because index.js imports the storage modules before it ever
+  // calls init(), .manta/ already exists by the time we get here, even in a
+  // brand-new repo. So `.manta/` existing tells us nothing about whether the
+  // user has actually run `init`.
+  //
+  // Instead we use the .gitattributes merge rule as the real marker of
+  // initialization, because writing that line is something only init() does.
+  const alreadyInitialized = existing.includes(GITATTRIBUTES_LINE);
 
   if (alreadyInitialized) {
     console.log('Manta is already initialized in this repository.');
     return;
   }
 
-  // Create .manta/ directory.
   mkdirSync(MANTA_DIR, { recursive: true });
 
-  // Add merge=union rule to .gitattributes if not already there.
-  const existing = existsSync(GITATTRIBUTES_PATH)
-    ? readFileSync(GITATTRIBUTES_PATH, 'utf8')
-    : '';
-
-  if (!existing.includes(GITATTRIBUTES_LINE)) {
-    const separator =
-      existing.length > 0 && !existing.endsWith('\n') ? '\n' : '';
-    writeFileSync(
-      GITATTRIBUTES_PATH,
-      existing + separator + GITATTRIBUTES_LINE + '\n',
-      'utf8',
-    );
-  }
+  // Append the merge=union rule to .gitattributes if it doesn't exist. If the file already had
+  // content not ending in a newline, add one first so we don't glue other rule
+  // onto the end of an existing line.
+  const separator = existing.length > 0 && !existing.endsWith('\n') ? '\n' : '';
+  writeFileSync(
+    GITATTRIBUTES_PATH,
+    existing + separator + GITATTRIBUTES_LINE + '\n',
+    'utf8',
+  );
 
   // Write agent.md to project root for AI agent reference.
   if (!existsSync(AGENT_MD_PATH)) {
