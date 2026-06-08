@@ -26,11 +26,11 @@ The storage layer needs to:
 
 ## Decision
 
-We adopt Option 1: `bun:sqlite` directly, with `store.js` as the only module that writes to SQLite or `.manta/issues.jsonl`. Connection management lives in `db.js`. Replay lives in `replay.js`.
+We adopt Option 1: `bun:sqlite` directly, with `store.js` as the only module that writes to SQLite or `.manta/manta.jsonl`. Connection management lives in `db.js`. Replay lives in `replay.js`.
 
 - Every mutating command flows through `store.js`.
-- Write order inside `store.js`: append the JSONL line first, then update SQLite
-- `schema.sql` includes a small metadata row holding the JSONL offset already applied. `replay.js` reads it, applies only the new lines, then advances it.
+- Write order inside `store.js` (per ADR-006): create events write to **SQLite first** (to validate the generated ID), then JSONL; update and delete events append to **JSONL first** (durability before visibility), then SQLite.
+- `schema.sql` includes a `meta` table holding a **checkpoint hash** of the JSONL log. On each run `replay.js` re-hashes the log; if the hash differs from the stored checkpoint it wipes the `issues` table and replays the whole log, then stores the new hash. See ADR-007 (this replaced the earlier "JSONL offset / apply only new lines" plan).
 
 Pipeline for any mutating command:
 
@@ -42,10 +42,10 @@ validate.js  >  events.js  >  store.js
 
 - `db.js`: opens .manta/manta.db, runs schema.sql (Tian)
 - `store.js`: writes to JSONL and SQLite
-- `schema.sql`: table definitions plus the replay-watermark row
-- `replay.js`: reads the watermark, applies new JSONL lines
-- `events.js`: builds event objects before they hit `store.js`
-- `validate.js`: input checks (see ADR-002)
+- `schema.sql`: table definitions plus the `meta` table holding the checkpoint hash
+- `replay.js`: `syncFromLog` — rebuilds SQLite from the JSONL log when the checkpoint hash changes
+- `cli/event.js`: builds event objects before they hit `store.js`
+- `validation/validation.js`: input checks (see ADR-002)
 
 ### Proposed Layout
 The full directory layout, file paths, and the extra modules below are a starting suggestion

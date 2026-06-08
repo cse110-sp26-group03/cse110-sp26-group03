@@ -65,12 +65,12 @@ mt create "title" [--desc <text>] [--priority <p0-p9>] [--status <status>] [--ty
 
 | Flag         | Short | Description                                      | Default  |
 | ------------ | ----- | ------------------------------------------------ | -------- |
-| `--title`    | `-t`  | Issue title (max 50 chars)                       | required |
-| `--desc`     | `-d`  | Longer description (max 512 chars)               | empty    |
-| `--priority` | `-p`  | Priority level: `p0`–`p9` (p0 is highest)        | `p5`     |
-| `--status`   | `-s`  | Initial status: `open`, `in_progress`, `blocked` | `open`   |
-| `--type`     | —     | Type: `bug`, `feature`, `task`, `docs`, `store`  | `task`   |
-| `--assignee` | `-a`  | Who is working on this issue (letters only)      | empty    |
+| `--title`    | `--t`  | Issue title (max 50 chars)                       | required |
+| `--desc`     | `--d`  | Longer description (max 512 chars)               | empty    |
+| `--priority` | `--p`  | Priority level: `p0`–`p9` (p0 is highest)        | `p5`     |
+| `--status`   | `--s`  | Initial status: `open`, `in_progress`, `blocked` | `open`   |
+| `--type`     | —      | Type: `bug`, `feature`, `task`, `docs`, `store`  | `task`   |
+| `--assignee` | `--a`  | Who is working on this issue (letters only)      | empty    |
 
 > [!NOTE]
 > `closed` is not a valid status on create. Use `mt close` to close an issue.
@@ -101,12 +101,12 @@ mt update manta-xxxx [--title <text>] [--desc <text>] [--priority <p>] [--status
 
 | Flag         | Short | Description                                            |
 | ------------ | ----- | ------------------------------------------------------ |
-| `--title`    | `-t`  | New title                                              |
-| `--desc`     | `-d`  | New description                                        |
-| `--priority` | `-p`  | New priority: `p0`–`p9`                                |
-| `--status`   | `-s`  | New status: `open`, `in_progress`, `blocked`, `closed` |
-| `--type`     | —     | New type: `bug`, `feature`, `task`, `docs`, `store`    |
-| `--assignee` | `-a`  | New assignee                                           |
+| `--title`    | `--t`  | New title                                              |
+| `--desc`     | `--d`  | New description                                        |
+| `--priority` | `--p`  | New priority: `p0`–`p9`                                |
+| `--status`   | `--s`  | New status: `open`, `in_progress`, `blocked`, `closed` |
+| `--type`     | —      | New type: `bug`, `feature`, `task`, `docs`, `store`    |
+| `--assignee` | `--a`  | New assignee                                           |
 
 #### Examples
 
@@ -238,10 +238,10 @@ mt view [--status <s>] [--priority <p>] [--type <t>] [--assignee <name>] [--crea
 
 | Flag                  | Short  | Filters by                                 |
 | --------------------- | ------ | ------------------------------------------ |
-| `--status <value>`    | `-s`   | `open`, `in_progress`, `blocked`, `closed` |
-| `--priority <value>`  | `-p`   | `p0`–`p9`                                  |
+| `--status <value>`    | `--s`  | `open`, `in_progress`, `blocked`, `closed` |
+| `--priority <value>`  | `--p`  | `p0`–`p9`                                  |
 | `--type <value>`      | —      | `bug`, `feature`, `task`, `docs`, `store`  |
-| `--assignee <value>`  | `-a`   | assignee name                              |
+| `--assignee <value>`  | `--a`  | assignee name                              |
 | `--createdBy <value>` | `--cb` | OS username of creator                     |
 | `--all`               | —      | includes closed issues (no value needed)   |
 
@@ -374,12 +374,12 @@ Migration complete:
 
 | Field       | Required     | Allowed values                             | Notes                                                       |
 | ----------- | ------------ | ------------------------------------------ | ----------------------------------------------------------- |
-| title       | Yes (create) | Any string, max 50 chars                   | Pass as positional arg or `--title` / `-t`                  |
-| description | No           | Any string, max 512 chars                  | `--desc` or `-d`                                            |
+| title       | Yes (create) | Any string, max 50 chars                   | Pass as positional arg or `--title` / `--t`                 |
+| description | No           | Any string, max 512 chars                  | `--desc` or `--d`                                           |
 | status      | No           | `open`, `in_progress`, `blocked`, `closed` | Defaults to `open` on create. Cannot be `closed` on create. |
 | priority    | No           | `p0`–`p9`                                  | p0 is highest. Defaults to `p5` on create.                  |
 | type        | No           | `bug`, `feature`, `task`, `docs`, `store`  | Defaults to `task`. `--type` (no shorthand)                 |
-| assignee    | No           | Letters only (a-z, A-Z)                    | `--assignee` or `-a`                                        |
+| assignee    | No           | Letters only (a-z, A-Z)                    | `--assignee` or `--a`                                       |
 
 ### Auto-assigned fields (read only)
 
@@ -430,14 +430,14 @@ If a command fails, Manta prints an error message to stderr and exits with code 
 
 | Alias  | Expands to    |
 | ------ | ------------- |
-| `-t`   | `--title`     |
-| `-d`   | `--desc`      |
-| `-p`   | `--priority`  |
-| `-s`   | `--status`    |
-| `-a`   | `--assignee`  |
+| `--t`  | `--title`     |
+| `--d`  | `--desc`      |
+| `--p`  | `--priority`  |
+| `--s`  | `--status`    |
+| `--a`  | `--assignee`  |
 | `--cb` | `--createdBy` |
 
-Aliases are resolved before validation, so `-t` and `--title` collide as duplicates.
+Aliases are resolved before validation, so `--t` and `--title` collide as duplicates.
 
 ### Parser check order
 
