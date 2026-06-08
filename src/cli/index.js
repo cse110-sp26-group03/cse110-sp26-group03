@@ -22,6 +22,12 @@ import { init } from './init.js';
 import { clear } from './clear.js';
 import { help } from '../help/help.js';
 
+const sync_messages = [
+  'Already up to date; no new events to sync.',
+  'Synced successfully.',
+  "No JSONL file found; no updates were made."
+]
+
 // ---- Step 1: Parse argv -----------------------------------------------
 
 let parsed_command;
@@ -86,20 +92,18 @@ if (parsed_command.cmd === 'clear') {
 // see the freshest issue set.
 
 try {
-  let madeChanges = syncFromLog();
+  let result = syncFromLog();
 
   // early exit on sync and clear
   if (parsed_command.cmd === 'sync' || parsed_command.cmd === 'clear') {
-    console.log(
-      madeChanges
-        ? 'Synced successfully.'
-        : 'Already up to date; no new events to sync.',
-    );
+    console.log(sync_messages[result]);
     process.exit(0);
   }
 } catch (err) {
+
   console.error(err.message);
   process.exit(1);
+
 }
 
 // ---- Early exit, read-only commands ----------------------------------
