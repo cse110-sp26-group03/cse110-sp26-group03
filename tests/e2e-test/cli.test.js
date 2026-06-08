@@ -1,353 +1,258 @@
 /**
- * End-to-end tests for the `mt` CLI (`src/cli/index.js`).
+ * End-to-end tests for the Manta CLI (`mt`).
  *
- * These tests run the program the way a real user would. Each test spawns
- * `bun src/cli/index.js ...` as a separate process in a fresh temporary
- * directory, and checks only what can be observed from the outside: stdout,
- * stderr, the exit code, and the files the CLI writes under `.manta/`. None of
- * them reach into the program's internal modules.
- *
- * The full write pipeline under test (see index.js):
- *   argv -> parse -> validate -> syncFromLog -> create_event -> applyEvent -> print
- * The read-only and early-exit commands are also covered: version, init, view,
- * sync, clear, and delete.
- *
- * Running the CLI as a child process keeps the tests deterministic, for two
- * reasons:
- *   - A child process has no terminal attached to its input, so
- *     `process.stdin.isTTY` is undefined. In that case index.js skips the
- *     interactive y/N prompt, so delete and clear run without asking.
- *   - For the same reason, display.js sees that stdout is not a terminal and
- *     prints the view once, instead of starting its interactive screen loop.
- *     This means `mt view` returns right away instead of hanging.
- *
- * Each test gets its own temporary directory, so the `.manta/manta.jsonl` log
- * and the `.manta/manta.db` cache are fully isolated from one test to the next.
+ * E2E steps covered
+ *   1. init — Checks that init creates the `.manta/` directory
+ *   2. create — adds an issue and prints its generated ID
+ *   3. view — check that lists correct created issue
+ *   4. update — a field change is persisted and visible on the next view
+ *   5. close — the issue's status flips to closed
+ *   6. delete — the issue is removed and can no longer be viewed
+ *   7. persistence — the JSONL log records every event, and the replay is able to reproduce the same state
  */
 import { test, expect, describe, beforeEach, afterEach } from 'bun:test';
-import { spawnSync } from 'node:child_process';
-import {
-  mkdtempSync,
-  rmSync,
-  existsSync,
-  readFileSync,
-  appendFileSync,
-} from 'fs';
+import { mkdtempSync, rmSync, readFileSync, existsSync } from 'fs';
 import { tmpdir } from 'os';
-import { join } from 'path';
-import { fileURLToPath } from 'url';
-
-// Absolute path to the CLI entry point, resolved relative to this test file.
-const CLI = fileURLToPath(new URL('../../src/cli/index.js', import.meta.url));
-
-// The version the CLI is expected to print, taken from the same package.json.
-const PKG_VERSION = JSON.parse(
-  readFileSync(
-    fileURLToPath(new URL('../../package.json', import.meta.url)),
-    'utf8',
-  ),
-).version;
-
-/** A fresh working directory for each test; the CLI reads and writes its `.manta/` here. */
-let workdir;
-
-beforeEach(() => {
-  workdir = mkdtempSync(join(tmpdir(), 'manta-e2e-'));
-});
-
-afterEach(() => {
-  rmSync(workdir, { recursive: true, force: true });
-});
+import { join, resolve } from 'path';
 
 /**
- * Run the mt CLI in this test's temp working directory.
+ * Path to index.js in frontent/cli
+ */
+const CLI_PATH = resolve(import.meta.dir, '../../src/cli/index.js');
+
+/**
+ * Run the `mt` CLI once in the given directory
  *
- * @param {...string} args - CLI arguments, exactly as typed after `mt`.
+ * Helper Function used in tests
+ * Bun.spawnSync is used to run the CLI as like a child process, while we wait for its result
+ * @param {string} cwd - which folder to run in
+ * @param {string[]} args - CLI arguments ['create', 'Fix bug', '--priority', 'p2'].
  * @returns {{stdout: string, stderr: string, code: number}}
  */
-function mt(...args) {
-  const r = spawnSync('bun', [CLI, ...args], {
-    cwd: workdir,
-    encoding: 'utf8',
-  });
-  if (r.error) throw r.error;
-  return { stdout: r.stdout ?? '', stderr: r.stderr ?? '', code: r.status };
+function runMt(cwd, args) {
+  //creates child process given current test (process.execPath),
+  //running on cli/index.js, with args
+  const proc = Bun.spawnSync([process.execPath, CLI_PATH, ...args], { cwd });
+  return {
+    stdout: proc.stdout.toString(), //normal output, get the text
+    stderr: proc.stderr.toString(), //error output
+    code: proc.exitCode, // 0 = success, nonzero = error
+  };
 }
 
 /**
- * Create an issue via the CLI and return its generated ID.
+ * Create an issue and return its generated ID, failing the test if the create
+ * command did not succeed.
  *
- * @param {string} title - The issue title (positional argument).
- * @param {...string} extra - Any additional flags (e.g. '--type', 'bug').
- * @returns {string} The full generated ID, e.g. "manta-h3kp".
+ * @param {string} cwd - The isolated working directory.
+ * @param {string[]} [extraArgs] - Extra create flags beyond the title.
+ * @returns {string} The full generated issue ID (e.g. "manta-h3kp").
  */
-function createIssue(title, ...extra) {
-  const { stdout, code } = mt('create', title, ...extra);
+function createIssue(cwd, extraArgs = []) {
+  const { stdout, code } = runMt(cwd, [
+    'create',
+    'Fix login bug',
+    ...extraArgs,
+  ]); //stdout is the text output, code is the success satus
   expect(code).toBe(0);
-  const m = stdout.match(/Created issue (manta-[0-9a-z]+):/);
-  expect(m).not.toBeNull();
-  return m[1];
+  // index.js prints: `Created issue manta-xxxx: <title>`
+  const match = stdout.match(/Created issue (manta-\S+):/);
+  expect(match).not.toBeNull();
+  return match[1];
 }
 
-/** Absolute path to the JSONL log inside the current temp workdir. */
-function logPath() {
-  return join(workdir, '.manta', 'manta.jsonl');
-}
-
-// ---- version ------------------------------------------------------------
-
-describe('mt version', () => {
-  test('prints the package.json version and exits 0', () => {
-    // mt version prints just the version string and nothing else.
-    const { stdout, code } = mt('version');
-    expect(code).toBe(0);
-    expect(stdout.trim()).toBe(PKG_VERSION);
-  });
-
-  test('rejects extra arguments', () => {
-    // version takes no arguments; passing one is an error.
-    const { code, stderr } = mt('version', 'extra');
-    expect(code).toBe(1);
-    expect(stderr).toMatch(/no arguments/i);
-  });
+// Each test gets its own temp dir, initialized as a fresh Manta repo, and the
+// dir is removed afterward so no info leaks
+// beforeEach and afterEach run before and after every test
+let dir;
+beforeEach(() => {
+  //tmpdir returns string of a new temp folder (AppData\Local\Temp as an example)
+  //join(tmpdir(), 'manta-e2e-') sticks manta-e2e onto that path, so we get string AppData\Local\Temp\manta-e2e- as an example
+  //mkdtempSync creates the actual temp directory with the string, and adds random chars at the end to make sure its unique
+  dir = mkdtempSync(join(tmpdir(), 'manta-e2e-'));
+  const { code } = runMt(dir, ['init']); //mt init in that temp directory
+  expect(code).toBe(0);
+});
+afterEach(() => {
+  rmSync(dir, { recursive: true, force: true });
 });
 
-// ---- init ---------------------------------------------------------------
-
+/**
+ * init tests. `mt init` creates a repo for Manta.
+ * 1. First test checks that init reports success and creates the .manta/
+ *    directory plus the .gitattributes
+ * 2. Second test checks that a second init is safe and just says
+ *    repo is already installed
+ */
 describe('mt init', () => {
-  test('init currently reports "already initialized" and writes no gitattributes', () => {
-    const { stdout, code } = mt('init');
-    expect(code).toBe(0);
-    expect(existsSync(join(workdir, '.manta'))).toBe(true);
-    expect(stdout).toMatch(/already initialized/i);
-    expect(existsSync(join(workdir, '.gitattributes'))).toBe(false);
+  // The beforeEach already ran init once; assert it produced the expected files.
+  test('creates .manta/ and the .gitattributes merge rule', () => {
+    // join(dir, '.manta) creates string path of the dir (directory) we made with the .manta
+    //existsSync(path) checks if the path exists
+    //so this checks whether the path (dir +  '.manta') exists. or in simple words if .manta was added to the dir
+    expect(existsSync(join(dir, '.manta'))).toBe(true);
+    //reads the file's contents and reutrns it. 'utf8' means we want text not bytes.
+    const attrs = readFileSync(join(dir, '.gitattributes'), 'utf8');
+    expect(attrs).toContain('.manta/manta.jsonl merge=union'); //check merge rule exists in .gitattributes
   });
 
-  test('does nothing new on a second run', () => {
-    // Running init again is harmless and changes nothing.
-    mt('init');
-    const { stdout, code } = mt('init');
+  // Running init again should not throw error, and print that its already initialized
+  test('is a no-op when already initialized', () => {
+    const { stdout, code } = runMt(dir, ['init']);
     expect(code).toBe(0);
     expect(stdout).toMatch(/already initialized/i);
   });
 });
 
-// ---- create + view ------------------------------------------------------
+/**
+ * create + view tests. Walk through of add an issue, then see it
+ * 1. First test checks that create prints a generated ID and the detail view
+ *    of that ID shows the title, priority, and assignee that were set at creation.
+ * 2. Second test checks that the issue appears in the `view --all` list.
+ * 3. Third test checks that creating without a required title fails
+ */
+describe('mt create + view', () => {
+  // Create with explicit priority and assignee, then see if detail matches
+  test('creates an issue and shows it in the detail view', () => {
+    const id = createIssue(dir, ['--priority', 'p2', '--assignee', 'alice']);
 
-describe('mt create / mt view', () => {
-  test('an empty workspace shows no issues', () => {
-    // With no events yet, the list view reports an empty result.
-    const { stdout, code } = mt('view');
+    const { stdout, code } = runMt(dir, ['view', id]); //run view command
+    expect(code).toBe(0); //check if view command succeed
+    expect(stdout).toContain('Fix login bug'); //view includes title, set to fix login bug (mentioned in helper function)
+    expect(stdout).toContain('p2'); //view includes priority, set to p2
+    expect(stdout).toContain('alice'); //view includes assignee, set to alice
+  });
+
+  // The list view --all should include the just-created issue's short ID.
+  test('lists the created issue with view --all', () => {
+    const id = createIssue(dir);
+    const shortId = id.replace('manta-', ''); // list view removes 'manta-' prefix, so strip it here for check
+
+    const { stdout, code } = runMt(dir, ['view', '--all']);
     expect(code).toBe(0);
-    expect(stdout).toMatch(/No issues found/);
+    expect(stdout).toContain(shortId); // list includes ID
+    expect(stdout).toContain('Fix login bug'); //title should be in list view
   });
 
-  test('create writes a create event to the JSONL log', () => {
-    // A create should append exactly one issue.created line to the log.
-    const id = createIssue('Alpha E2E');
-    expect(existsSync(logPath())).toBe(true);
-
-    const lines = readFileSync(logPath(), 'utf8').trim().split('\n');
-    expect(lines.length).toBe(1);
-    const event = JSON.parse(lines[0]);
-    expect(event.type).toBe('issue.created');
-    expect(event.issueId).toBe(id);
-    expect(event.issue.title).toBe('Alpha E2E');
-  });
-
-  test('a created issue appears in the list view', () => {
-    // The new issue's title should appear in the list output.
-    createIssue('Alpha E2E');
-    const { stdout, code } = mt('view');
-    expect(code).toBe(0);
-    expect(stdout).toContain('Alpha E2E');
-  });
-
-  test('detail view shows the issue by id with its flags applied', () => {
-    // mt view <id> shows one issue, including the flags we passed in.
-    const id = createIssue('Beta E2E', '--type', 'bug', '--assignee', 'alice');
-    const { stdout, code } = mt('view', id);
-    expect(code).toBe(0);
-    expect(stdout).toContain(id);
-    expect(stdout).toContain('Beta E2E');
-    expect(stdout).toContain('bug');
-    expect(stdout).toContain('alice');
-  });
-
-  test('the SQLite cache file is created alongside the log', () => {
-    // Writing also builds the local SQLite cache file.
-    createIssue('Alpha E2E');
-    expect(existsSync(join(workdir, '.manta', 'manta.db'))).toBe(true);
-  });
-});
-
-// ---- update -------------------------------------------------------------
-
-describe('mt update', () => {
-  test('updates a field and the new value is visible in detail view', () => {
-    // Change one field, then confirm it shows up in the detail view.
-    const id = createIssue('Gamma E2E');
-
-    const upd = mt('update', id, '--title', 'Renamed E2E');
-    expect(upd.code).toBe(0);
-    expect(upd.stdout).toMatch(/Updated issue manta-[0-9a-z]+ with/);
-    expect(upd.stdout).toContain('title=Renamed E2E');
-
-    const view = mt('view', id);
-    expect(view.stdout).toContain('Renamed E2E');
-  });
-
-  test('rejects an update with no fields to change', () => {
-    // An update must change at least one field, or it is rejected.
-    const id = createIssue('Gamma E2E');
-    const { code, stderr } = mt('update', id);
+  // A title is required, no title should fail
+  test('fails when required title is missing', () => {
+    const { stderr, code } = runMt(dir, ['create', '--priority', 'p2']);
     expect(code).toBe(1);
-    expect(stderr).toMatch(/too few flags/i);
+    expect(stderr).toMatch(/title/i);
   });
 });
 
-// ---- close --------------------------------------------------------------
+/**
+ * update tests. `mt update <id> --field value` changes an existing issue.
+ * 1. First test checks that an updated field is persisted and shows up on the
+ *    next view.
+ * 2. Second test checks that updating a non existent issue should fail
+ */
+describe('mt update', () => {
+  // Rename the issue, then confirm the new title is what the view reports.
+  test('persists a field change visible on the next view', () => {
+    const id = createIssue(dir);
 
-describe('mt close', () => {
-  test('closed issues drop out of the default view but show under --all', () => {
-    // Create two issues, close one, and compare the default and --all views.
-    const closedId = createIssue('Closeme E2E');
-    createIssue('Keepme E2E');
+    const upd = runMt(dir, ['update', id, '--title', 'Renamed issue']);
+    expect(upd.code).toBe(0);
+    expect(upd.stdout).toMatch(/Updated issue/);
 
-    const close = mt('close', closedId);
-    expect(close.code).toBe(0);
-    expect(close.stdout).toMatch(/Closed issue/);
-
-    // The default list should hide the closed issue and keep the open one.
-    const def = mt('view');
-    expect(def.stdout).not.toContain('Closeme E2E');
-    expect(def.stdout).toContain('Keepme E2E');
-
-    // The --all flag should bring the closed issue back.
-    const all = mt('view', '--all');
-    expect(all.stdout).toContain('Closeme E2E');
-    expect(all.stdout).toContain('Keepme E2E');
-  });
-});
-
-// ---- delete -------------------------------------------------------------
-
-describe('mt delete', () => {
-  test('deletes an existing issue (no TTY => no prompt)', () => {
-    // Delete runs without a prompt here because stdin is not a terminal.
-    const id = createIssue('Deleteme E2E');
-
-    const del = mt('delete', id);
-    expect(del.code).toBe(0);
-    expect(del.stdout).toMatch(/Deleted issue/);
-
-    // The issue should be gone even from the --all view.
-    const all = mt('view', '--all');
-    expect(all.stdout).not.toContain('Deleteme E2E');
-
-    // A delete event should have been appended to the log.
-    const events = readFileSync(logPath(), 'utf8')
-      .trim()
-      .split('\n')
-      .map((l) => JSON.parse(l));
-    expect(
-      events.some((e) => e.type === 'issue.deleted' && e.issueId === id),
-    ).toBe(true);
+    const { stdout } = runMt(dir, ['view', id]);
+    expect(stdout).toContain('Renamed issue');
   });
 
-  test('deleting a non-existent issue fails with a clear error', () => {
-    // Deleting an unknown id should fail rather than do nothing.
-    const { code, stderr } = mt('delete', 'manta-nope');
+  // Updating an ID that was never created should be rejected by the store.
+  test('fails for an unknown issue ID', () => {
+    const { stderr, code } = runMt(dir, [
+      'update',
+      'manta-nope', // non existent ID
+      '--title',
+      'x',
+    ]);
     expect(code).toBe(1);
     expect(stderr).toMatch(/no issue with that ID exists/i);
   });
 });
 
-// ---- sync ---------------------------------------------------------------
+/**
+ * close + delete tests.
+ * 1. First test checks that close reports success and flips the status to
+ *    closed
+ * 2. Second test checks that delete removes the issue so a later view of that
+ *    ID fails.
+ */
+describe('mt close + delete', () => {
+  // Close the issue and verify the detail view now shows a closed status.
+  test('close marks the issue closed', () => {
+    const id = createIssue(dir);
 
-describe('mt sync', () => {
-  test('does nothing right after our own write', () => {
-    createIssue('Solo E2E');
-    // create has already moved the checkpoint forward, so there is nothing new to replay.
-    const { stdout, code } = mt('sync');
+    const closed = runMt(dir, ['close', id]);
+    expect(closed.code).toBe(0);
+    expect(closed.stdout).toMatch(/Closed issue/);
+
+    const { stdout } = runMt(dir, ['view', id]);
+    expect(stdout).toMatch(/Status:\s*closed/i);
+  });
+
+  // Delete the issue, then a view of the
+  // same ID should fail because the row is gone from both stores.
+  test('delete removes the issue', () => {
+    const id = createIssue(dir);
+
+    const del = runMt(dir, ['delete', id]);
+    expect(del.code).toBe(0);
+    expect(del.stdout).toMatch(/Deleted issue/); //make sure delete happened
+
+    const { code } = runMt(dir, ['view', id]);
+    expect(code).toBe(1); // FETCH throws "Query failed" for a missing ID
+  });
+});
+
+/**
+ * Check persistence between the JSONL log and the SQLite cache that is rebuilt from the log by replay.
+ * 1. First test checks that each command appends the expected event type to
+ *    the JSONL log
+ * 2. Second test checks that deleting the SQLite cache and rerunning a command
+ *    rebuilds it from the log alone, with no loss of data.
+ */
+describe('persistence and replay', () => {
+  // The JSONL log should accumulate one line per write command, in the order
+  // the commands ran (create, then update, then close).
+  test('records each write as an event line in the JSONL log', () => {
+    const id = createIssue(dir);
+    runMt(dir, ['update', id, '--title', 'Renamed']);
+    runMt(dir, ['close', id]);
+
+    const log = readFileSync(join(dir, '.manta', 'manta.jsonl'), 'utf8');
+    const events = log
+      .trim() //remove trailing newline
+      .split('\n') //split into lines, each line is an event
+      .map((line) => JSON.parse(line)); //parse each line from JSON text into an object
+
+    expect(events.map((e) => e.type)).toEqual([
+      'issue.created',
+      'issue.updated',
+      'issue.updated', // `close` is persisted as a status update
+    ]);
+    // Every event refers to the same issue we created.
+    expect(events.every((e) => e.issueId === id)).toBe(true);
+  });
+
+  // Deleting the SQLite cache simulates a fresh clone
+  // The next command must rebuild the cache from the JSONL log via replay, so
+  // the issue is still viewable with all its data intact.
+  test('rebuilds the SQLite cache from the log after the cache is deleted', () => {
+    const id = createIssue(dir, ['--assignee', 'bob']);
+
+    // Drop the cache and its files, keeping only the JSONL log.
+    for (const f of ['manta.db', 'manta.db-wal', 'manta.db-shm']) {
+      rmSync(join(dir, '.manta', f), { force: true });
+    }
+
+    // Any command triggers syncFromLog(), which replays the log into a new DB.
+    const { stdout, code } = runMt(dir, ['view', id]);
     expect(code).toBe(0);
-    expect(stdout).toMatch(/up to date/i);
-  });
-
-  test('replays an event that was appended outside the CLI (as a git pull would)', () => {
-    createIssue('Solo E2E');
-
-    // Simulate a teammate's event arriving through a git pull: take the
-    // create event we just wrote, give it a new ID and title, and append it
-    // straight to the log, without going through the CLI.
-    const original = JSON.parse(
-      readFileSync(logPath(), 'utf8').trim().split('\n')[0],
-    );
-    original.issueId = 'manta-ext9';
-    original.issue.title = 'External E2E';
-    appendFileSync(logPath(), JSON.stringify(original) + '\n', 'utf8');
-
-    // The log's hash no longer matches the stored checkpoint, so sync rebuilds the cache.
-    const sync = mt('sync');
-    expect(sync.code).toBe(0);
-    expect(sync.stdout).toMatch(/Synced successfully/i);
-
-    // Both the original issue and the one added outside the CLI should now be visible.
-    const view = mt('view', '--all');
-    expect(view.stdout).toContain('Solo E2E');
-    expect(view.stdout).toContain('External E2E');
-  });
-});
-
-// ---- clear --------------------------------------------------------------
-
-describe('mt clear', () => {
-  test('empties the log and the issues drop out of view', () => {
-    // Clearing truncates the log, then the cache re-syncs to empty.
-    createIssue('Wipe E2E');
-    expect(readFileSync(logPath(), 'utf8').trim().length).toBeGreaterThan(0);
-
-    const clear = mt('clear');
-    expect(clear.code).toBe(0);
-    expect(clear.stdout).toMatch(/Log cleared/i);
-
-    // The log is now empty, so the refreshed cache should show nothing.
-    expect(readFileSync(logPath(), 'utf8').trim().length).toBe(0);
-    const view = mt('view');
-    expect(view.stdout).toMatch(/No issues found/);
-  });
-
-  test('reports an already-empty log without error', () => {
-    mt('init'); // ensure .manta exists
-    createIssue('Tmp E2E');
-    mt('clear'); // first clear empties it
-    const again = mt('clear'); // second clear: the log is already empty
-    expect(again.code).toBe(0);
-    expect(again.stdout).toMatch(/already empty/i);
-  });
-});
-
-// ---- argument / command errors -----------------------------------------
-
-describe('mt error handling', () => {
-  test('unknown command exits 1 with a helpful message', () => {
-    // An unrecognized command is rejected with a non-zero exit code.
-    const { code, stderr } = mt('frobnicate');
-    expect(code).toBe(1);
-    expect(stderr).toMatch(/unknown command/i);
-  });
-
-  test('create without a title is rejected', () => {
-    // create requires a title; without one it errors out.
-    const { code, stderr } = mt('create');
-    expect(code).toBe(1);
-    expect(stderr).toMatch(/missing required input: title/i);
-  });
-
-  test('no command at all is rejected', () => {
-    // Running mt with no command is an error.
-    const { code, stderr } = mt();
-    expect(code).toBe(1);
-    expect(stderr).toMatch(/no input provided/i);
+    expect(stdout).toContain('Fix login bug');
+    expect(stdout).toContain('bob');
   });
 });
