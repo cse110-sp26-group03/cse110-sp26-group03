@@ -1,3 +1,10 @@
+## [1.8.1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.8.0...v1.8.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* fix problem where checking init was not really valid ([8a4a1ca](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/8a4a1ca603203ef228628c9cb814bf443b8d2f8a))
+
 # [1.8.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.7.1...v1.8.0) (2026-06-05)
 
 
