@@ -23,6 +23,9 @@ admin/
 │   ├── rules.md           — Group contract
 │   └── rules-*.pdf        — Signed individual agreements (per member)
 ├── photos/                — Team photos
+├── sprint-plans/          — Sprint planning docs
+│   ├── sprint0–5.md       — Sprint plans per sprint
+│   └── whiteboard-photos/ — Planning session whiteboard captures
 └── videos/
     ├── teamintro.mp4
     └── Agile Team Status Video.mp4
