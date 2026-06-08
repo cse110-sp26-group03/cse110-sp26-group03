@@ -84,7 +84,7 @@ export function syncFromLog(logPath = DEFAULT_LOG_PATH) {
   if (!existsSync(logPath)) {
     rollingHasher = newHasher();
     db.prepare(`DELETE FROM issues`).run(); // no log = no events = empty cache
-    return false;
+    return 2;
   }
 
   const contents = readFileSync(logPath, 'utf8');
@@ -105,12 +105,12 @@ export function syncFromLog(logPath = DEFAULT_LOG_PATH) {
 
   // The log is provably unchanged since we last built the cache.
   if (storedHash !== null && storedHash === currentHash) {
-    return false;
+    return 0;
   }
 
   replayLog(contents);
   setCheckpoint(currentHash);
-  return true;
+  return 1;
 }
 
 /**

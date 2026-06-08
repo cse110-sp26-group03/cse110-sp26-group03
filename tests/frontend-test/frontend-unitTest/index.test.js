@@ -145,17 +145,17 @@ describe('mt version', () => {
 /**
  * mt sync. index.js runs syncFromLog() then, for the `sync` command, prints
  * whether a rebuild happened and exits 0.
- * 1. A freshly initialized repo has no new events, so sync is a no-op and
- *    reports it is already up to date.
+ * 1. A freshly initialized repo has no new events and no JSONL file, so sync is a no-op and
+ *    reports "No JSONL file found; no updates were made."
  * 2. Deleting the SQLite cache forces sync to rebuild the cache from the log and report
  *    success.
  */
 describe('mt sync', () => {
   // Nothing has changed since init, so there is nothing to replay.
-  test('reports already up to date on a fresh repo', () => {
+  test('reports No JSONL file found; no updates were made. on a fresh repo', () => {
     const { stdout, code } = runMt(dir, ['sync']);
     expect(code).toBe(0);
-    expect(stdout).toMatch(/already up to date/i);
+    expect(stdout).toMatch(/No JSONL file found; no updates were made./i);
   });
 
   // With the cache gone, the stored checkpoint is gone too, so the log no

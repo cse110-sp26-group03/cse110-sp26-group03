@@ -124,7 +124,7 @@ afterAll(() => {
 describe('syncFromLog()', () => {
   // No file on disk means there are no events to replay: report "skipped"
   // and leave the cache empty.
-  test('returns false and empties the cache when the log is missing', () => {
+  test('returns 2 and empties the cache when the log is missing', () => {
     db.prepare('INSERT INTO issues (ID, Title) VALUES (?, ?)').run(
       'manta-stale',
       'stale',
@@ -132,18 +132,18 @@ describe('syncFromLog()', () => {
 
     const replayed = syncFromLog(tempLogPath()); // path never created
 
-    expect(replayed).toBe(false);
+    expect(replayed).toBe(2);
     expect(issueCount()).toBe(0);
   });
 
   // A fresh log with no prior checkpoint is replayed in full.
-  test('replays a new log into the issues table and returns true', () => {
+  test('replays a new log into the issues table and returns 1', () => {
     const path = tempLogPath();
     writeFileSync(path, createdLine('manta-r1') + createdLine('manta-r2'));
 
     const replayed = syncFromLog(path);
 
-    expect(replayed).toBe(true);
+    expect(replayed).toBe(1);
     expect(issueCount()).toBe(2);
     expect(
       db.prepare('SELECT Title FROM issues WHERE ID = ?').get('manta-r1').Title,
@@ -152,23 +152,23 @@ describe('syncFromLog()', () => {
 
   // Storing the checkpoint lets the second call prove the log is unchanged
   // and skip the rebuild entirely.
-  test('skips replay (returns false) when the log is unchanged', () => {
+  test('skips replay (returns 0) when the log is unchanged', () => {
     const path = tempLogPath();
     writeFileSync(path, createdLine('manta-r1'));
 
-    expect(syncFromLog(path)).toBe(true);
-    expect(syncFromLog(path)).toBe(false);
+    expect(syncFromLog(path)).toBe(1);
+    expect(syncFromLog(path)).toBe(0);
     expect(storedCheckpoint()).not.toBeNull();
   });
 
   // Any change to the log content changes its hash, so the next sync rebuilds.
-  test('re-replays (returns true) after the log content changes', () => {
+  test('re-replays (returns 1) after the log content changes', () => {
     const path = tempLogPath();
     writeFileSync(path, createdLine('manta-r1'));
-    expect(syncFromLog(path)).toBe(true);
+    expect(syncFromLog(path)).toBe(1);
 
     appendFileSync(path, createdLine('manta-r2'));
-    expect(syncFromLog(path)).toBe(true);
+    expect(syncFromLog(path)).toBe(1);
     expect(issueCount()).toBe(2);
   });
 
@@ -180,7 +180,7 @@ describe('syncFromLog()', () => {
 
     const replayed = syncFromLog(path);
 
-    expect(replayed).toBe(true);
+    expect(replayed).toBe(1);
     expect(issueCount()).toBe(0);
   });
 });
@@ -304,7 +304,7 @@ describe('recordAppend()', () => {
     recordAppend(line, path); // ... then records exactly that line.
 
     // The checkpoint now reflects the full file, so no replay is needed.
-    expect(syncFromLog(path)).toBe(false);
+    expect(syncFromLog(path)).toBe(0);
   });
 
   // Multiple appends roll forward correctly one after another, keeping the
@@ -320,7 +320,7 @@ describe('recordAppend()', () => {
       recordAppend(line, path);
     }
 
-    expect(syncFromLog(path)).toBe(false);
+    expect(syncFromLog(path)).toBe(0);
   });
 
   // If the recorded line does NOT match what was written to disk, the rolling
@@ -334,7 +334,7 @@ describe('recordAppend()', () => {
     appendFileSync(path, realLine);
     recordAppend(createdLine('manta-different'), path); // wrong bytes
 
-    expect(syncFromLog(path)).toBe(true);
+    expect(syncFromLog(path)).toBe(1);
   });
 });
 
@@ -352,7 +352,7 @@ describe('syncFromLog() external rewrites (ADR-007 rebuild semantics)', () => {
 
     // The log now contains only r2.
     writeFileSync(path, createdLine('manta-r2'));
-    expect(syncFromLog(path)).toBe(true);
+    expect(syncFromLog(path)).toBe(1);
 
     expect(issueCount()).toBe(1);
     expect(
