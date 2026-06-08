@@ -313,6 +313,12 @@ Synced successfully.
 Already up to date; no new events to sync.
 ```
 
+**Output (no JSONL log exists):**
+
+```
+No JSONL file found; no updates were made.
+```
+
 ### `mt clear`
 
 Erases all issues from the JSONL log by truncating it. Asks for confirmation before clearing. Defaults to `.manta/manta.jsonl` if no path is provided.
