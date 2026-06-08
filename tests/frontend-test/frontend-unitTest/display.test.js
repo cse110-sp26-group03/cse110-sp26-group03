@@ -3,7 +3,7 @@
  *
  * DISPLAY() is the only exported function.
  * It is responsible for rendering the output of FETCH() to the console.
- * 
+ *
  * The main things to test is that DISPLAY() correctly formats the output of FETCH()
  * and that it handles edge cases (e.g. empty results, errors) gracefully.
  */
