@@ -1,6 +1,6 @@
 # Overview of cli.test.js
 
-`cli.test.js` is the end-to-end test suite for the Manta CLI (`mt`).
+`cli2.test.js` is the end-to-end test suite for the Manta CLI (`mt`).
 
 ## Isolation
 
