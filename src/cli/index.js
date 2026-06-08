@@ -25,8 +25,8 @@ import { help } from '../help/help.js';
 const sync_messages = [
   'Already up to date; no new events to sync.',
   'Synced successfully.',
-  "No JSONL file found; no updates were made."
-]
+  'No JSONL file found; no updates were made.',
+];
 
 // ---- Step 1: Parse argv -----------------------------------------------
 
@@ -100,10 +100,8 @@ try {
     process.exit(0);
   }
 } catch (err) {
-
   console.error(err.message);
   process.exit(1);
-
 }
 
 // ---- Early exit, read-only commands ----------------------------------
