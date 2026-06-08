@@ -1,3 +1,11 @@
+## [1.9.1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.9.0...v1.9.1) (2026-06-08)
+
+
+### Bug Fixes
+
+* enforce view-only flags and update field rules in parser ([ca72c59](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/ca72c594fe7d82be93e57da5bcb59735b289fe7f))
+* repair syntax error in parser test clear describe block ([4812a86](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/4812a868eda6f11619e05bfd5107606fcccff260))
+
 # [1.9.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.8.1...v1.9.0) (2026-06-08)
 
 
