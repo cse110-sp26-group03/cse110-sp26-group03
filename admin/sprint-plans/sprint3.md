@@ -1,4 +1,4 @@
-# Sprint X Plan
+# Sprint 3 Plan
 
 **Sprint Duration:** May 17, 2026 - May 24, 2026
 
