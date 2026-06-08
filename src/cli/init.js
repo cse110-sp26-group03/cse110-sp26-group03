@@ -20,31 +20,38 @@ const GITATTRIBUTES_LINE = '.manta/manta.jsonl merge=union';
  * - Prints a reminder to run `git config pull.rebase false`.
  */
 export function init() {
-  // Detect if already initialized.
-  const alreadyInitialized = existsSync(MANTA_DIR);
+  // Read the current .gitattributes, as a way for checking whether we've already initialized, not .manta/
+  const existing = existsSync(GITATTRIBUTES_PATH)
+    ? readFileSync(GITATTRIBUTES_PATH, 'utf8')
+    : '';
+
+  // The .manta/ directory is created as a side effect of opening the SQLite
+  // database. storage/db.js runs `mkdirSync('.manta', ...)` the moment it is
+  // imported. Because index.js imports the storage modules before it ever
+  // calls init(), .manta/ already exists by the time we get here, even in a
+  // brand-new repo. So `.manta/` existing tells us nothing about whether the
+  // user has actually run `init`.
+  //
+  // Instead we use the .gitattributes merge rule as the real marker of
+  // initialization, because writing that line is something only init() does.
+  const alreadyInitialized = existing.includes(GITATTRIBUTES_LINE);
 
   if (alreadyInitialized) {
     console.log('Manta is already initialized in this repository.');
     return;
   }
 
-  // Create .manta/ directory.
   mkdirSync(MANTA_DIR, { recursive: true });
 
-  // Add merge=union rule to .gitattributes if not already there.
-  const existing = existsSync(GITATTRIBUTES_PATH)
-    ? readFileSync(GITATTRIBUTES_PATH, 'utf8')
-    : '';
-
-  if (!existing.includes(GITATTRIBUTES_LINE)) {
-    const separator =
-      existing.length > 0 && !existing.endsWith('\n') ? '\n' : '';
-    writeFileSync(
-      GITATTRIBUTES_PATH,
-      existing + separator + GITATTRIBUTES_LINE + '\n',
-      'utf8',
-    );
-  }
+  // Append the merge=union rule to .gitattributes if it doesn't exist. If the file already had
+  // content not ending in a newline, add one first so we don't glue other rule
+  // onto the end of an existing line.
+  const separator = existing.length > 0 && !existing.endsWith('\n') ? '\n' : '';
+  writeFileSync(
+    GITATTRIBUTES_PATH,
+    existing + separator + GITATTRIBUTES_LINE + '\n',
+    'utf8',
+  );
 
   console.log('Manta initialized.');
   console.log('Run this once in your repo to enable merge support:');
