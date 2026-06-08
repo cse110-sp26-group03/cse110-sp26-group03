@@ -12,16 +12,10 @@
  *   2. mt help                 — early exit that runs BEFORE syncFromLog
  *   3. mt version              — prints the package.json version, exits 0
  *   4. mt sync                 — reports synced / already-up-to-date, exits 0
- *   5. mt delete gate          — issueExists check + confirmation prompt 
+ *   5. mt delete gate          — issueExists check + confirmation prompt
  *   6. read-only ordering      — read only commands never write to the log
  */
-import {
-  test,
-  expect,
-  describe,
-  beforeEach,
-  afterEach,
-} from 'bun:test';
+import { test, expect, describe, beforeEach, afterEach } from 'bun:test';
 import { mkdtempSync, rmSync, readFileSync, existsSync } from 'fs';
 import { tmpdir } from 'os';
 import { join, resolve } from 'path';
@@ -38,9 +32,9 @@ const PKG_PATH = resolve(import.meta.dir, '../../../package.json');
  * Run the `mt` CLI once in the given directory.
  *
  * Spawns index.js as a child process (like a real `mt` invocation) and waits
- * for it to finish. 
- * 
- * @param {string} cwd - Working directory to run in 
+ * for it to finish.
+ *
+ * @param {string} cwd - Working directory to run in
  * @param {string[]} args - CLI arguments, e.g. ['view', '--all'].
  * @returns {{stdout: string, stderr: string, code: number}}
  */
@@ -181,7 +175,7 @@ describe('mt sync', () => {
 
 /**
  * mt delete gate. Before building a delete event, index.js verifies the issue
- * exists and asks for confirmation. 
+ * exists and asks for confirmation.
  * 1. Deleting an unknown ID is rejected by index.js's own issueExists check,
  *    before any prompt or event, with a clear message and exit 1.
  * 2. Deleting an existing ID proceeds without prompting and succeeds.

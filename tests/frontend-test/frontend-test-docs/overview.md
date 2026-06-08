@@ -28,7 +28,7 @@ covers the full create/update/close/delete lifecycle end-to-end).
 
 Grouped into six `describe()` blocks:
 
-- **`parse + validate gate`** — bad input exits `1` before any work happens, 
+- **`parse + validate gate`** — bad input exits `1` before any work happens,
   no command, an unknown command, and a structurally-valid command whose flag
   value that is bad, fails.
 - **`mt help`** — checks it prints the general help overview and exits `0`.
@@ -41,7 +41,6 @@ Grouped into six `describe()` blocks:
   prompting.
 - **`read-only commands do not write to the log`** — `version` exits before the
   write stages, so it never creates or appends to `.manta/manta.jsonl`.
-
 
 ---
 
