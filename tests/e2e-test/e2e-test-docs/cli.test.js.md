@@ -1,7 +1,6 @@
 # Overview of cli.test.js
 
-`cli.test.js` is the end-to-end test suite for the Manta CLI (`mt`). 
-
+`cli.test.js` is the end-to-end test suite for the Manta CLI (`mt`).
 
 ## Isolation
 
@@ -10,7 +9,6 @@ directory created under the OS temp folder. Because `store.js` and `db.js`
 resolve the `.manta/` directory relative to the current working directory, each
 test gets its own throwaway JSONL log and SQLite cache. The developer's real
 `.manta/` is never touched. The temp directory is removed in `afterEach`.
-
 
 ## Helper Functions
 
@@ -76,7 +74,7 @@ blocks:
 
 ### `persistence and replay`
 
-These two test the storage ADRs directly, where the JSONL log is the 
+These two test the storage ADRs directly, where the JSONL log is the
 source of truth, and the SQLite cache is a something that is rebuilt from the
 log by replay.
 

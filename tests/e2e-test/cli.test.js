@@ -10,13 +10,7 @@
  *   6. delete — the issue is removed and can no longer be viewed
  *   7. persistence — the JSONL log records every event, and the replay is able to reproduce the same state
  */
-import {
-  test,
-  expect,
-  describe,
-  beforeEach,
-  afterEach,
-} from 'bun:test';
+import { test, expect, describe, beforeEach, afterEach } from 'bun:test';
 import { mkdtempSync, rmSync, readFileSync, existsSync } from 'fs';
 import { tmpdir } from 'os';
 import { join, resolve } from 'path';
@@ -27,7 +21,7 @@ import { join, resolve } from 'path';
 const CLI_PATH = resolve(import.meta.dir, '../../src/cli/index.js');
 
 /**
- * Run the `mt` CLI once in the given directory 
+ * Run the `mt` CLI once in the given directory
  *
  * Helper Function used in tests
  * Bun.spawnSync is used to run the CLI as like a child process, while we wait for its result
@@ -36,9 +30,9 @@ const CLI_PATH = resolve(import.meta.dir, '../../src/cli/index.js');
  * @returns {{stdout: string, stderr: string, code: number}}
  */
 function runMt(cwd, args) {
-  //creates child process given current test (process.execPath), 
+  //creates child process given current test (process.execPath),
   //running on cli/index.js, with args
-  const proc = Bun.spawnSync([process.execPath, CLI_PATH, ...args], { cwd }); 
+  const proc = Bun.spawnSync([process.execPath, CLI_PATH, ...args], { cwd });
   return {
     stdout: proc.stdout.toString(), //normal output, get the text
     stderr: proc.stderr.toString(), //error output
@@ -55,7 +49,11 @@ function runMt(cwd, args) {
  * @returns {string} The full generated issue ID (e.g. "manta-h3kp").
  */
 function createIssue(cwd, extraArgs = []) {
-  const { stdout, code } = runMt(cwd, ['create', 'Fix login bug', ...extraArgs]); //stdout is the text output, code is the success satus
+  const { stdout, code } = runMt(cwd, [
+    'create',
+    'Fix login bug',
+    ...extraArgs,
+  ]); //stdout is the text output, code is the success satus
   expect(code).toBe(0);
   // index.js prints: `Created issue manta-xxxx: <title>`
   const match = stdout.match(/Created issue (manta-\S+):/);
@@ -71,7 +69,7 @@ beforeEach(() => {
   //tmpdir returns string of a new temp folder (AppData\Local\Temp as an example)
   //join(tmpdir(), 'manta-e2e-') sticks manta-e2e onto that path, so we get string AppData\Local\Temp\manta-e2e- as an example
   //mkdtempSync creates the actual temp directory with the string, and adds random chars at the end to make sure its unique
-  dir = mkdtempSync(join(tmpdir(), 'manta-e2e-')); 
+  dir = mkdtempSync(join(tmpdir(), 'manta-e2e-'));
   const { code } = runMt(dir, ['init']); //mt init in that temp directory
   expect(code).toBe(0);
 });
@@ -92,7 +90,7 @@ describe('mt init', () => {
     // join(dir, '.manta) creates string path of the dir (directory) we made with the .manta
     //existsSync(path) checks if the path exists
     //so this checks whether the path (dir +  '.manta') exists. or in simple words if .manta was added to the dir
-    expect(existsSync(join(dir, '.manta'))).toBe(true); 
+    expect(existsSync(join(dir, '.manta'))).toBe(true);
     //reads the file's contents and reutrns it. 'utf8' means we want text not bytes.
     const attrs = readFileSync(join(dir, '.gitattributes'), 'utf8');
     expect(attrs).toContain('.manta/manta.jsonl merge=union'); //check merge rule exists in .gitattributes
@@ -177,7 +175,7 @@ describe('mt update', () => {
 });
 
 /**
- * close + delete tests. 
+ * close + delete tests.
  * 1. First test checks that close reports success and flips the status to
  *    closed
  * 2. Second test checks that delete removes the issue so a later view of that
