@@ -43,8 +43,8 @@ Tasks did not follow exact Github Issues specs but overall engagement vastly imp
 
 ## Photos 
 
-![may12](whiteboard_photos/may12_1.png)
+![may12](whiteboard-photos/may12_1.png)
 
-![may12(2)](whiteboard_photos/may12_2.png)
+![may12(2)](whiteboard-photos/may12_2.png)
 
-![may12(3)](whiteboard_photos/may12_3.png)
+![may12(3)](whiteboard-photos/may12_3.png)
