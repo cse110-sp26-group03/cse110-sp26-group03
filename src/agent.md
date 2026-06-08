@@ -65,12 +65,12 @@ mt create "title" [--desc <text>] [--priority <p0-p9>] [--status <status>] [--ty
 
 | Flag         | Short | Description                                      | Default  |
 | ------------ | ----- | ------------------------------------------------ | -------- |
-| `--title`    | `--t`  | Issue title (max 50 chars)                       | required |
-| `--desc`     | `--d`  | Longer description (max 512 chars)               | empty    |
-| `--priority` | `--p`  | Priority level: `p0`–`p9` (p0 is highest)        | `p5`     |
-| `--status`   | `--s`  | Initial status: `open`, `in_progress`, `blocked` | `open`   |
-| `--type`     | —      | Type: `bug`, `feature`, `task`, `docs`, `store`  | `task`   |
-| `--assignee` | `--a`  | Who is working on this issue (letters only)      | empty    |
+| `--title`    | `--t` | Issue title (max 50 chars)                       | required |
+| `--desc`     | `--d` | Longer description (max 512 chars)               | empty    |
+| `--priority` | `--p` | Priority level: `p0`–`p9` (p0 is highest)        | `p5`     |
+| `--status`   | `--s` | Initial status: `open`, `in_progress`, `blocked` | `open`   |
+| `--type`     | —     | Type: `bug`, `feature`, `task`, `docs`, `store`  | `task`   |
+| `--assignee` | `--a` | Who is working on this issue (letters only)      | empty    |
 
 > [!NOTE]
 > `closed` is not a valid status on create. Use `mt close` to close an issue.
@@ -101,12 +101,12 @@ mt update manta-xxxx [--title <text>] [--desc <text>] [--priority <p>] [--status
 
 | Flag         | Short | Description                                            |
 | ------------ | ----- | ------------------------------------------------------ |
-| `--title`    | `--t`  | New title                                              |
-| `--desc`     | `--d`  | New description                                        |
-| `--priority` | `--p`  | New priority: `p0`–`p9`                                |
-| `--status`   | `--s`  | New status: `open`, `in_progress`, `blocked`, `closed` |
-| `--type`     | —      | New type: `bug`, `feature`, `task`, `docs`, `store`    |
-| `--assignee` | `--a`  | New assignee                                           |
+| `--title`    | `--t` | New title                                              |
+| `--desc`     | `--d` | New description                                        |
+| `--priority` | `--p` | New priority: `p0`–`p9`                                |
+| `--status`   | `--s` | New status: `open`, `in_progress`, `blocked`, `closed` |
+| `--type`     | —     | New type: `bug`, `feature`, `task`, `docs`, `store`    |
+| `--assignee` | `--a` | New assignee                                           |
 
 #### Examples
 
