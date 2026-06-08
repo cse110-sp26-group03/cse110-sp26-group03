@@ -1,3 +1,16 @@
+# [1.9.0](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.8.1...v1.9.0) (2026-06-08)
+
+
+### Bug Fixes
+
+* fixed init always saying already initialized ([691ec3c](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/691ec3c2ac344bee1d563663abc1c9df27d9adfe))
+
+
+### Features
+
+* init AGENT.md ([0b21350](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/0b213501548ff22e0cbd21b0ba4a11b895f5e1da))
+* init now creates agent.md in root of repo, using agent.md from /src ([43af9e5](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/43af9e562c35df0c09e9af82b1f9554948182b44))
+
 ## [1.8.1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.8.0...v1.8.1) (2026-06-08)
 
 

@@ -46,29 +46,7 @@ Grouped into six `describe()` blocks:
 
 #### `init.test.js` — `mt init` (`src/cli/init.js`)
 
-Tests `init()`, the only exported function. It bootstraps Manta in the current
-directory by creating `.manta/`, writing the `merge=union` rule to
-`.gitattributes`, and printing a one-time git config reminder. Parser coverage
-for `mt init` lives in `parser.test.js`. Grouped into five `describe()` blocks:
-
-- **`init() — first run`** — creates `.manta/`, writes `.gitattributes` when
-  missing, and prints the initialization messages.
-- **`init() — gitattributes`** — appends the merge rule without clobbering
-  existing content, handles missing trailing newlines, avoids duplicates, and
-  treats commented lines as non-matching.
-- **`init() — already init`** — exits early when the canonical merge rule is
-  already in `.gitattributes`; does not create `.manta/` or re-print setup
-  output.
-- **`init() — idempotency & scope`** — second run reports already initialized;
-  does not create `manta.jsonl` or `manta.db`; leaves pre-existing `.manta/`
-  files untouched.
-- **`init() — partial & edges`** — adds the merge rule when `.manta/` exists
-  but the rule is missing; throws when `.manta` is a file instead of a
-  directory.
-
-Each test runs in an isolated temp directory via `beforeEach`/`afterEach`, so
-init never touches the real repo. See `init.test.js.md` for variables, helpers,
-and a per-suite test list.
+_Placeholder — real tests to be added._
 
 #### `parser.test.js` — argv parser (`src/cli/parser.js`)
 
