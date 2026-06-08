@@ -8,7 +8,7 @@
  * Each describe() block below targets one scenario:
  *   1. init() — first run         — .manta/, .gitattributes creation and messages
  *   2. init() — gitattributes     — append, dedupe, newline handling
- *   3. init() — already init      — early return when .manta/ exists
+ *   3. init() — already init      — early return when .gitattributes has the merge rule
  *   4. init() — idempotency       — second run, scope limits, preserved .manta/ files
  *   5. init() — partial & edges   — repair gaps, substring dedupe, .manta as file
  */
@@ -206,15 +206,15 @@ describe('init() — gitattributes', () => {
 });
 
 /**
- * init() tests when .manta/ already exists. init() should exit early without
- * touching .gitattributes or re-printing the first-run setup flow.
+ * init() tests when the merge rule is already in .gitattributes. init() should
+ * exit early without re-printing the first-run setup flow.
  * 1. First test checks the already-initialized message
  * 2. Second test checks that an existing .gitattributes file is left unchanged
- * 3. Third test checks that a missing .gitattributes file stays missing
+ * 3. Third test checks that .manta/ is not created when only the rule is present
  */
 describe('init() — already init', () => {
   beforeEach(() => {
-    mkdirSync(MANTA_DIR, { recursive: true });
+    writeFileSync(GITATTRIBUTES_PATH, GITATTRIBUTES_LINE + '\n', 'utf8');
   });
 
   test('prints the already-initialized message and skips first-run output', () => {
@@ -225,19 +225,20 @@ describe('init() — already init', () => {
   });
 
   test('does not modify an existing .gitattributes file', () => {
-    writeFileSync(GITATTRIBUTES_PATH, '*.png binary\n', 'utf8');
+    const existing = '*.png binary\n' + GITATTRIBUTES_LINE + '\n';
+    writeFileSync(GITATTRIBUTES_PATH, existing, 'utf8');
 
     init();
 
-    expect(readFileSync(GITATTRIBUTES_PATH, 'utf8')).toBe('*.png binary\n');
+    expect(readFileSync(GITATTRIBUTES_PATH, 'utf8')).toBe(existing);
   });
 
-  test('does not create .gitattributes when it is missing', () => {
-    expect(existsSync(GITATTRIBUTES_PATH)).toBe(false);
+  test('does not create .manta/ when the merge rule is already present', () => {
+    expect(existsSync(MANTA_DIR)).toBe(false);
 
     init();
 
-    expect(existsSync(GITATTRIBUTES_PATH)).toBe(false);
+    expect(existsSync(MANTA_DIR)).toBe(false);
   });
 });
 
@@ -282,26 +283,27 @@ describe('init() — idempotency & scope', () => {
 
 /**
  * init() tests for partial initialization and unusual filesystem states.
- * Documents repair gaps and the string-based dedupe behavior in init.js.
- * 1. First test checks that a missing merge rule is not repaired when .manta/ exists
- * 2. Second test checks that an existing .manta file is treated as initialized
+ * .manta/ may exist before init() runs (e.g. from storage imports), so the
+ * merge rule in .gitattributes is the real initialization marker.
+ * 1. First test checks that init() adds the merge rule when .manta/ exists but the rule is missing
+ * 2. Second test checks that init() fails when .manta exists as a file instead of a directory
  */
 describe('init() — partial & edges', () => {
-  test('does not repair .gitattributes when .manta/ exists but the merge rule is missing', () => {
+  test('appends the merge rule when .manta/ exists but the rule is missing', () => {
     mkdirSync(MANTA_DIR, { recursive: true });
     writeFileSync(GITATTRIBUTES_PATH, '*.png binary\n', 'utf8');
 
     init();
 
-    expect(readFileSync(GITATTRIBUTES_PATH, 'utf8')).toBe('*.png binary\n');
+    expect(readFileSync(GITATTRIBUTES_PATH, 'utf8')).toBe(
+      '*.png binary\n' + GITATTRIBUTES_LINE + '\n',
+    );
   });
 
-  test('treats an existing .manta file as already initialized', () => {
+  test('throws when .manta exists as a file instead of a directory', () => {
     writeFileSync(MANTA_DIR, 'not a directory', 'utf8');
 
-    const lines = captureConsoleLog(() => init());
-
-    expect(lines).toEqual(['Manta is already initialized in this repository.']);
+    expect(() => init()).toThrow();
     expect(existsSync(GITATTRIBUTES_PATH)).toBe(false);
   });
 });
