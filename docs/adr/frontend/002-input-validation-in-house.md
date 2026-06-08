@@ -34,6 +34,8 @@ We adopt Option 1: small helpers in `validate.js`.
 
 No new dependencies.
 
+> **Update (reflects current code):** the implemented design differs from this proposal in two ways, both settled by **ADR-007**: (1) validation is **data-driven and centralized** in a single `validate()` (keyed on `possible_flags` + `validations` lookup tables), not handled per-command; (2) checks **throw an `Error`** on failure rather than returning `{ ok, message }` — `index.js` catches and exits 1. The file is `src/validation/validation.js` (not `validate.js`).
+
 ### Proposed Layout (pending team review)
 
 Names and paths below are a starting suggestion, not a team decision.

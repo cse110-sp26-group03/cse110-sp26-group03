@@ -28,7 +28,7 @@ We need both a **durable record** that teammates can share via git and a **fast 
 
 We adopt Option 4: an appendable JSONL log as the source of truth, plus a SQLite cache for fast local queries. JSONL is better for user appeal and performance on the durability side. We want to prioritize performance over space optimizations for improved user experience, especially for a project of our scale.
 
-- `.manta/issues.jsonl` is committed to git. Every change is one appended line.
+- `.manta/manta.jsonl` is committed to git. Every change is one appended line.
 - `.manta/manta.db` is the local SQLite cache, gitignored. Each developer has their own copy.
 - On every write: the event is constructed, applied to SQLite, and auto-exported as a new line appended to the JSONL log. Both stores stay in sync after every command.
 - On startup or after `git pull`, new events from the JSONL are replayed into SQLite so the local cache reflects teammates' changes.

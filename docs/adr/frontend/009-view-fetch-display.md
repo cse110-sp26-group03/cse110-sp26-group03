@@ -24,14 +24,16 @@ The read path is three modules plus CLI wiring:
 - `src/cli/display.js` — formats rows for the terminal (list table or detail).
 - `src/cli/index.js` — runs parse → validate → FETCH → DISPLAY, then exits.
 
-JSONL remains the source of truth ([[001-storage-layer]]). Write commands call
-`syncFromLog()` from `replay.js` before mutating ([[007-jsonl-checkpoints]]).
-**`mt view` does not call `syncFromLog`** — it reads whatever is already in the
-SQLite cache. After a `git pull` that changes `.manta/manta.jsonl`, the cache
-refreshes on the next write command; until then, `mt view` may show stale data.
+JSONL remains the source of truth ([[001-storage-layer]]). `index.js` calls
+`syncFromLog()` from `replay.js` once before dispatching ([[007-jsonl-checkpoints]]),
+and this runs ahead of the `view` branch. **`mt view` therefore reads a
+freshly-synced cache** — after a `git pull` that changes `.manta/manta.jsonl`,
+the next `mt view` already reflects it; no separate write command is needed.
+The sync is cheap when nothing changed (the log hash matches the checkpoint).
 
-The steps for `view` are: `argv → parse → validate → FETCH → DISPLAY`. This
-skips `event.js`, `replay.js`, and `store.js` — `view` never appends to the log
+The steps for `view` are: `argv → parse → validate → FETCH → DISPLAY`. `view`
+skips `event.js` and `store.js` — it never appends to the log — though
+`syncFromLog()` (from `replay.js`) still runs first to refresh the cache
 (see [[004-event-issue-object]] for the write path).
 
 ### What the parser already handles
@@ -127,7 +129,8 @@ process.exit(0);
 ```
 
 Failures in `FETCH` or `DISPLAY` are caught, printed to stderr, and exit with
-code 1. The command never reaches `syncFromLog`, `create_event`, or `applyEvent`.
+code 1. The command never reaches `create_event` or `applyEvent` (but
+`syncFromLog` does run before the `view` branch).
 
 Write commands use a separate path:
 
@@ -150,6 +153,8 @@ applyEvent(event);
 - **Linked to FETCH row shape.** PascalCase keys and object-vs-array dispatch must
   stay in sync between `fetch.js` and `display.js`.
 - **Key casing differs** from the event schema ([[004-event-issue-object]]).
-- **No replay on view.** Stale SQLite after a pull until a write command runs
-  `syncFromLog` (or replay is wired into view in a future change).
+- **Replay runs on view.** `index.js` calls `syncFromLog` before the `view`
+  branch, so `view` is never stale after a pull. (This updates the original
+  design, which skipped replay on view; the trade-off is that every `view` does
+  a hash check, which is cheap when the log is unchanged.)
 - **Interactive exit via `process.exit`.** ESC is handled inside `display.js`.

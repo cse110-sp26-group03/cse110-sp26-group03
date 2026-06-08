@@ -26,7 +26,7 @@ We adopt Option 1: Ike's custom parser, in plain JS.
 
 - Parser handles argv splitting, flag resolution (including shorthands), and surface-level checks (empty input, unknown command, duplicate/missing flags).
 - Deeper command-specific validation (required fields, enum values, formats) is handled by `src/validation/validation.js`; see ADR-002.
-- The pipeline in `index.js` is: **parse → validate → create_event → applyEvent → print**. Each stage throws on failure; `index.js` catches and exits 1 with the error message.
+- The write pipeline in `index.js` is: **parse → validate → create_event → syncFromLog → applyEvent → print**. Each stage throws on failure; `index.js` catches and exits 1 with the error message. (`view` uses a separate read path: **parse → validate → FETCH → DISPLAY**; see ADR-009.)
 
 ### Actual Layout
 
@@ -35,16 +35,24 @@ src/
 ├── cli/
 │   ├── index.js           entry point: runs the parse→validate→create_event→applyEvent→print pipeline
 │   ├── parser.js          Ike's parser: argv → { cmd, flags }
-│   └── event.js           builds typed event objects (issue.created / issue.updated / issue.deleted) from { cmd, flags }
+│   ├── event.js           builds typed event objects (issue.created / issue.updated / issue.deleted) from { cmd, flags }
+│   ├── display.js         renders `mt view` output (list table / detail) — see ADR-009
+│   ├── init.js            `mt init`: sets up .manta/ and the .gitattributes merge rule — see ADR-010
+│   ├── clear.js           `mt clear`: truncates the JSONL log
+│   └── migrate.js         `mt migrate`: imports issues from a Beads JSONL export
 ├── storage/
 │   ├── schema.sql
 │   ├── db.js
-│   └── store.js           applyEvent: writes events to SQLite and JSON stores
-└── validation/
-    └── validation.js      stage-2 validation: required fields, enum checks, ID format, etc.
+│   ├── store.js           applyEvent: writes events to SQLite and JSONL stores
+│   ├── fetch.js           read-only queries for `mt view` (list + detail)
+│   └── replay.js          syncFromLog: rebuilds SQLite from the JSONL log — see ADR-007
+├── validation/
+│   └── validation.js      stage-2 validation: required fields, enum checks, ID format, etc.
+└── help/
+    └── help.js            `mt help`: overview text + opens a command's wiki page
 ```
 
-Valid commands: `create`, `update`, `close`, `delete`.
+Valid commands (original scope was `create`, `update`, `close`, `delete`; the full set as implemented): `create`, `update`, `close`, `delete`, `view`, `sync`, `init`, `migrate`, `clear`, `help`, `version`.
 
 No new dependencies.
 
