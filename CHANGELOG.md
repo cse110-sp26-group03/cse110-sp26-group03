@@ -1,3 +1,10 @@
+## [1.9.2](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.9.1...v1.9.2) (2026-06-09)
+
+
+### Bug Fixes
+
+* added deleteme example. ([4cea732](https://github.com/cse110-sp26-group03/cse110-sp26-group03/commit/4cea73254c14b9e18ce28409dbf1b9f3cfda3fd6))
+
 ## [1.9.1](https://github.com/cse110-sp26-group03/cse110-sp26-group03/compare/v1.9.0...v1.9.1) (2026-06-08)
 
 
