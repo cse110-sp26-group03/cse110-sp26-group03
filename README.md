@@ -47,7 +47,7 @@ Click to view all manta commands [here](https://github.com/cse110-sp26-group03/c
 
 ## Team
 
-Manta is developed by StringRays, a group of student software developers passionate about building community and robust, well-engineered code. More about our members can be found [here](Team). Thank you for checking out our work!
+Manta is developed by StringRays, a group of student software developers passionate about building community and robust, well-engineered code. More about our members can be found [here](https://github.com/cse110-sp26-group03/cse110-sp26-group03/wiki/Team). Thank you for checking out our work!
 
 
 ![logo](https://github.com/user-attachments/assets/1f5387e0-d624-4380-acbf-9f1e63b1a89e)
