@@ -45,6 +45,16 @@ Click to view all manta commands [here](https://github.com/cse110-sp26-group03/c
 
 [npm: manta-it](https://www.npmjs.com/package/manta-it)
 
+## Manta Demo Videos
+
+### Public Demo
+
+[![Manta Public Demo](https://img.youtube.com/vi/cGJDMzNs6F0/hqdefault.jpg)](https://www.youtube.com/watch?v=cGJDMzNs6F0)
+
+### Private Overview 
+
+
+
 ## Team
 
 Manta is developed by StringRays, a group of student software developers passionate about building community and robust, well-engineered code. More about our members can be found [here](https://github.com/cse110-sp26-group03/cse110-sp26-group03/wiki/Team). Thank you for checking out our work!
