@@ -53,7 +53,7 @@ Click to view all manta commands [here](https://github.com/cse110-sp26-group03/c
 
 ### Private Overview 
 
-
+[![Manta Private Repo Overview](https://img.youtube.com/vi/ilkPzk-KoYw/hqdefault.jpg)](https://www.youtube.com/watch?v=ilkPzk-KoYw)
 
 ## Team
 
